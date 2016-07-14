@@ -2,3 +2,21 @@ Actor
 1) Create actor;
 2) Edit actor;
 3) Delete actor.
+Use case
+1) Create use case
+Use case slice
+Use case model
+Stakeholder
+Requirement
+Defect
+Change
+System
+Component
+Increment
+Release
+Test case
+Test
+Project
+Customer
+Team
+Member
