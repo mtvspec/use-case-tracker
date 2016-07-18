@@ -10,7 +10,12 @@ Stakeholder
 Requirement
 Defect
 Change
+--------------------------------------------------------------------------------
 System
+--------------------------------------------------------------------------------
+A system can be identified as the combination of interacting elements organized
+to achieve one or more stated purposes.
+
 Component
 Increment
 Release
@@ -20,3 +25,111 @@ Project
 Customer
 Team
 Member
+Baseline
+--------------------------------------------------------------------------------
+System Configuration
+--------------------------------------------------------------------------------
+The configuration of a system is the functional and physical characteristics
+of hardware or software as set forth in technical documentation or achieved
+in a product; it can also be thought of as a collection of specific versions
+of hardware, firmware, or software items combined according to specific build
+procedures to serve a particular purpose.
+Elements of a system:
+- hardware;
+- software;
+- documentation;
+- certification;
+- user manuals;
+- data (dictionaries).
+--------------------------------------------------------------------------------
+Configuration Management (CM)
+--------------------------------------------------------------------------------
+Configuration management, then, is the discipline of identifying the
+configuration of a system at distinct points in a time for the purpose of
+systematically controlling changes to the configuration and maintaining the
+integrity and traceability of the configuration throughout the system life
+cycle.
+It is formally defined as
+A discipline applying technical and administrative direction and surveillance
+to: identify and document the functional and physical characteristics of a
+configuration item, control changes to those characteristics, record and report
+change processing and implementation status, and verify compliance with
+specified requirements.
+The concepts of configuration management apply to all items to be controlled,
+although there are some differences in implementation between hardware CM and
+software CM.
+--------------------------------------------------------------------------------
+Software Configuration Management (SCM)
+--------------------------------------------------------------------------------
+Software configuration management is a supporting-software life cycle process
+that benefits project management, development and maintenance activities,
+quality assurance activities, as well as the customers and users of the end
+product.
+The SCM activities are management and planing of the SCM process, software
+configuration control, software configuration status accounting, software
+configuration auditing, and software release management and delivery.
+The software configuration management KA is related to all other KAs, since
+the object of configuration management is the artifact produced and used
+throughout the software engineering process.
+The purpose of Software Configuration Management is to establish and maintain
+the integrity of the products of the software project throughout the project's
+software life cycle.
+Software Configuration Management Goals:
+Goal 1. Software configuration activities are planned.
+Goal 2. Selected software work products are identified, controlled, and
+available.
+Goal 3. Changes to identified software work products are controlled.
+Goal 4. Affected groups and individuals are informed of the status and
+content of software baselines.
+--------------------------------------------------------------------------------
+Configuration item (CI)
+--------------------------------------------------------------------------------
+A configuration item is an item or aggregation of hardware or software or
+both that is designed to be managed as a single entity.
+Configuration management items:
+- plans;
+- specifications;
+- hardware;
+- software:
+-- source code;
+-- executable code;
+-- software tools;
+-- code libraries;
+- documentation for
+-- use and operation;
+-- design;
+-- maintenance;
+-- installation;
+- certification;
+- user manuals;
+- data:
+-- database structures;
+-- data dictionaries;
+- testing materials.
+--------------------------------------------------------------------------------
+Software Configuration Item (SCI)
+--------------------------------------------------------------------------------
+A software configuration item is a software entity that has been established as
+a configuration item.
+Selecting SCIs is an important process in which balance must be achieved
+between providing adequate visibility for project control purposes and
+providing a manageable number of controlled items.
+--------------------------------------------------------------------------------
+Software Baseline Library
+--------------------------------------------------------------------------------
+A software baseline library is a container for software baselines.
+A software baseline library is established containing the software baselines
+as they are developed. Changes to baselines and the release of software
+products built from the software baseline library are systematically controlled
+via the change control and configuration auditing functions of software
+configuration management.
+--------------------------------------------------------------------------------
+System Configuration Control Board
+Software Configuration Control Board
+Configuration Management Members
+Change Request (CR)
+System Change Request
+Software Change Request (SCR)
+System Element
+Software Element
+Change Control Process
