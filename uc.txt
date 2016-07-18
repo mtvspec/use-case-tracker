@@ -15,7 +15,7 @@ System
 --------------------------------------------------------------------------------
 A system can be identified as the combination of interacting elements organized
 to achieve one or more stated purposes.
-
+--------------------------------------------------------------------------------
 Component
 Increment
 Release
@@ -25,7 +25,10 @@ Project
 Customer
 Team
 Member
+--------------------------------------------------------------------------------
 Baseline
+--------------------------------------------------------------------------------
+Baseline - the specification of current planning version of product to release.
 --------------------------------------------------------------------------------
 System Configuration
 --------------------------------------------------------------------------------
@@ -81,6 +84,20 @@ available.
 Goal 3. Changes to identified software work products are controlled.
 Goal 4. Affected groups and individuals are informed of the status and
 content of software baselines.
+Цели
+1) Фиксация элементов базовой линии;
+2) Фиксация элементов имплементации элементов базовой линии;
+3) Фиксация ответственных лиц за имплементацию элементов;
+4) Фиксация ответственных лиц за приемку имлементированных элементов;
+5) Контроль изменения элементов;
+6) Фиксация удаляемых элементов;
+7) Мониторинг прогресса имплементации элементов;
+8) Фиксация релизов;
+9) Фиксация изменений;
+10) Обеспечение качества имплементации элементов;
+11) Оценка объема изменений;
+12) Фиксация связей между элементами имплементации и элементами базовой линии;
+13) Фиксация статусов элементов.
 --------------------------------------------------------------------------------
 Configuration item (CI)
 --------------------------------------------------------------------------------
@@ -127,9 +144,38 @@ configuration management.
 System Configuration Control Board
 Software Configuration Control Board
 Configuration Management Members
+--------------------------------------------------------------------------------
 Change Request (CR)
+--------------------------------------------------------------------------------
+A change request is a request to expand or reduce the project scope; modify
+policies, processes, plans, or procedures; modify costs or budgets; or receive
+schedules.
+One source of a change request is the initiation of corrective action in
+response to problem reports.
+--------------------------------------------------------------------------------
 System Change Request
+--------------------------------------------------------------------------------
 Software Change Request (SCR)
+--------------------------------------------------------------------------------
+Requests for changes to software configuration items may be originated by
+anyone at any point in the software life cycle and may include a suggested
+solution and requested priority.
+Regardless of the source, type of change (for example, defect or enhancement)
+is usually recorded on the software change request.
+--------------------------------------------------------------------------------
+Deviation
+--------------------------------------------------------------------------------
+A deviation is a written authorization, granted prior to the manufacture of an
+item, to depart from a particular performance or design requirement for a
+specific number of units or specific period of time.
+--------------------------------------------------------------------------------
+Waiver
+--------------------------------------------------------------------------------
+A waiver is a written authorization to accept a configuration item or other
+designated item that is found, during production or after having been submitted
+for inspection, to depart from specified requirements but is nevertheless
+considered suitable for use as-is or after rework by an approved method.
+--------------------------------------------------------------------------------
 System Element
 Software Element
 Change Control Process
