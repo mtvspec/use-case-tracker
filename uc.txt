@@ -1,8 +1,26 @@
+--------------------------------------------------------------------------------
+Vision
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 Actor
+--------------------------------------------------------------------------------
+Actor - an individual or other system that interacts with system to achieve
+particular goal by use case of system.
 1) Create actor;
 2) Edit actor;
 3) Delete actor.
+--------------------------------------------------------------------------------
 Use case
+--------------------------------------------------------------------------------
+Level 0. Scope establishment
+Scope representation techniques
+1) Use case table
+2) Use case model
+Level 1. Header information gathering
+Level 2. Main success scenario
+Level 3. Extensions and exceptions
+Level 4. Extensions handling
+--------------------------------------------------------------------------------
 1) Create use case
 Use case slice
 Use case model
