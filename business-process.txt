@@ -1,0 +1,65 @@
+--============================================================================--
+-- Business process Domain
+--============================================================================--
+Key Objects:
+- Business process *
+- Activity
+- Task
+- Service
+- Product
+- Goal
+- Customer
+- Input *
+- Input Supplier *
+- Input Specification
+- Output *
+- Output Consumer *
+- Output Specification
+- Transformation
+- Transformation Specification
+- Event
+- Trigger
+- Termination
+- Resource
+- Control
+- Control Input
+- Control Input Supplier
+- Control Input Specification
+- Control Output
+- Control Output Consumer
+- Control Output Specification
+- System
+- Individual
+- Metrics
+- Measurements
+- Process Owner
+--------------------------------------------------------------------------------
+-- Business Process (BP)
+--------------------------------------------------------------------------------
+a) A collection of related, structured activities or tasks that produce a
+specific service or product (serve a particular goal) for a particular
+customer.
+--------------------------------------------------------------------------------
+-- Input (I)
+--------------------------------------------------------------------------------
+a) A set of elements used for transformation by process to output.
+Set elements may be:
+a) Resource
+b) Data
+--------------------------------------------------------------------------------
+-- Input supplier (IS)
+--------------------------------------------------------------------------------
+a) A an individual or process.
+--------------------------------------------------------------------------------
+-- Output (O)
+--------------------------------------------------------------------------------
+a) A set of elements received for output consumer.
+Set of elements may be:
+a) Product
+b) Service
+c) Data
+--------------------------------------------------------------------------------
+-- Output Consumer (OC)
+--------------------------------------------------------------------------------
+a) A an individual or process.
+--------------------------------------------------------------------------------

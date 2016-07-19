@@ -1,0 +1,54 @@
+--============================================================================--
+-- Requirements Management Process Domain (RQ)
+--============================================================================--
+Key Objects:
+Artifacts:
+- Vision
+- Baseline
+Activities Performers:
+- Software Assurance Group
+- Software Engineering Group
+Activities:
+- Allocated requirements review (Vision)
+- Allocated requirements used as a basis (Baseline)
+- Allocated requirements changes review (Change Request)
+--------------------------------------------------------------------------------
+-- Vision
+--------------------------------------------------------------------------------
+a) A specification of system concepts by stakeholders.
+--------------------------------------------------------------------------------
+-- Baseline
+--------------------------------------------------------------------------------
+a) A basis for start to implement first release of system.
+--------------------------------------------------------------------------------
+-- Software Quality Assurance Group
+--------------------------------------------------------------------------------
+A group that works with the software project during its early stages to
+establish plans, standards, and procedures that will add value to the software
+project and satisfy the constraints of the project and the organization's
+policies.
+The software quality assurance group reviews project activities and audits
+software work products throughout the life cycle and provides management
+with visibility as to whether the software project is adhering to its
+established plans, standards, and procedures.
+--------------------------------------------------------------------------------
+-- Software Engineering Group
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Allocated requirements review
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Allocated requirements used as a basis
+--------------------------------------------------------------------------------
+
+Activity output:
+a) Accepted allocated requirements incorporated in version control system
+--------------------------------------------------------------------------------
+-- Allocated requirements changes review
+--------------------------------------------------------------------------------
+
+Activity output:
+a) Accepted change requests incorporated in change and version control systems
+--------------------------------------------------------------------------------

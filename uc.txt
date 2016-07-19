@@ -4,75 +4,116 @@ Vision
 --============================================================================--
 -- Use Case Domain
 --============================================================================--
+Actors:
+- Руководитель (Senior manager)
+Use cases:
+-- Просмотреть проекты (Show projects)
+-- Создать проект (Create project)
+--- Выбрать заказчика проекта (Select project's customer)
+-- Просмотреть проект (Show selected project)
+-- Изменить проект (Change project)
+--- Назначить менеджера проекта (Assign project manager)
+--- Изменить объем проекта (Change project scope)
+--- Изменить сроки проекта (Change project schedule)
+--- Изменить бюджет проекта (Change project budget)
+- Менеджер проекта (Project Manager)
+Use cases:
+-- Просмотреть проекты (Show projects)
+-- Просмотреть проект (Show selected project)
+-- Просмотреть прогресс проекта (Show project's progress)
+-- Внести предложения по изменению проекта
+- Проектировщик (Solution Designer)
+- Дизайнер (UI Designer)
+Use cases:
+-- Просмотреть проекты (Show projects)
+-- Просмотреть проект (Show selected project)
+-- Просмотреть макеты пользовательского интерфейса (Show UI mockups)
+-- Создать макет пользовательского интерфейса (Create UI mockup)
+-- Просмотреть макет пользовательского интерфейса (Show UI mockup)
+-- Изменить макет пользовательского интерфейса (Change selected UI mockup)
+-- Удалить макет пользовательского интерфейса (Delete selected UI mockup)
+- Проектировщик структур данных (Database Structure Designer)
+Use cases:
+-- Просмотреть проекты (Show projects)
+-- Просмотреть проект (Show selected project)
+-- Просмотреть модели структур данных (Show data structures models)
+-- Создать концептуальную структуру данных (Create conceptual data structure model)
+-- Просмотреть концептуальную структуру данных (Show selected conceptual data structure model)
+-- Изменить концептуальную структуру данных (Change selected conceptual data structure model)
+-- Удалить концептульную структуру данных (Delete selected conceptual data structure model)
+-- Преобразовать концептуальную структуру данных в логическую структуру данных
+-- Создать логическую структуру данных (Create logical data structure model)
+-- Просмотреть логическую структуру данных (Show selected logical data structure model)
+-- Изменить логическую структуру данных (Change selected logical data structure model)
+-- Удалить логическую структуру данных (Delete selected logical data structure model)
+- Текстировщик (Tester)
+Use cases:
+-- Просмотреть проекты (Show projects)
+-- Просмотреть проект (Show selected project)
+-- Просмотреть тест кейсы (Show test cases)
+-- Создать тест кейс (Create test case)
+-- Изменить тест кейс (Change test case)
+-- Удалить тест кейс (Delete change case)
+- Постановщик (Team Lead)
+-- Просмотреть проекты (Show projects)
+-- Просмотреть проект (Show selected project)
+-- Создать базовую линию (Create baseline)
+-- Создать запрос на изменение базовой линии (Create change request for baseline change)
+-- Просмотреть модели вариантов использования (Show use cases)
+-- Создать модель вариантов использования (Create use-case model)
+-- Просмотреть модель вариантов использования (Show selected use-case model)
+-- Просмотреть акторов (Show actors)
+-- Создать актора (Create actor)
+-- Просмотреть актора (Show selected actor)
+-- Изменить актора (Change selected actor)
+-- Просмотреть предметы вариантов использования (Show use-case subjects)
+-- Создать предмет вариантов использования (Create use-case subject)
+-- Просмотреть предмет варианта использования (Show selected use-case subject)
+-- Изменить предмет варианта использования (Change selected use-case subject)
+-- Просмотреть варианты использования (Show use cases)
+-- Создать вариант использования (Create use case)
+-- Просмотреть вариант использования (Show use case)
+-- Изменить вариант использования (Change selected use case)
+-- Просмотреть слайсы (Show use-case slices)
+-- Создать слайс (Create slice)
+-- Просмотреть слайс (Show selected slice)
+-- Изменить слайс (Change selected slice)
+- Разработчик (Developer)
+Use cases:
+-- Просмотреть проекты (Show projects)
+-- Просмотреть проект (Show selected project)
+-- Просмотреть модели структуры данных (Show data structures models)
+-- Преобразовать логическую структуру данных в физическую структуру данных
+-- Создать физическую структуру данных (Create physical data structure model)
+-- Просмотреть физическую структуру данных (Show selected physical data structure model)
+-- Изменить физическую структуру данных (Change selected physical data structure model)
+-- Удалить физическую структуру данных (Delete selected physical data structure model)
+- Лидер продукта (Product Leader)
+-- Просмотреть проекты (Show projects)
+-- Просмотреть проект (Show selected project)
+-- Просмотреть прогресс проекта (Show project's progress)
+- Архитектор
+Use cases:
+-- Просмотреть проекты (Show projects)
+-- Просмотреть проект (Show selected project)
+-- Просмотреть архитектуры (Show architectures)
+-- Создать архитектуру (Create architecture)
+-- Изменить архитектуру (Change selected architecture)
+-- Удалить архитектуру (Delete selected architecture)
+- Планировщик
+Use cases:
+-- Просмотреть проекты (Show projects)
+-- Просмотреть проект (Show selected project)
+-- Просмотреть планы (Show plans)
+-- Создать план (Create plan)
+-- Просмотреть план (Show selected plan)
+-- Изменить план (Change selected plan)
+-- Удалить план (Delete selected plan)
+Plans:
+-- План разработки системы (System Development Plan)
+-- План управления конфигурацией системы (System Configuration Management Plan)
 --------------------------------------------------------------------------------
--- Actor
---------------------------------------------------------------------------------
-An actor defines a role that a user can play when interacting with the system.
-A user can either be an individual or another system.
-Actors have a name and a brief description, and they are associated to the
-use cases with which they interact.
-Actor - an individual or other system that interacts with system to achieve
-particular goal by use case of system.
-1) Create actor
-2) Edit actor
-3) Delete actor
---------------------------------------------------------------------------------
--- Use Case
---------------------------------------------------------------------------------
-A use case is all the ways of using a system to achieve a particular goal for
-particular user.
-Level 0. Scope establishment
-Scope representation techniques
-1) Use case table
-2) Use case model
-Level 1. Header information gathering
-Level 2. Main success scenario
-Level 3. Extensions and exceptions
-Level 4. Extensions handling
-1) Create use case
-2) Edit use case
-3) Delete use case
---------------------------------------------------------------------------------
---- Flow
---------------------------------------------------------------------------------
-A description of some full or partial path through a use-case narrative. There
-is always at least a basic flow, and where may be alternative flows.
---------------------------------------------------------------------------------
----- Basic Flow
---------------------------------------------------------------------------------
-A description of the normal, expected path through the use case. This is the
-path taken by most of the users most of the time; it is the most important part
-of use-case narrative.
---------------------------------------------------------------------------------
----- Alternative Flow
---------------------------------------------------------------------------------
-A description of variant or optional behaviour as part of a use-case narrative.
-Alternative flows are defined relative to the use case's basic flow.
---------------------------------------------------------------------------------
---- Use Case Narrative
---------------------------------------------------------------------------------
-A description of a use case that tells the story of how the system and its
-actors work together to achieve a particular goal. It includes a sequence of
-actions (including variants) that a system and its actor can perform to achieve
-a goal.
---------------------------------------------------------------------------------
--- Use Case Diagram
---------------------------------------------------------------------------------
-A diagram showing a number of actors and use cases, and their relationships.
---------------------------------------------------------------------------------
--- Use Case Model
---------------------------------------------------------------------------------
-A model of all of the useful ways to use a system, and the value that it will
-provide. A use-case model is primarily made up of a set of actors and set of
-use cases, and diagrams illustrating their relationships.
---------------------------------------------------------------------------------
--- Use Case Slice
---------------------------------------------------------------------------------
-A use-case slice is one or more stories selected from a use case to form a work
-item that is of clear value to the customer.
---============================================================================--
---------------------------------------------------------------------------------
-User
+User (U)
 --------------------------------------------------------------------------------
 A stakeholder who interacts with the system to achieve its goals.
 --------------------------------------------------------------------------------
@@ -85,213 +126,25 @@ Customer
 --------------------------------------------------------------------------------
 A stakeholder who is paying for the development of the system or who is
 expected to purchase the system once it is complete.
---------------------------------------------------------------------------------
-Story
---------------------------------------------------------------------------------
-A way of using a system that is of value to a user or other stakeholder.
-In the Use-Case 2.0 a story is described by part of the use-case narrative,
-one or more flows and special requirements, and one or more test cases.
---------------------------------------------------------------------------------
-Requirement
+Requirement (RQ)
 --------------------------------------------------------------------------------
 What the software must do to satisfy the stakeholders.
 --------------------------------------------------------------------------------
-Defect
-Change
+Defect (DF)
+Change (CH)
+
 --------------------------------------------------------------------------------
-System
---------------------------------------------------------------------------------
-A system can be identified as the combination of interacting elements organized
-to achieve one or more stated purposes.
---------------------------------------------------------------------------------
-Software system
---------------------------------------------------------------------------------
-A system made up of software, hardware, and digital information, and that
-provides its primary value by the execution of the system.
-A software system can be part of a larger software, hardware, business or
-social solution.
---------------------------------------------------------------------------------
-Component
-Increment
-Release
---------------------------------------------------------------------------------
-Test case
+Test case (TC)
 --------------------------------------------------------------------------------
 A test case defines a set of test inputs and expected results for the purpose
 of evaluation whether or not a system works correctly.
+
+Test input
+
+Expected Result
+
+Test Result
+
 --------------------------------------------------------------------------------
 Test
 Project
-Team
-Member
---------------------------------------------------------------------------------
-Baseline
---------------------------------------------------------------------------------
-Baseline - the specification of current planning version of product to release.
---------------------------------------------------------------------------------
-System Configuration
---------------------------------------------------------------------------------
-The configuration of a system is the functional and physical characteristics
-of hardware or software as set forth in technical documentation or achieved
-in a product; it can also be thought of as a collection of specific versions
-of hardware, firmware, or software items combined according to specific build
-procedures to serve a particular purpose.
-Elements of a system:
-- hardware;
-- software;
-- documentation;
-- certification;
-- user manuals;
-- data (dictionaries).
---------------------------------------------------------------------------------
-Configuration Management (CM)
---------------------------------------------------------------------------------
-Configuration management, then, is the discipline of identifying the
-configuration of a system at distinct points in a time for the purpose of
-systematically controlling changes to the configuration and maintaining the
-integrity and traceability of the configuration throughout the system life
-cycle.
-It is formally defined as
-A discipline applying technical and administrative direction and surveillance
-to: identify and document the functional and physical characteristics of a
-configuration item, control changes to those characteristics, record and report
-change processing and implementation status, and verify compliance with
-specified requirements.
-The concepts of configuration management apply to all items to be controlled,
-although there are some differences in implementation between hardware CM and
-software CM.
---------------------------------------------------------------------------------
-Software Configuration Management (SCM)
---------------------------------------------------------------------------------
-Software configuration management is a supporting-software life cycle process
-that benefits project management, development and maintenance activities,
-quality assurance activities, as well as the customers and users of the end
-product.
-The SCM activities are management and planing of the SCM process, software
-configuration control, software configuration status accounting, software
-configuration auditing, and software release management and delivery.
-The software configuration management KA is related to all other KAs, since
-the object of configuration management is the artifact produced and used
-throughout the software engineering process.
-The purpose of Software Configuration Management is to establish and maintain
-the integrity of the products of the software project throughout the project's
-software life cycle.
-Software Configuration Management Goals:
-Goal 1. Software configuration activities are planned.
-Goal 2. Selected software work products are identified, controlled, and
-available.
-Goal 3. Changes to identified software work products are controlled.
-Goal 4. Affected groups and individuals are informed of the status and
-content of software baselines.
-
-Plan
-1) Establish baseline
-a) assign baseline elements to the stakeholder
-b) prioritize baseline elements
-2) Implement baseline elements
-a) assign implementing baseline elements to implementing member
-3) Control elements changes
-a) new baseline elements
-b) changes existing baseline elements
-c) drop baseline elements
-4) Establish releases
-5) Delivery releases
-6) Maintain releases
-Цели
-1) Фиксация элементов базовой линии;
-2) Фиксация элементов имплементации элементов базовой линии;
-3) Фиксация ответственных лиц за имплементацию элементов;
-4) Фиксация ответственных лиц за приемку имлементированных элементов;
-5) Контроль изменения элементов;
-6) Фиксация удаляемых элементов;
-7) Мониторинг прогресса имплементации элементов;
-8) Фиксация релизов;
-9) Фиксация изменений;
-10) Обеспечение качества имплементации элементов;
-11) Оценка объема изменений;
-12) Фиксация связей между элементами имплементации и элементами базовой линии;
-13) Фиксация статусов элементов.
---------------------------------------------------------------------------------
-Configuration item (CI)
---------------------------------------------------------------------------------
-A configuration item is an item or aggregation of hardware or software or
-both that is designed to be managed as a single entity.
-Configuration management items:
-- plans;
-- specifications;
-- hardware;
-- software:
--- source code;
--- executable code;
--- software tools;
--- code libraries;
-- documentation for
--- use and operation;
--- design;
--- maintenance;
--- installation;
-- certification;
-- user manuals;
-- data:
--- database structures;
--- data dictionaries;
-- testing materials.
---------------------------------------------------------------------------------
-Software Configuration Item (SCI)
---------------------------------------------------------------------------------
-A software configuration item is a software entity that has been established as
-a configuration item.
-Selecting SCIs is an important process in which balance must be achieved
-between providing adequate visibility for project control purposes and
-providing a manageable number of controlled items.
---------------------------------------------------------------------------------
-Software Baseline Library
---------------------------------------------------------------------------------
-A software baseline library is a container for software baselines.
-A software baseline library is established containing the software baselines
-as they are developed. Changes to baselines and the release of software
-products built from the software baseline library are systematically controlled
-via the change control and configuration auditing functions of software
-configuration management.
---------------------------------------------------------------------------------
-System Configuration Control Board
-Software Configuration Control Board
-Configuration Management Members
---------------------------------------------------------------------------------
-Change Request (CR)
---------------------------------------------------------------------------------
-A change request is a request to expand or reduce the project scope; modify
-policies, processes, plans, or procedures; modify costs or budgets; or receive
-schedules.
-One source of a change request is the initiation of corrective action in
-response to problem reports.
---------------------------------------------------------------------------------
-System Change Request
---------------------------------------------------------------------------------
-Software Change Request (SCR)
---------------------------------------------------------------------------------
-Requests for changes to software configuration items may be originated by
-anyone at any point in the software life cycle and may include a suggested
-solution and requested priority.
-Regardless of the source, type of change (for example, defect or enhancement)
-is usually recorded on the software change request.
---------------------------------------------------------------------------------
-Deviation
---------------------------------------------------------------------------------
-A deviation is a written authorization, granted prior to the manufacture of an
-item, to depart from a particular performance or design requirement for a
-specific number of units or specific period of time.
---------------------------------------------------------------------------------
-Waiver
---------------------------------------------------------------------------------
-A waiver is a written authorization to accept a configuration item or other
-designated item that is found, during production or after having been submitted
-for inspection, to depart from specified requirements but is nevertheless
-considered suitable for use as-is or after rework by an approved method.
---------------------------------------------------------------------------------
-System Element
---------------------------------------------------------------------------------
-A member of a set of elements that constitutes a system.
---------------------------------------------------------------------------------
-Software Element
-Change Control Process
