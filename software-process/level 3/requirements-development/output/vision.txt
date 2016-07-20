@@ -11,25 +11,36 @@
 -- Actor (entity)
 -----------------------------------------------------------------------
 Actor entity attributes:
-- code
-- name
-- description
+- Code
+- Name
+- Description
+Actor entity metadata:
+- Author
+- Create timestamp
+- Established timestamp
 Actor relationships:
-- use case
+- Use Case
 Use case relationship attributes:
-- actor type
+- Actor Type
 -----------------------------------------------------------------------
 -- Code (attribute)
 -----------------------------------------------------------------------
 This attribute stores actor's code.
 Constraints:
 1) Actor code is unique in the use case model.
+2) Actor code length is 3 digits.
+3) Actor code prefix format is 'A'.
+4) Actor code full format example: 'A-003'.
 -----------------------------------------------------------------------
 -- Name (attribute)
 -----------------------------------------------------------------------
 This attribute stores actor's name.
 Constraints:
-1) Actor name is unique in use case model.
+1) Attribute is unique in use case model.
+2) Attribute length is 1000 characters.
+3) Attribute data type is text.
+Rules:
+1) Attribute value must represent user's role.
 -----------------------------------------------------------------------
 -- Description (attribute)
 -----------------------------------------------------------------------
@@ -49,3 +60,38 @@ Constraints:
 a) Primary
 b) Secondary
 -----------------------------------------------------------------------
+-- Use Case (entity)
+-----------------------------------------------------------------------
+Use Case entity attributes:
+- Code
+- Name (goal)
+- Description
+Use Case relationships:
+- Actor
+-----------------------------------------------------------------------
+-- Code (attribute)
+-----------------------------------------------------------------------
+This attribute stores use case's code.
+Constraints:
+1) Use case code is unique in the use case model.
+2) Use case code length is 3 digits.
+3) Use case code prefix format: 'UC'
+3) Use case code full format example: 'UC-003'.
+-----------------------------------------------------------------------
+-- Name (attribute)
+-----------------------------------------------------------------------
+This attribute stores use case's name.
+Constraints:
+1) Attribute is unique in the use case model.
+2) Attribute length is 1000 characters.
+3) Attribute datatype is text.
+Rules:
+1) Attribute value must represent actor's goal achieved by use case.
+-----------------------------------------------------------------------
+-- Description (attribute)
+-----------------------------------------------------------------------
+This attribute stores use case's description.
+Constraints:
+1) Attribute is unique in the use case model.
+2) Attribute length is 4000 characters.
+3) Attribute datatype is text.
