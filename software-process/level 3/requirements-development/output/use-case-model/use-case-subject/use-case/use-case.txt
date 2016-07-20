@@ -1,0 +1,77 @@
+--============================================================================--
+-- Use Case (object)
+--============================================================================--
+--------------------------------------------------------------------------------
+-- Purpose
+--------------------------------------------------------------------------------
+The purpose of this object is to store data about which goal and how can be
+achieved by use case.
+--------------------------------------------------------------------------------
+Use Case entity attributes:
+- Code *
+- Name (goal) *
+- Type *
+- Level *
+- System
+- Summary
+- Trigger
+- State
+Actor entity metadata:
+- Author
+- Create timestamp
+- Established date
+- Established time
+Use Case relationships:
+- Actor
+- System
+- Pre-conditions
+- Post-conditions
+- Basic Flow
+- Alternative Flow
+- Exception
+- Exception Handler
+- Question
+- Defect
+- Use Case State Dictionary
+--------------------------------------------------------------------------------
+-- Code (attribute)
+--------------------------------------------------------------------------------
+This attribute stores use-case's code.
+Constraints:
+1) Use case code is unique in the use case model.
+2) Use case code length is 3 digits.
+3) Use case code prefix format: 'UC'
+3) Use case code full format example: 'UC-003'.
+--------------------------------------------------------------------------------
+-- Name (attribute)
+--------------------------------------------------------------------------------
+This attribute stores use-case's name.
+Constraints:
+1) Attribute is unique in the use case model.
+2) Attribute length is 1000 characters.
+3) Attribute datatype is text.
+Rules:
+1) Attribute value must represent actor's goal achieved by use case.
+--------------------------------------------------------------------------------
+-- Type (attribute)
+--------------------------------------------------------------------------------
+This attribute stores type id.
+Types:
+1) Business use-case
+2) System use-case
+3) System (internal) use-case
+--------------------------------------------------------------------------------
+-- Level (attribute)
+--------------------------------------------------------------------------------
+This attribute stores level id.
+Levels:
+1) Black Box
+2) White Box
+--------------------------------------------------------------------------------
+-- Summary (attribute)
+--------------------------------------------------------------------------------
+This attribute stores use case's summary.
+Constraints:
+1) Attribute is unique in the use case model.
+2) Attribute length is 4000 characters.
+3) Attribute datatype is text.

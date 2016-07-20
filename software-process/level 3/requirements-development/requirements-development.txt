@@ -1,5 +1,5 @@
 --============================================================================--
--- Requirements Development Process Domain
+-- Requirements Development Process Domain (specification)
 --============================================================================--
 Key Objects
 Work Products:

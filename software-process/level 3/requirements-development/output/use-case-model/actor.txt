@@ -1,0 +1,84 @@
+--============================================================================--
+-- Actor (object)
+--============================================================================--
+--------------------------------------------------------------------------------
+-- Purpose
+--------------------------------------------------------------------------------
+The purpose of this object is to store data about user roles that can interact
+with the system.
+--------------------------------------------------------------------------------
+-- Actor Object Specification
+--------------------------------------------------------------------------------
+-- Attribute list
+--------------------------------------------------------------------------------
+- Code
+- Name
+- Description
+- Type
+- State
+--------------------------------------------------------------------------------
+-- Metadata attribute list
+--------------------------------------------------------------------------------
+- Author
+- Create timestamp
+- Established date
+- Established time
+--------------------------------------------------------------------------------
+-- Relationship list
+--------------------------------------------------------------------------------
+- Use Case
+--------------------------------------------------------------------------------
+-- Code (attribute)
+--------------------------------------------------------------------------------
+This attribute stores actor's code.
+Constraints:
+1) Actor code is unique in the use case model.
+2) Actor code length is 3 digits.
+3) Actor code prefix format is 'A'.
+4) Actor code full format example: 'A-003'.
+--------------------------------------------------------------------------------
+-- Name (attribute)
+--------------------------------------------------------------------------------
+This attribute stores actor's name.
+Constraints:
+1) Attribute is unique in use case model.
+2) Attribute length is 1000 characters.
+3) Attribute data type is text.
+4) Attribute must be not null.
+Rules:
+1) Attribute value must represent user's role.
+--------------------------------------------------------------------------------
+-- Description (attribute)
+--------------------------------------------------------------------------------
+This attribute stores actor's brief description.
+Constraints:
+1) Actor description is unique in use case model.
+2) Attribute length is 4000 characters.
+3) Attribute datatype is text.
+4) Attribute may be null.
+--------------------------------------------------------------------------------
+-- Type (attribute)
+--------------------------------------------------------------------------------
+This attribute stores actor's type id.
+Actor's types:
+1) Individual
+2) System
+--------------------------------------------------------------------------------
+-- Use Case Relationship Specification
+--------------------------------------------------------------------------------
+This relationship stores associated use case's id with actor.
+--------------------------------------------------------------------------------
+-- Attribute list
+--------------------------------------------------------------------------------
+- Actor
+- Use Case
+- Actor Type
+--------------------------------------------------------------------------------
+-- Actor Type (attribute)
+--------------------------------------------------------------------------------
+This attribute stores actor type id.
+Constraints:
+1) Actor types:
+a) Primary
+b) Secondary
+--------------------------------------------------------------------------------
