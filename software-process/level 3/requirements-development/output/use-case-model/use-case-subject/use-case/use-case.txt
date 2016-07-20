@@ -7,7 +7,19 @@
 The purpose of this object is to store data about which goal and how can be
 achieved by use case.
 --------------------------------------------------------------------------------
-Use Case entity attributes:
+-- Definition
+--------------------------------------------------------------------------------
+a) A sequence of actions a system performs that yields an observable result
+of value to a particular user.
+b) That specific behavior of a system, which participates in a collaboration
+with a user to deliver something of value for that user.
+c) The smallest unit of activity that provides a meaningful result to the user.
+d) The context for a set of related requirements.
+--------------------------------------------------------------------------------
+-- Use Case Object Specification
+--------------------------------------------------------------------------------
+-- Attribute list
+--------------------------------------------------------------------------------
 - Code *
 - Name (goal) *
 - Type *
@@ -16,12 +28,17 @@ Use Case entity attributes:
 - Summary
 - Trigger
 - State
-Actor entity metadata:
+--------------------------------------------------------------------------------
+-- Metadata attribute list
+--------------------------------------------------------------------------------
 - Author
+- Owner
 - Create timestamp
 - Established date
 - Established time
-Use Case relationships:
+--------------------------------------------------------------------------------
+-- Relationship list
+--------------------------------------------------------------------------------
 - Actor
 - System
 - Pre-conditions
@@ -33,6 +50,25 @@ Use Case relationships:
 - Question
 - Defect
 - Use Case State Dictionary
+--------------------------------------------------------------------------------
+Lifecycle
+--------------------------------------------------------------------------------
+- New
+When the use case created
+- Goal established
+When the goal of the use case has been established
+- Story structure understood
+When the structure of the use-case narrative has been understood enough for the
+team to start work identifying and implementing the first use-case slices
+- Simplest story fulfilled
+When the system fulfills the simplest story that allows a user to achieve the
+goal
+- Sufficient stories fulfilled
+When the system fulfills enough of the stories to provide a usable solution
+- All stories fulfilled
+When the system fulfills all the stories told by the use case
+- Accepted
+When the use case accepted by its owner
 --------------------------------------------------------------------------------
 -- Code (attribute)
 --------------------------------------------------------------------------------

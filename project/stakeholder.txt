@@ -1,0 +1,45 @@
+--============================================================================--
+-- Stakeholder (object)
+--============================================================================--
+--------------------------------------------------------------------------------
+-- Purpose
+--------------------------------------------------------------------------------
+The purpose of this object is to store and represent data about project's
+stakeholders.
+--------------------------------------------------------------------------------
+Key Objects:
+- statement
+
+Attributes
+- code
+- type
+- name
+- description
+- status
+Metadata
+- create timestamp
+- establishment date
+- establishment time
+Relationships
+- Author
+- System
+- Product
+- Component
+- Implementation group
+Lifecycle
+- New
+- Analyzed
+- Assigned
+- Implemented
+- Closed
+Type
+1) Business problem
+2) business objective
+3) Business requirement
+4) Solution
+5) Requirement
+6) User requirement
+7) Success metric
+8) Success criteria
+9) Constraint
+10) Business rule

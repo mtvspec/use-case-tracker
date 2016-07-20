@@ -1,0 +1,39 @@
+--============================================================================--
+-- Use-case Slice (object)
+--============================================================================--
+--------------------------------------------------------------------------------
+-- Purpose
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Definition
+--------------------------------------------------------------------------------
+a) Enables use cases to be broken up into smaller, independently deliverable
+units of work.
+b) Enable the requirements contained in a set of use cases to be ordered,
+prioritized and addressed in parallel.
+c) Link the different system models (requirements, analysis, design,
+implementation and test) used in use-case driven development.
+--------------------------------------------------------------------------------
+Lifecycle
+- New
+When the use-case slice is created
+- Scoped
+When it has been scoped and the extent of the stories covered has been
+clarified
+- Prepared
+When the slice has been prepared be enhancing the narrative and test cases
+to clearly define what it means to successfully implement the slice
+- Analyzed
+When the slice has been analyzed so its impact on the components of the
+system is understood and the pieces affected are ready for coding and
+developer testing
+- Implemented
+When the software system has been enhanced to implement the slice and the
+slice is ready for testing
+- Verified
+When the slice has been verified as done and is ready for inclusion in a
+release
+- Accepted
+When the slice has been accepted by its owner
+--------------------------------------------------------------------------------
