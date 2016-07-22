@@ -15,8 +15,18 @@ b) That specific behavior of a system, which participates in a collaboration
 with a user to deliver something of value for that user.
 c) The smallest unit of activity that provides a meaningful result to the user.
 d) The context for a set of related requirements.
+e) A conversation of actor(s) and system.
+f) A agreement about system behavior.
 --------------------------------------------------------------------------------
--- Use Case Object Specification
+-- Benefits
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Notes
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Use Case (specification)
 --------------------------------------------------------------------------------
 -- Attribute list
 --------------------------------------------------------------------------------
@@ -51,7 +61,7 @@ d) The context for a set of related requirements.
 - Defect
 - Use Case State Dictionary
 --------------------------------------------------------------------------------
-Lifecycle
+-- Lifecycle
 --------------------------------------------------------------------------------
 - New
 When the use case created
@@ -111,3 +121,9 @@ Constraints:
 1) Attribute is unique in the use case model.
 2) Attribute length is 4000 characters.
 3) Attribute datatype is text.
+--------------------------------------------------------------------------------
+-- Open Questions
+--------------------------------------------------------------------------------
+1) Who establishes use cases?
+Product Leader
+--------------------------------------------------------------------------------

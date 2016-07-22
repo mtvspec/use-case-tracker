@@ -1,5 +1,5 @@
 --============================================================================--
--- Use-case Slice (object)
+-- Statement (object)
 --============================================================================--
 --------------------------------------------------------------------------------
 -- Purpose
@@ -8,55 +8,57 @@
 --------------------------------------------------------------------------------
 -- Definition
 --------------------------------------------------------------------------------
-a) Enables use cases to be broken up into smaller, independently deliverable
-units of work.
-b) Enable the requirements contained in a set of use cases to be ordered,
-prioritized and addressed in parallel.
-c) Link the different system models (requirements, analysis, design,
-implementation and test) used in use-case driven development.
+
 --------------------------------------------------------------------------------
 -- Benefits
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Notes
---------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
--- Use-case Slice (specification)
+-- Statement (specification)
 --------------------------------------------------------------------------------
 -- Attribute list
 --------------------------------------------------------------------------------
-
+- Code
+- Stakeholder
+- Type
+- Name
+- Description
 --------------------------------------------------------------------------------
--- Metadata attribute list
+-- Metadata list
 --------------------------------------------------------------------------------
-
+- Create timestamp
+- Established date
+- Established time
 --------------------------------------------------------------------------------
 -- Relationship list
 --------------------------------------------------------------------------------
-
+- Stakeholder
+- Statement Type Dictionary
 --------------------------------------------------------------------------------
 -- Lifecycle
 --------------------------------------------------------------------------------
 - New
-When the use-case slice is created
-- Scoped
-When it has been scoped and the extent of the stories covered has been
-clarified
-- Prepared
-When the slice has been prepared be enhancing the narrative and test cases
-to clearly define what it means to successfully implement the slice
 - Analyzed
-When the slice has been analyzed so its impact on the components of the
-system is understood and the pieces affected are ready for coding and
-developer testing
+- Assigned
 - Implemented
-When the software system has been enhanced to implement the slice and the
-slice is ready for testing
-- Verified
-When the slice has been verified as done and is ready for inclusion in a
-release
-- Accepted
-When the slice has been accepted by its owner
+- Closed
+--------------------------------------------------------------------------------
+-- Statement Type Dictionary Values
+--------------------------------------------------------------------------------
+1) Business problem
+2) business objective
+3) Business requirement
+4) Solution
+5) Requirement
+6) User requirement
+7) Success metric
+8) Success criteria
+9) Constraint
+10) Business rule
+11) Actor
+12) Use Case
+13) Use Case Subject
+14) Defect
+15) Change Request
+16) Problem Report
 --------------------------------------------------------------------------------

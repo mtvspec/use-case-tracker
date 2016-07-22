@@ -1,19 +1,15 @@
 --============================================================================--
--- Use-case Slice (object)
+-- Stakeholder (object)
 --============================================================================--
 --------------------------------------------------------------------------------
 -- Purpose
 --------------------------------------------------------------------------------
-
+The purpose of this object is to store and represent data about project's
+stakeholders.
 --------------------------------------------------------------------------------
 -- Definition
 --------------------------------------------------------------------------------
-a) Enables use cases to be broken up into smaller, independently deliverable
-units of work.
-b) Enable the requirements contained in a set of use cases to be ordered,
-prioritized and addressed in parallel.
-c) Link the different system models (requirements, analysis, design,
-implementation and test) used in use-case driven development.
+
 --------------------------------------------------------------------------------
 -- Benefits
 --------------------------------------------------------------------------------
@@ -21,42 +17,40 @@ implementation and test) used in use-case driven development.
 --------------------------------------------------------------------------------
 -- Notes
 --------------------------------------------------------------------------------
-
+Who, when and which information send
+States history of this information
 --------------------------------------------------------------------------------
--- Use-case Slice (specification)
+-- Stakeholder (specification)
+--------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- Attribute list
 --------------------------------------------------------------------------------
-
+- Code
+- Type
+- Name
+- Description
+- Organization
+- Division
+- Position
+- State
 --------------------------------------------------------------------------------
 -- Metadata attribute list
 --------------------------------------------------------------------------------
-
+- Create timestamp
+- Creator
+- Establishment date
+- Establishment time
 --------------------------------------------------------------------------------
 -- Relationship list
 --------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
--- Lifecycle
---------------------------------------------------------------------------------
-- New
-When the use-case slice is created
-- Scoped
-When it has been scoped and the extent of the stories covered has been
-clarified
-- Prepared
-When the slice has been prepared be enhancing the narrative and test cases
-to clearly define what it means to successfully implement the slice
-- Analyzed
-When the slice has been analyzed so its impact on the components of the
-system is understood and the pieces affected are ready for coding and
-developer testing
-- Implemented
-When the software system has been enhanced to implement the slice and the
-slice is ready for testing
-- Verified
-When the slice has been verified as done and is ready for inclusion in a
-release
-- Accepted
-When the slice has been accepted by its owner
---------------------------------------------------------------------------------
+- Statement
+- Contact
+- Organization
+- Division
+- Position
+- Stakeholder Role Dictionary
+- Stakeholder State Dictionary
+- System
+- Product
+- Component
+- Implementation group

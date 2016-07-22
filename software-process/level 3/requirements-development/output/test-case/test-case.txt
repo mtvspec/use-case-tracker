@@ -36,9 +36,38 @@ support, and for each story described in the use-case narrative there will have
 to be at least one test case. You create the test cases at the same time as the
 use-case narratives as part of preparing a use-case slice for development.
 --------------------------------------------------------------------------------
-Lifecycle
+-- Test Case (specification)
 --------------------------------------------------------------------------------
-- Test Ideas Formulated
+
+--------------------------------------------------------------------------------
+-- Attribute list
+--------------------------------------------------------------------------------
+-- Code
+-- Name
+-- Type
+-- Level
+-- System
+-- Summary
+-- State
+--------------------------------------------------------------------------------
+-- Metadata attribute list
+--------------------------------------------------------------------------------
+-- Author
+-- Create timestamp
+-- Established date
+-- Established time
+--------------------------------------------------------------------------------
+-- Relationship list
+--------------------------------------------------------------------------------
+-- Use Case Slice
+-- Input
+-- Result
+--------------------------------------------------------------------------------
+-- Lifecycle
+--------------------------------------------------------------------------------
+-- New
+The test case is created.
+-- Test Ideas Formulated
 The lightest level of detail just captures the initial idea that will inform
 the test case. When defining a test case it needs to be clear what the idea
 behind the test case is, and which slice of the requirements it applies to.
@@ -55,7 +84,7 @@ exploratory and investigative testing. This can be very useful early in the
 project lifecycle when the insight provided by testing the system is invaluable
 but specification (and solution) may not be stable enough to support formal,
 scripted testing.
-- Variables Identified
+-- Variables Identified
 A test case takes some inputs, manipulates system states, and produces some
 results. These variables appear as inputs, internal states and outputs in the
 requirements. As this level of detail the acceptable ranges for the key
@@ -64,13 +93,13 @@ This level of detail is suitable for those test cases where soliciting the
 opinion of the tester is an essential part of the test, for example when
 undertaking usability testing. It can also be used when more structure is
 needed for exploratory and investigative testing.
-- Variables Set
+-- Variables Set
 The test case can be further elaborated by explicitly providing specific
 values for all of the variables involved in the test case.
 This level of detail is suitable for manual test cases as all the information
 needed by an intelligent tester to repeatedly and consistently execute the test
 case is in place.
-- Scripted/Automated
+-- Scripted/Automated
 If a test case is to be used many times or support many different tests then it
 is worth making the effort to fully script or automate it.
 At this level of detail the test case can be executed without any intervention

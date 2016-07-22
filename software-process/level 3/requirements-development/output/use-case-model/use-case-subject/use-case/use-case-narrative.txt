@@ -33,15 +33,15 @@ detailed than the others. The same goes for the sections of the use-case
 narrative - the most important, complex or risky parts of a use case are often
 described in more detail than the others.
 --------------------------------------------------------------------------------
-Lifecycle
+-- Lifecycle
 --------------------------------------------------------------------------------
-- Briefly Described
+-- Briefly Described
 The lightest level of detail that just captures the goal of the use case and
 which actor starts it.
 This level of detail is suitable for those use cases you decide not to
 implement. More detail will be needed if the use case is to be sliced for
 implementation.
-- Bulleted Outline
+-- Bulleted Outline
 The use case must be outlined in order to understand its size and complexity.
 This level of detail also enables effective scope management as the outline
 allows the different parts of the use case to be prioritized against one
@@ -50,7 +50,7 @@ This is the lightest level of detail that enables the use case to be sliced up
 and development to progress. It is suitable for those teams that are in close
 collaboration with their users, and are able to fill in any missing detail via
 conversations and the completion of the accompanying test cases.
-- Essential Outline
+-- Essential Outline
 Sometimes it is necessary to clarify the responsibilities of the system and its
 actors whilst undertaking the use case. A bulleted outline captures their
 responsibilities but does not clearly define which parts of the use case are
@@ -58,7 +58,7 @@ undertaken by the system and which are undertaken by the actor(s).
 At this level of detail the narrative becomes a description of the dialog
 between the system and its actors. It is particularly useful when establishing
 the architecture of new system or trying to establish a new user experience.
-- Fully Described
+-- Fully Described
 Use-case narratives can be used to provide a highly detailed requirements
 specification by evolving them to their most comprehensive level of detail,
 fully described. The extra detail may be needed to cover for the absence of
@@ -68,3 +68,4 @@ This level of detail is particularly useful for those use cases where a
 misunderstanding of the contents could have severe safety, financial or
 legal consequences. It can also be useful when off-shoring or outsourcing
 software development.
+--------------------------------------------------------------------------------
