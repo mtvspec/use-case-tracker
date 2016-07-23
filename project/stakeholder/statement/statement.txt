@@ -18,15 +18,13 @@
 --------------------------------------------------------------------------------
 -- Attribute list
 --------------------------------------------------------------------------------
-- Code
-- Stakeholder
-- Type
 - Name
 - Description
 --------------------------------------------------------------------------------
 -- Metadata list
 --------------------------------------------------------------------------------
 - Create timestamp
+- Creator
 - Established date
 - Established time
 --------------------------------------------------------------------------------
@@ -34,6 +32,7 @@
 --------------------------------------------------------------------------------
 - Stakeholder
 - Statement Type Dictionary
+- Statement State Dictionary
 --------------------------------------------------------------------------------
 -- Lifecycle
 --------------------------------------------------------------------------------
@@ -41,24 +40,27 @@
 - Analyzed
 - Assigned
 - Implemented
+- Rejected
 - Closed
 --------------------------------------------------------------------------------
 -- Statement Type Dictionary Values
 --------------------------------------------------------------------------------
-1) Business problem
-2) business objective
-3) Business requirement
-4) Solution
-5) Requirement
-6) User requirement
-7) Success metric
-8) Success criteria
-9) Constraint
-10) Business rule
-11) Actor
-12) Use Case
-13) Use Case Subject
-14) Defect
-15) Change Request
-16) Problem Report
+1) Business Problem (BP)
+2) business Objective (BO)
+3) Business Requirement (BR)
+4) Solution (SN)
+5) Requirement (RQ)
+6) User Requirement (URQ)
+7) Success Metric (SM)
+8) Success Criteria (SC)
+9) Constraint (CT)
+10) Business Rule (BL)
+11) Actor (A)
+12) Use Case (UC)
+13) Use Case Subject (UCS)
+14) Defect (D)
+15) Change Request (CR)
+16) Problem Report (PR)
+17) Story (ST)
+18) System Requirement (SRQ)
 --------------------------------------------------------------------------------

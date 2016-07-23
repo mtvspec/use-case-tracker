@@ -13,7 +13,9 @@ stakeholders.
 --------------------------------------------------------------------------------
 -- Benefits
 --------------------------------------------------------------------------------
-
+-- All statements received from stakeholders stored
+-- All stakeholders interest are stored
+-- All stakeholders roles are stored
 --------------------------------------------------------------------------------
 -- Notes
 --------------------------------------------------------------------------------
@@ -25,14 +27,7 @@ States history of this information
 --------------------------------------------------------------------------------
 -- Attribute list
 --------------------------------------------------------------------------------
-- Code
-- Type
-- Name
 - Description
-- Organization
-- Division
-- Position
-- State
 --------------------------------------------------------------------------------
 -- Metadata attribute list
 --------------------------------------------------------------------------------
@@ -43,14 +38,24 @@ States history of this information
 --------------------------------------------------------------------------------
 -- Relationship list
 --------------------------------------------------------------------------------
+- Project
+- Person
+- Type
+- Stakeholder Role Dictionary
+- Interest
 - Statement
 - Contact
 - Organization
 - Division
 - Position
-- Stakeholder Role Dictionary
 - Stakeholder State Dictionary
 - System
 - Product
 - Component
 - Implementation group
+--------------------------------------------------------------------------------
+-- Lifecycle
+--------------------------------------------------------------------------------
+-- New
+-- Deleted
+--------------------------------------------------------------------------------
