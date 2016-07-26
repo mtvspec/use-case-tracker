@@ -112,3 +112,9 @@ create table use_cases.r_components (
     foreign key (e_component_id) references components.e_component (id),
     foreign key (e_use_cases_component_id) references use_cases.e_component (id)
 );
+
+select
+count (*)
+from
+use_cases.e_component
+where e_component_id = 1;

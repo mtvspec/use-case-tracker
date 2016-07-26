@@ -117,3 +117,16 @@ from
 use_case
 where
 id between 360 and 380;
+
+select
+a.name,
+count (u.id)
+from
+use_cases.e_use_case u,
+use_cases.e_actor a
+where
+u.e_actor_id = a.id
+group by
+a.name
+order by
+a.name asc;
