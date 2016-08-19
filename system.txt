@@ -2,7 +2,7 @@
 -- System Domain
 --============================================================================--
 Key Objects
-- people
+- persons
 - organizations
 - hardware
 - software

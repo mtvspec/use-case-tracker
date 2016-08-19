@@ -1,0 +1,30 @@
+{
+  "name": "use-case-tracker",
+  "version": "0.0.1",
+  "description": "Use Case Tracker",
+  "main": "www",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mtvspec/use-case-tracker.git"
+  },
+  "keywords": [
+    "use",
+    "case",
+    "tracker"
+  ],
+  "author": "mtvspec",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mtvspec/use-case-tracker/issues"
+  },
+  "homepage": "https://github.com/mtvspec/use-case-tracker#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "multer": "^1.2.0",
+    "pg": "^6.1.0"
+  }
+}

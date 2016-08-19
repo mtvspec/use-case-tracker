@@ -6,5 +6,6 @@ create table stakeholders.e_stakeholder (
     create_user_id integer not null default 1,
       primary key (id),
       unique (e_person_id),
-      foreign key (e_person_id) references persons.e_person (id)
+      foreign key (e_person_id) references persons.e_person (id),
+      foreign key (create_user_id) references users.e_user (id)
 );
