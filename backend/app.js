@@ -1,6 +1,10 @@
+'use strict';
+
 const express = require('express');
 const app = express();
 const persons = express.Router();
+var Database = require('./db.js');
+var db = new Database();
 const Pool = require('pg').Pool;
 const pool = new Pool();
 const personQueries = require('./persons.js');
@@ -10,78 +14,92 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const multer = require('multer');
 const upload = multer();
 
-function SELECT_PERSON_BY_ID(id) {
-  'use strict';
-  let SELECT_PERSON_BY_ID_TEXT =
-  `select
-    id,
-    iin,
-    last_name "lastName",
-    first_name "firstName",
-    middle_name "middleName",
-    dob,
-    gender_id "gender"
-  from
-    persons.e_person
-  where
-    id = ${id}`
-  return SELECT_PERSON_BY_ID_TEXT;
+const Queries = {
+  persons: {
+    SELECT_ALL_PERSONS: function () {
+      return `select
+        id,
+        iin,
+        last_name "lastName",
+        first_name "firstName",
+        middle_name "middleName",
+        dob,
+        gender_id "gender"
+      from
+        persons.e_person;`;
+    },
+    SELECT_PERSON_BY_ID(id) {
+      return `select
+        id,
+        iin,
+        last_name "lastName",
+        first_name "firstName",
+        middle_name "middleName",
+        dob,
+        gender_id "gender"
+      from
+        persons.e_person
+      where
+        id = ${id}`;
+    },
+    INSERT_PERSON(person) {
+      return `insert into
+      persons.e_person
+      (
+        iin,
+        last_name,
+        first_name,
+        middle_name,
+        dob,
+        gender_id
+      )
+      values
+      (
+        '${person.iin}',
+        '${person.lastName}',
+        '${person.firstName}',
+        '${person.middleName}',
+        '${person.dob}',
+        '${person.gender}'
+      )
+      returning id;`;
+    },
+    UPDATE_PERSON(person) {
+      return `update
+        persons.e_person
+      set
+        iin = '${person.iin}',
+        last_name = '${person.lastName}',
+        first_name = '${person.firstName}',
+        middle_name = '${person.middleName}',
+        dob = '${person.dob}',
+        gender_id = '${person.gender}'
+      where
+          id = ${person.id}
+        returning id;`;
+    },
+    DELETE_PERSON(id) {
+      return `delete
+      from
+        persons.e_person
+      where
+        id = ${id}
+      returning id;`;
+    }
+  }
 }
-
-// db queries
-const
-SELECT_ALL_PERSONS =
-`select
-  id,
-  iin,
-  last_name "lastName",
-  first_name "firstName",
-  middle_name "middleName",
-  dob,
-  gender_id "gender"
-from
-  persons.e_person;`;
 
 persons
 .get('/', function (req, res, next) {
-  pool.connect(function (err, client, release) {
-    pool.on('error', function (e, client) {
-      if (e) {
-        console.error(e);
-        res.status(500).end();
-        next();
-      }
-    });
-    if (err) {
-      console.error(err);
-      res.status(500).end();
-      next();
+  db.selectAllRecords({text: Queries.persons.SELECT_ALL_PERSONS()}, function (status, data) {
+    if (status && status === 200) {
+      res.status(status).json(data).end();
+    } else if (status && status === 204) {
+      res.status(status).end();
     } else {
-      client.query(SELECT_ALL_PERSONS, function (err, result) {
-        release();
-        if (err) {
-          console.error(err);
-          res.status(500).end();
-          next();
-        } else {
-          var rowCount = result.rowCount;
-          if (rowCount === 0) {
-            res.status(204).end();
-            next();
-          } else {
-            if (rowCount > 0) {
-              res.status(200).json(result.rows).end();
-              next();
-            } else {
-              console.error(result);
-              res.status(500).end();
-              next();
-            }
-          }
-        }
-      });
+      res.status(500).end();
     }
-  });
+  })
 })
 .get('/:id', function (req, res, next) {
   if (isId(req.params.id)) {
@@ -90,199 +108,128 @@ persons
     res.status(400).end('Resource id is required');
     next();
   }
-  pool.on('error', function (e, client) {
-    if (e) {
-      console.error(e);
-      res.status(500).end();
-      next();
-    }
-  });
-  pool.connect(function (err, client, release) {
-    pool.on('error', function (e, client) {
-      if (e) {
-        console.error(e);
-        res.status(500).end();
-        next();
-      }
-    });
-    if (err) {
-      console.error(err);
-      res.status(500).end();
-      next();
+  db.selectRecordById({text: Queries.persons.SELECT_PERSON_BY_ID(id)}, function (status, data) {
+    if (status && status === 200) {
+      res.status(status).json(data).end();
+    } else if (status && status === 204) {
+      res.status(status).end();
     } else {
-      client.query(SELECT_PERSON_BY_ID(id), function (err, result) {
-        release();
-        if (err) {
-          console.error(err);
-          res.status(500).end();
-          next();
-        } else {
-          var rowCount = result.rowCount;
-          if (rowCount === 0) {
-            res.status(204).end();
-            next();
-          } else {
-            if (rowCount === 1) {
-              res.status(200).json(result.rows[0]).end();
-              next();
-            } else {
-              console.error(result);
-              res.status(500).end();
-              next();
-            }
-          }
-        }
-      });
+      res.status(500).end();
     }
   });
 })
 .post('/', upload.array(), function (req, res, next) {
-  var person = {
-    iin: req.body.iin,
-    lastName: req.body.lastName,
-    firstName: req.body.firstName,
-    middleName: req.body.middleName,
-    dob: req.body.dob,
-    gender: req.body.gender
-  }
-  pool.connect(function (err, client, release) {
-    pool.on('error', function (e, client) {
-      if (e) {
-        console.error(e);
-        res.status(500).end();
-        next();
-      }
-    });
-    if (err) {
-      console.error(err);
-      res.status(500).end();
-      next();
-    } else {
-      client.query(INSERT_PERSON(person), function (err, result) {
-        release();
-        if (err) {
-          console.error(err);
-          res.status(500).end();
-          next();
+  isPerson(req.body, function (result, data) {
+    if (result) {
+      db.updateRecord({text: Queries.persons.INSERT_PERSON(data)}, function (status, data) {
+        if (status && status === 201) {
+          res.status(status).json(data).end();
         } else {
-          var rowCount = result.rowCount;
-          if (rowCount === 0) {
-            res.status(204).end();
-            next();
-          } else {
-            if (rowCount === 1) {
-              res.status(201).json(result.rows[0]).end();
-              next();
-            } else {
-              console.error(result);
-              res.status(500).end();
-              next();
-            }
-          }
+          res.status(500).end();
         }
       });
+    } else if (data) {
+      res.status(400).json(data).end();
+    } else {
+      res.status(400).end();
     }
   });
 })
 .put('/:id', upload.array(), function (req, res, next) {
   if (isId(req.params.id)) {
-    var id = Number(req.params.id);
+    isPerson(req.body, function (result, data) {
+      if (result) {
+        console.log(data);
+        data.id = Number(req.params.id);
+        db.updateRecord({text: Queries.persons.UPDATE_PERSON(data)}, function (status, data) {
+          if (status && status === 200) {
+            res.status(status).json(data).end();
+          } else {
+            res.status(500).end();
+          }
+        });
+      } else if (data) {
+        res.status(400).json(data).end();
+      } else {
+        res.status(400).end();
+      }
+    });
   } else {
     res.status(400).end('Resource id is required');
     next();
   }
-  var person = {
-    id: req.params.id,
-    iin: req.body.iin,
-    lastName: req.body.lastName,
-    firstName: req.body.firstName,
-    middleName: req.body.middleName,
-    dob: req.body.dob,
-    gender: req.body.gender
-  }
-  pool.connect(function (err, client, release) {
-    pool.on('error', function (e, client) {
-      if (e) {
-        console.error(e);
-        res.status(500).end();
-        next();
-      }
-    });
-    if (err) {
-      console.error(err);
-      res.status(500).end();
-      next();
-    } else {
-      client.query(UPDATE_PERSON(person), function (err, result) {
-        release();
-        if (err) {
-          console.error(err);
-          res.status(500).end();
-          next();
-        } else {
-          var rowCount = result.rowCount;
-          if (rowCount === 1) {
-            res.status(200).json(result.rows[0]).end();
-            next();
-          } else {
-            console.error(result);
-            res.status(500).end();
-            next();
-          }
-        }
-      });
-    }
-  });
 })
 .delete('/:id', function (req, res, next) {
   if (isId(req.params.id)) {
-    var id = Number(req.params.id);
+    db.updateRecord({text: Queries.persons.DELETE_PERSON(Number(req.params.id))}, function (status, data) {
+      if (status && status === 200) {
+        res.status(status).json(data).end();
+      } else {
+        res.status(500).end();
+      }
+    });
   } else {
     res.status(400).end('Resource id is required');
     next();
   }
-  pool.connect(function (err, client, release) {
-    pool.on('error', function (e, client) {
-      if (e) {
-        console.error(e);
-        res.status(500).end();
-        next();
-      }
-    });
-    if (err) {
-      console.error(err);
-      res.status(500).end();
-      next();
-    } else {
-      client.query({
-        text: personQueries.persons.deletePerson,
-        values: [id]
-      }, function (err, result) {
-        release();
-        if (err) {
-          console.error(err);
-          res.status(500).end();
-          next();
-        } else {
-          var rowCount = result.rowCount;
-          if (rowCount === 1) {
-            res.status(200).json(result.rows[0]).end();
-            next();
-          } else {
-            if (rowCount === 0) {
-              res.status(204).end();
-              next();
-            } else {
-              console.error(result);
-              res.status(500).end();
-              next();
-            }
-          }
-        }
-      });
-    }
-  });
 });
+
+function isPerson(data, cb) {
+  console.log(data);
+  let person = {};
+  let messages = {};
+  if (data) {
+    if (data.iin) {
+      if (isIin(data.iin)) {
+        person.iin = data.iin;
+      } else {
+        messages.iin = 'Incorrect iin';
+      }
+    }
+    if (data.lastName) {
+      if (islastOrFirstName(data.lastName)) {
+        person.lastName = data.lastName;
+      } else {
+        messages.lastName = 'Incorrect lastName';
+      }
+    }
+    if (data.firstName) {
+      if (islastOrFirstName(data.firstName)) {
+        person.firstName = data.firstName;
+      } else {
+        messages.firstName = 'Incorrect firstName';
+      }
+    }
+    if (data.middleName) {
+      if (isMiddleName(data.middleName)) {
+        person.middleName = data.middleName;
+      } else {
+        messages.middleName = 'Incorrect middleName';
+      }
+    }
+    if (data.dob) {
+      if (isValidDate(data.dob)) {
+        person.dob = data.dob;
+      } else {
+        messages.dob = 'Incorrect dob';
+      }
+    }
+    if (data.gender) {
+      if (isGender(data.gender)) {
+        person.gender = data.gender;
+      } else {
+        messages.gender = 'Incorrect gender';
+      }
+    }
+    if (messages.hasOwnProperties) {
+      return cb(false, messages);
+    } else {
+      return cb(true, person);
+    }
+  } else {
+    return cb(false);
+  }
+}
 
 function isId(id) {
   if (id && typeof +id === 'number' && Number.isInteger(+id)) {
@@ -303,7 +250,7 @@ function isIin(iin) {
   }
 }
 
-function isStringWithLength200(string) {
+function islastOrFirstName(string) {
   if (string
   && typeof string === 'string'
   && string.length > 1
@@ -314,7 +261,7 @@ function isStringWithLength200(string) {
   }
 }
 
-function isStringWithLength300(string) {
+function isMiddleName(string) {
   if (string
   && typeof string === 'string'
   && string.length > 1
@@ -325,48 +272,53 @@ function isStringWithLength300(string) {
   }
 }
 
-function INSERT_PERSON(person) {
-  'use strict';
-  let INSERT_PERSON_QUERY =
-  `insert into
-  persons.e_person
-  (
-    iin,
-    last_name,
-    first_name,
-    middle_name,
-    dob,
-    gender_id
-  )
-  values
-  (
-    '${person.iin}',
-    '${person.lastName}',
-    '${person.firstName}',
-    '${person.middleName}',
-    '${person.dob}',
-    '${person.gender}'
-  )
-  returning id;`;
-  return INSERT_PERSON_QUERY;
+function isDate(date) {
+  let dob = new Date(date);
+  console.log(date instanceof Date);
+  if (date
+  && typeof date === 'string'
+  && date instanceof Date) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
-function UPDATE_PERSON(person) {
-  'use strict';
-  let UPDATE_PERSON_QUERY =
-  `update
-    persons.e_person
-  set
-    iin = '${person.iin}',
-    last_name = '${person.lastName}',
-    first_name = '${person.firstName}',
-    middle_name = '${person.middleName}',
-    dob = '${person.dob}',
-    gender_id = '${person.gender}'
-  where
-      id = ${person.id}
-    returning id;`;
-  return UPDATE_PERSON_QUERY;
+function isValidDate(dateString)
+{
+    // First check for the pattern
+    if(!/^\d{4}\-\d{1,2}\-\d{1,2}$/.test(dateString))
+        return false;
+
+    // Parse the date parts to integers
+    let parts = dateString.split('-');
+    let day = parseInt(parts[2], 10);
+    let month = parseInt(parts[1], 10);
+    let year = parseInt(parts[0], 10);
+
+    // Check the ranges of month and year
+    if(year < 1000 || year > 3000 || month == 0 || month > 12)
+        return false;
+
+    let monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+
+    // Adjust for leap years
+    if(year % 400 == 0 || (year % 100 != 0 && year % 4 == 0))
+        monthLength[1] = 29;
+
+    // Check the range of the day
+    return day > 0 && day <= monthLength[month - 1];
+};
+
+function isGender(gender) {
+  if (gender
+  && typeof gender === 'string'
+  && gender.length === 1
+  && (gender === 'M' || gender === 'F')) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 app.use('/api/persons', persons);
@@ -375,4 +327,4 @@ app.use(function (err, req, res, next) {
   console.error(err);
   res.status(500).end();
 });
-app.listen(3000);
+app.listen(3010);
