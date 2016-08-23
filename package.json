@@ -22,10 +22,12 @@
   },
   "homepage": "https://github.com/mtvspec/use-case-tracker#readme",
   "dependencies": {
+    "angular": "^1.5.8",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "multer": "^1.2.0",
     "pg": "^6.1.0",
-    "pg-pool": "^1.4.0"
+    "pg-pool": "^1.4.0",
+    "validator": "^5.5.0"
   }
 }

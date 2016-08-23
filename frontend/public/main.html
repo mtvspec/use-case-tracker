@@ -1,0 +1,66 @@
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+
+<input type="text" ng-model="SearchPerson">
+<table>
+  <tr>
+    <th>ИИН</th>
+    <th>Фамилия</th>
+    <th>Имя</th>
+    <th>Отчество</th>
+    <th>Дата рождения</th>
+    <th>Пол</th>
+  </tr>
+  <tr>
+    <td><input type="text" ng-model="Person.iin" placeholder="ИИН"></td>
+    <td><input type="text" ng-model="Person.lastName" placeholder="Фамилия"></td>
+    <td><input type="text" ng-model="Person.firstName"></td>
+    <td><input type="text" ng-model="Person.middleName"></td>
+    <td><input type="text" ng-model="Person.dob"></td>
+    <td><input type="text" ng-model="Person.gender"></td>
+  </tr>
+</table>
+<input type="submit" ng-click="CreatePerson(Person)">
+<well>
+  {{Person || JSON}}
+</well>
+<table>
+  <tr>
+    <th>ID</th>
+    <th>ИИН</th>
+    <th>Фамилия</th>
+    <th>Имя</th>
+    <th>Отчество</th>
+    <th>Дата рождения</th>
+    <th>Пол</th>
+  </tr>
+  <tr ng-repeat="person in persons | filter: SearchPerson">
+    <td>{{person.id}}</td>
+    <td>{{person.iin}}</td>
+    <td>{{person.lastName}}</td>
+    <td>{{person.firstName}}</td>
+    <td>{{person.middleName}}</td>
+    <td>{{person.dob}}</td>
+    <td>{{person.gender}}</td>
+  </tr>
+</table>
+<ul ng-repeat="test in tests">
+  <li>
+    <span>{{test.name}}</span>
+  </li>
+</ul>
