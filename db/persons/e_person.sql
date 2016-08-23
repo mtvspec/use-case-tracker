@@ -6,10 +6,11 @@ CREATE TABLE persons.e_person (
   middle_name VARCHAR (500),
   dob DATE,
   gender_id CHAR(1) NOT NULL,
-    is_deleted CHAR(1) NOT NULL DEFAULT 'F' REFERENCES system.is_deleted (id),
+    is_deleted CHAR(1) NOT NULL DEFAULT 'F',
       PRIMARY KEY (id),
       UNIQUE (iin),
-      FOREIGN KEY (gender_id) REFERENCES persons.d_gender (id)
+      FOREIGN KEY (gender_id) REFERENCES persons.d_gender (id),
+      FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
 );
 
 INSERT INTO
@@ -49,7 +50,7 @@ CREATE TABLE persons.e_person_log (
       FOREIGN KEY (e_person_id) REFERENCES persons.e_person (id)
 );
 
-CREATE FUNCTION create_person (
+CREATE FUNCTION persons.create_person (
   IN v_iin CHAR (12),
   IN v_last_name VARCHAR (400),
   IN v_first_name VARCHAR (300),
@@ -121,7 +122,7 @@ SELECT
     1
   );
 
-CREATE FUNCTION update_person (
+CREATE FUNCTION persons.update_person (
   IN v_id INTEGER,
   IN v_iin CHAR (12),
   IN v_last_name VARCHAR (400),
@@ -177,8 +178,8 @@ RETURNING
   (SELECT id FROM upd) "e_person_id";
 $$ LANGUAGE sql;
 
-CREATE FUNCTION delete_person (
-  IN v_id INTEGER,
+CREATE FUNCTION persons.delete_person (
+  IN v_e_person_id INTEGER,
   IN v_user_id INTEGER,
   OUT v_person_id INTEGER
 )
@@ -189,7 +190,7 @@ WITH upd AS (
   SET
     is_deleted = 'T'
   WHERE
-    id = v_id
+    id = v_e_person_id
   RETURNING
     *
 )
@@ -219,11 +220,11 @@ VALUES (
   (SELECT is_deleted FROM upd)
 )
 RETURNING
-  (SELECT id FROM upd) "e_person_id";
+  (SELECT id FROM upd) "v_person_id";
 $$ LANGUAGE sql;
 
-CREATE FUNCTION restore_person (
-  IN v_id INTEGER,
+CREATE FUNCTION persons.restore_person (
+  IN v_e_person_id INTEGER,
   IN v_user_id INTEGER,
   OUT v_person_id INTEGER
 )
@@ -234,7 +235,7 @@ WITH upd AS (
   SET
     is_deleted = 'F'
   WHERE
-    id = v_id
+    id = v_e_person_id
   RETURNING
     *
 )
@@ -264,10 +265,10 @@ VALUES (
   (SELECT is_deleted FROM upd)
 )
 RETURNING
-  (SELECT id FROM upd) "e_person_id";
+  (SELECT id FROM upd) "v_person_id";
 $$ LANGUAGE sql;
 
-CREATE FUNCTION select_person (
+CREATE FUNCTION persons.select_person (
   IN v_id INTEGER,
   IN v_user_id INTEGER,
   OUT v_person_id INTEGER
@@ -312,7 +313,7 @@ RETURNING
   (SELECT id FROM upd) "e_person_id";
 $$ LANGUAGE sql;
 
-CREATE FUNCTION select_persons ()
+CREATE FUNCTION persons.select_persons ()
 RETURNS SETOF persons.e_person
 AS $$
 SELECT
