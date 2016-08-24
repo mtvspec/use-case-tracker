@@ -12,7 +12,7 @@ CREATE TABLE projects.e_project (
   fact_budget NUMERIC,
   project_manager_id INTEGER,
   state_id INTEGER NOT NULL,
-    is_deleted CHAR(1) NOT NULL DEFAULT 'F'
+    is_deleted CHAR (1) NOT NULL DEFAULT 'F',
       PRIMARY KEY (id),
       UNIQUE (name),
       UNIQUE (description),
@@ -25,6 +25,7 @@ CREATE TABLE projects.e_project (
 CREATE TABLE projects.e_project_log (
   id SERIAL,
   d_operation_type_id INTEGER NOT NULL,
+  operation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT LOCALTIMESTAMP,
   e_project_id INTEGER NOT NULL,
   customer_id INTEGER,
   name VARCHAR (1000) NOT NULL,
@@ -38,15 +39,16 @@ CREATE TABLE projects.e_project_log (
   fact_budget NUMERIC,
   project_manager_id INTEGER,
   state_id INTEGER NOT NULL,
-    is_deleted CHAR(1) NOT NULL,
-      operation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT LOCALTIMESTAMP,
+    is_deleted CHAR (1) NOT NULL,
       e_user_id INTEGER NOT NULL,
         PRIMARY KEY (id)
         FOREIGN KEY (d_operation_type_id) REFERENCES system.d_operation_type (id),
+        FOREIGN KEY (e_project_id) REFERENCES projects.e_project (id),
         FOREIGN KEY (e_user_id) REFERENCES users.e_user (id)
         FOREIGN KEY (customer_id) REFERENCES organizations.e_organizations (id),
         FOREIGN KEY (project_manager_id) REFERENCES persons.e_person (id),
-        FOREIGN KEY (state_id) REFERENCES projects.d_state (id)
+        FOREIGN KEY (state_id) REFERENCES projects.d_state (id),
+        FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
 );
 
 CREATE FUNCTION projects.create_project (
@@ -72,9 +74,9 @@ WITH ins AS (
       name,
       official_name,
       description,
-      start_date,
-      end_date,
-      budget,
+      plan_start_date,
+      plan_end_date,
+      plan_budget,
       project_manager_id
     )
   VALUES (
@@ -82,12 +84,10 @@ WITH ins AS (
     v_name,
     v_official_name,
     v_description,
-    v_start_date,
-    v_end_date,
-    v_budget,
-    v_project_manager_id,
-    v_state_id,
-    v_user_id
+    v_plan_start_date,
+    v_plan_end_date,
+    v_plan_budget,
+    v_project_manager_id
   )
   RETURNING
     *
@@ -115,7 +115,7 @@ VALUES
   (
     1,
     v_user_id,
-    (SELECT e_project_id FROM ins),
+    (SELECT id FROM ins),
     (SELECT customer_id FROM ins),
     (SELECT name FROM ins),
     (SELECT official_name FROM ins),
