@@ -57,31 +57,44 @@ router
 })
 // CREATE person
 .post('/', function (req, res, next) {
-  isPerson(req.body, function (result, data) {
-    if (result) {
-      db.selectRecordById({
-        text: sql.persons.SELECT_PERSON_BY_IIN(Number(data.iin))
-      }, function (status, data) {
-        console.log(status, data);
-        if (status && status === 200) {
-          res.status(400).json('Duplicate IIN').end();
-        }
-      });
-      db.insertRecord({
-        text: sql.persons.INSERT_PERSON(data, {id: 1})
-      }, function (status, data) {
-        if (status && status === 201) {
-          res.status(status).json(data).end();
+  console.log(req.body);
+  if (!req.headers['user-id']) {
+    return res.status(401).end();
+  } else {
+    if (isID(req.headers['user-id'])) {
+      let user = {
+        id: Number(req.headers['user-id'])
+      }
+      isPerson(req.body, function (output) {
+        if (output.result) {
+          let person = output.data;
+          db.selectRecordById({
+            text: sql.persons.SELECT_PERSON_BY_IIN(Number(output.data.iin))
+          }, function (status, data) {
+            if (status && status === 200) {
+              return res.status(400).json('Duplicate IIN').end();
+            } else if (status && status === 204) {
+              db.insertRecord({
+                text: sql.persons.INSERT_PERSON(person, user)
+              }, function (status, data) {
+                if (status && status === 201) {
+                  return res.status(status).json(data).end();
+                } else {
+                  return res.status(500).end();
+                }
+              });
+            }
+          });
+        } else if (output.data) {
+          res.status(400).json(output.data).end();
         } else {
-          res.status(500).end();
+          return res.status(400).end();
         }
       });
-    } else if (data) {
-      res.status(400).json(data).end();
     } else {
-      res.status(400).end();
+      return res.status(400).end('Incorrect user id');
     }
-  });
+  }
 })
 // UPDATE person
 .put('/:id', upload.array(), function (req, res, next) {
@@ -159,62 +172,82 @@ function isPerson(data, cb) {
   let person = {};
   let messages = {};
   if (data) {
-    if (!data.middleName) {
-      person.middleName = '';
-    }
+    console.log(data);
     if (data.iin) {
       if (isIIN(data.iin)) {
         person.iin = data.iin;
       } else {
-        messages.iin = 'Incorrect iin';
+        messages.iin = `Incorrect 'iin': ${data.iin}`;
       }
+    } else {
+      person.iin = '';
     }
     if (data.lastName) {
-      if (isLastOrFirstName(data.lastName)) {
+      if (isLastName(data.lastName)) {
         person.lastName = data.lastName;
       } else {
-        messages.lastName = 'Incorrect lastName';
+        messages.lastName = `Incorrect 'lastName': ${data.lastName}`;
       }
+    } else {
+      messages.lastName = `'lastName' is required`;
     }
     if (data.firstName) {
-      if (isLastOrFirstName(data.firstName)) {
+      if (isFirstName(data.firstName)) {
         person.firstName = data.firstName;
       } else {
-        messages.firstName = 'Incorrect firstName';
+        messages.firstName = `Incorrect 'firstName': ${data.firstName}`;
       }
+    } else {
+      messages.firstName = `'firstName' is required`;
     }
     if (data.middleName) {
       if (isMiddleName(data.middleName)) {
         person.middleName = data.middleName;
       } else {
-        messages.middleName = 'Incorrect middleName';
+        messages.middleName = `Incorrect 'middleName': ${data.middleName}`;
       }
+    } else {
+      person.middleName = '';
     }
     if (data.dob) {
       if (isValidDate(data.dob)) {
         person.dob = data.dob;
       } else {
-        messages.dob = 'Incorrect dob';
+        messages.dob = `Incorrect 'dob': ${data.dob}`;
       }
+    } else {
+      messages.dob = `'dob' is required`;
     }
     if (data.gender) {
       if (isGender(data.gender)) {
         person.gender = data.gender;
       } else {
-        messages.gender = 'Incorrect gender';
+        messages.gender = `Incorrect 'gender': ${data.gender}`;
       }
-    }
-    if (messages.hasOwnProperties) {
-      return cb(false, messages);
     } else {
-      return cb(true, person);
+      messages.gender = `'gender' is required`
+    }
+    if (Object.keys(messages).length > 0) {
+      console.log(messages);
+      return cb({
+        result: false,
+        data: messages
+      });
+    } else {
+      return cb({
+        result: true,
+        data: person
+      });
     }
   } else {
-    return cb(false);
+    return cb({
+      result: false
+    });
   }
 }
 
-function isIIN(iin) {
+function isIIN (iin) {
+  console.log(iin.length);
   if (iin
     && typeof iin === 'string'
     && iin.length === 12
@@ -225,20 +258,19 @@ function isIIN(iin) {
   }
 }
 
-function isLastOrFirstName(string) {
+function isLastName (string) {
   if (string
   && validator.isAlpha(string, 'ru-RU')
   && typeof string === 'string'
   && string.length > 1
-  && string.length <= 200) {
+  && string.length <= 400) {
     return true;
   } else {
     return false;
   }
 }
 
-function isMiddleName(string) {
-
+function isFirstName (string) {
   if (string
   && validator.isAlpha(string, 'ru-RU')
   && typeof string === 'string'
@@ -250,7 +282,19 @@ function isMiddleName(string) {
   }
 }
 
-function isValidDate(dateString)
+function isMiddleName (string) {
+  if (string
+  && validator.isAlpha(string, 'ru-RU')
+  && typeof string === 'string'
+  && string.length > 1
+  && string.length <= 500) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function isValidDate (dateString)
 {
     // First check for the pattern
     if(!/^\d{4}\-\d{1,2}\-\d{1,2}$/.test(dateString))
@@ -276,7 +320,7 @@ function isValidDate(dateString)
     return day > 0 && day <= monthLength[month - 1];
 };
 
-function isGender(gender) {
+function isGender (gender) {
   if (gender
   && typeof gender === 'string'
   && gender.length === 1

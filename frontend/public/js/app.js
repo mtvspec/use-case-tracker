@@ -1,10 +1,15 @@
 'use strict';
 
-const app = angular.module('app', ['ui.router']);
+var app = angular.module('app', ['ui.router']);
 
 app.config(function ($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
   $stateProvider
+  .state('login', {
+    url: '/login',
+    templateUrl: '/templates/login/login.html',
+    controllerAs: 'LoginCtrl'
+  })
   .state('main', {
     url: '/',
     templateUrl: 'main.html',
@@ -19,33 +24,54 @@ app.config(function ($stateProvider, $urlRouterProvider) {
 app.controller('TestCtrl', function TestCtrl($scope, $http) {
 
 
-  $http({
-    method: 'GET',
-    url: '/api/persons'
-  }).then(function (response) {
-    $scope.persons = response.data;
-  }, function (error) {
-    console.error(error);
-  });
+  getPersons();
 
-  $scope.CreatePerson = function(person) {
+  function getPersons() {
     $http({
-      method: 'POST',
+      method: 'GET',
       url: '/api/persons',
-      data: person
+      headers: {
+        'user-id': 1
+      }
     }).then(function (response) {
-      console.log(response);
-    }, function (response) {
-      console.error(response);
+      $scope.persons = response.data;
+    }, function (error) {
+      console.error(error);
     });
   }
 
-  $scope.tests = [
-    {
-      name: 'Nexus'
-    },
-    {
-      name: 'Apple'
+  $scope.isPerson = function (person) {
+    if (person) {
+      if (person.iin
+      && typeof person.iin === 'string'
+      && person.iin.length === 12) {
+        console.log('iin true');
+      } else {
+        console.log('iin false');
+      }
+      console.debug(true);
+      return true;
+    } else {
+      console.debug(false);
+      return false;
     }
-  ]
+  }
+
+
+  $scope.CreatePerson = function CreatePerson(person) {
+    console.log(person);
+    $http.post('/api/persons', person, {
+      headers: {
+        'Content-Type': 'application/json',
+        'user-id': 1
+      }
+    }).success(function (data, status) {
+      console.log(data, status);
+    }).error(function (error) {
+      console.log(error);
+    });
+
+  }
+
+
 })

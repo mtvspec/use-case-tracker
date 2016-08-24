@@ -1,8 +1,8 @@
 CREATE TABLE users.e_user (
   id SERIAL,
   e_person_id INTEGER NOT NULL,
-  v_username VARCHAR (20) NOT NULL,
-  v_password VARCHAR (4000) NOT NULL,
+  u_username VARCHAR (20) NOT NULL,
+  u_password VARCHAR (4000) NOT NULL,
   status_id INTEGER NOT NULL DEFAULT 1,
     is_deleted CHAR (1) NOT NULL DEFAULT 'F',
       PRIMARY KEY (id),
@@ -14,17 +14,30 @@ CREATE TABLE users.e_user (
 
 INSERT INTO
   users.e_user (
-    e_person_id
+    e_person_id,
+    v_username,
+    v_password
   )
 VALUES (
-  1
+  1,
+  'mtvspec',
+  'PASSWORD'
 );
 
 CREATE TABLE users.d_user_status (
   id SERIAL,
   cr_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT LOCALTIMESTAMP,
-    PRIMARY KEY (id),
-    UNIQUE(status)
+    PRIMARY KEY (id)
+);
+
+INSERT INTO
+  users.d_user_status
+VALUES
+(
+  DEFAULT
+),
+(
+  DEFAULT
 );
 
 CREATE TABLE users.tr_user_status (
@@ -75,11 +88,30 @@ VALUES
   2
 );
 
+CREATE VIEW users.v_user_status
+AS
+SELECT
+  s.id,
+  tr.status_en,
+  tr.status_ru,
+  tr.status_kz
+FROM
+  users.d_user_status s,
+  users.tr_user_status tr,
+  users.r_user_status r
+WHERE
+  r.d_user_status_id = s.id
+AND
+  r.tr_user_status_id = tr.id
+ORDER BY
+  s.id ASC;
+
 CREATE TABLE users.e_user_log (
   id SERIAL,
   d_operation_type_id INTEGER NOT NULL,
   operation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT LOCALTIMESTAMP,
   user_id INTEGER NOT NULL,
+  e_user_id INTEGER NOT NULL,
   e_person_id INTEGER NOT NULL,
   u_username VARCHAR (20) NOT NULL,
   u_password VARCHAR (4000) NOT NULL,
@@ -88,11 +120,11 @@ CREATE TABLE users.e_user_log (
       PRIMARY KEY (id),
       FOREIGN KEY (d_operation_type_id) REFERENCES system.d_operation_type (id),
       FOREIGN KEY (user_id) REFERENCES users.e_user (id),
+      FOREIGN KEY (e_user_id) REFERENCES users.e_user (id),
       FOREIGN KEY (e_person_id) REFERENCES persons.e_person (id),
       FOREIGN KEY (status_id) REFERENCES users.d_user_status (id),
       FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
 );
-
 /*
 create_user (v_e_person_id, v_username, v_password, v_user);
 return v_user_id (created user id);
@@ -102,9 +134,9 @@ CREATE FUNCTION users.create_user (
   IN v_username VARCHAR (20),
   IN v_password VARCHAR (4000),
   IN v_user INTEGER,
-  OUT v_user_id INTEGER
+  OUT e_user_id INTEGER
 )
-AS &&
+AS $$
 WITH ins AS (
   INSERT INTO
     users.e_user (
@@ -127,12 +159,14 @@ INSERT INTO
     e_user_id,
     e_person_id,
     u_username,
-    u_password
+    u_password,
+    status_id,
+    is_deleted
   )
 VALUES (
   1,
   v_user,
-  (SELECT e_user_id FROM ins),
+  (SELECT id FROM ins),
   (SELECT e_person_id FROM ins),
   (SELECT u_username FROM ins),
   'PASSWORD',
@@ -140,8 +174,14 @@ VALUES (
   (SELECT is_deleted FROM ins)
 )
 RETURNING
-  (SELECT id FROM ins) "v_user_id";
+  e_user_id;
 $$ LANGUAGE sql;
+
+SELECT
+  create_user (
+    2
+  )
+
 /*
 update_user_status (v_user_id, v_status_id, v_user);
 return user_id (updated users id);

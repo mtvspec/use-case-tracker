@@ -5,13 +5,13 @@ const Queries = {
       SELECT
         id,
         iin,
-        last_name,
-        first_name,
-        middle_name,
-        to_char(dob, 'YYYY-MM-DD'),
-        gender_id
+        last_name "lastName",
+        first_name "firstName",
+        middle_name "middleName",
+        to_char(dob, 'YYYY-MM-DD') "dob",
+        gender_id "gender"
       FROM
-       select_persons()
+       persons.select_persons()
       WHERE
         is_deleted = 'F'`;
     },
@@ -35,7 +35,7 @@ const Queries = {
     INSERT_PERSON(person, user) {
       return `
       SELECT
-        create_person (
+        persons.create_person (
           '${person.iin}',
           '${person.lastName}',
           '${person.firstName}',
@@ -48,7 +48,7 @@ const Queries = {
     UPDATE_PERSON(person, user) {
       return `
       SELECT
-        update_person (
+        persons.update_person (
           ${person.id},
           '${person.iin}',
           '${person.lastName}',
@@ -70,7 +70,7 @@ const Queries = {
     RESTORE_PERSON(person, user) {
       return `
       SELECT
-        restore_person (
+        persons.restore_person (
           ${person.id},
           ${user.id}
         );`;

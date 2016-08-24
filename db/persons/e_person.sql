@@ -108,7 +108,7 @@ VALUES (
   (SELECT is_deleted FROM ins)
 )
 RETURNING
-  id "v_person_id";
+  e_person_id "v_person_id";
 $$ LANGUAGE sql;
 
 SELECT
