@@ -60,7 +60,7 @@ app.controller('TestCtrl', function TestCtrl($scope, $http) {
 
   $scope.CreatePerson = function CreatePerson(person) {
     console.log(person);
-    $http.post('/api/persons', person, {
+    $http.post('/api/users', person, {
       headers: {
         'Content-Type': 'application/json',
         'user-id': 1
