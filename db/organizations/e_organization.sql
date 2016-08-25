@@ -115,3 +115,44 @@ VALUES (
 RETURNING
   (SELECT id FROM upd) "e_organization_id";
 $$ LANGUAGE sql;
+
+CREATE FUNCTION organizations.select_organization (
+  IN v_e_organization_id INTEGER,
+  IN v_user_id INTEGER
+)
+RETURNS organizations.e_organization
+AS $$
+WITH sel AS (
+  SELECT
+    *
+  FROM
+    organizations.e_organization
+  WHERE
+    id = v_e_organization_id
+)
+INSERT INTO
+  organizations.e_organization_log (
+    d_operation_type_id,
+    user_id,
+    e_organization_id,
+    bin,
+    short_name,
+    official_name,
+    is_deleted
+  )
+VALUES (
+  5,
+  v_user_id,
+  (SELECT id FROM sel),
+  (SELECT bin FROM sel),
+  (SELECT short_name FROM sel),
+  (SELECT official_name FROM sel),
+  (SELECT is_deleted FROM sel)
+);
+SELECT
+  *
+FROM
+  organizations.e_organization
+WHERE
+  id = v_e_organization_id;
+$$ LANGUAGE sql;
