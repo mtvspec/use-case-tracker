@@ -131,7 +131,7 @@ CREATE FUNCTION persons.update_person (
   IN v_dob DATE,
   IN v_gender_id CHAR (1),
   IN v_user_id INTEGER,
-  OUT v_person_id INTEGER
+  OUT e_person_id INTEGER
 )
 AS $$
 WITH upd AS (
@@ -181,7 +181,7 @@ $$ LANGUAGE sql;
 CREATE FUNCTION persons.delete_person (
   IN v_e_person_id INTEGER,
   IN v_user_id INTEGER,
-  OUT v_person_id INTEGER
+  OUT e_person_id INTEGER
 )
 AS $$
 WITH upd AS (
@@ -220,13 +220,13 @@ VALUES (
   (SELECT is_deleted FROM upd)
 )
 RETURNING
-  (SELECT id FROM upd) "v_person_id";
+  (SELECT id FROM upd) "e_person_id";
 $$ LANGUAGE sql;
 
 CREATE FUNCTION persons.restore_person (
   IN v_e_person_id INTEGER,
   IN v_user_id INTEGER,
-  OUT v_person_id INTEGER
+  OUT e_person_id INTEGER
 )
 AS $$
 WITH upd AS (
@@ -265,24 +265,22 @@ VALUES (
   (SELECT is_deleted FROM upd)
 )
 RETURNING
-  (SELECT id FROM upd) "v_person_id";
+  (SELECT id FROM upd) "e_person_id";
 $$ LANGUAGE sql;
 
 CREATE FUNCTION persons.select_person (
-  IN v_id INTEGER,
-  IN v_user_id INTEGER,
-  OUT v_person_id INTEGER
+  IN v_e_person_id INTEGER,
+  IN v_user_id INTEGER
 )
+RETURNS persons.e_person
 AS $$
-WITH upd AS (
-  UPDATE
-    persons.e_person
-  SET
-    is_deleted = 'F'
-  WHERE
-    id = v_id
-  RETURNING
+WITH sel AS (
+  SELECT
     *
+  FROM
+    persons.e_person
+  WHERE
+    id = v_e_person_id
 )
 INSERT INTO
   persons.e_person_log (
@@ -300,17 +298,21 @@ INSERT INTO
 VALUES (
   5,
   v_user_id,
-  (SELECT id FROM upd),
-  (SELECT iin FROM upd),
-  (SELECT last_name FROM upd),
-  (SELECT first_name FROM upd),
-  (SELECT middle_name FROM upd),
-  (SELECT dob FROM upd),
-  (SELECT gender_id FROM upd),
-  (SELECT is_deleted FROM upd)
-)
-RETURNING
-  (SELECT id FROM upd) "e_person_id";
+  (SELECT id FROM sel),
+  (SELECT iin FROM sel),
+  (SELECT last_name FROM sel),
+  (SELECT first_name FROM sel),
+  (SELECT middle_name FROM sel),
+  (SELECT dob FROM sel),
+  (SELECT gender_id FROM sel),
+  (SELECT is_deleted FROM sel)
+);
+SELECT
+  *
+FROM
+  persons.e_person
+WHERE
+  id = v_e_person_id;
 $$ LANGUAGE sql;
 
 CREATE FUNCTION persons.select_persons ()

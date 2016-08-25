@@ -9,16 +9,26 @@ const Queries = {
         first_name "firstName",
         middle_name "middleName",
         to_char(dob, 'YYYY-MM-DD') "dob",
-        gender_id "gender"
+        gender_id "gender",
+        is_deleted
       FROM
-       persons.select_persons()
-      WHERE
-        is_deleted = 'F'`;
+        persons.select_persons()
+      ORDER BY
+        id ASC;`;
     },
     SELECT_PERSON_BY_ID(person, user) {
       return `
       SELECT
-        select_person (
+        id,
+        iin,
+        last_name "lastName",
+        first_name "firstName",
+        middle_name "middleName",
+        to_char(dob, 'YYYY-MM-DD') "dob",
+        gender_id "gender",
+        is_deleted "isDeleted"
+      FROM
+        persons.select_person (
           ${person.id},
           ${user.id}
         );`;
@@ -62,7 +72,7 @@ const Queries = {
     DELETE_PERSON(person, user) {
       return `
       SELECT
-        delete_person (
+        persons.delete_person (
           ${person.id},
           ${user.id}
         );`;
