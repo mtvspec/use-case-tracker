@@ -24,39 +24,50 @@ router
         text: sql.persons.SELECT_ALL_PERSONS(user)
       }, function (status, data) {
         if (status && status === 200) {
-          res.status(status).json(data).end();
+          return res.status(status).json(data).end();
         } else if (status && status === 204) {
-          res.status(status).end();
+          return res.status(status).end();
         } else {
-          res.status(500).end();
+          return res.status(500).end();
         }
       });
     } else {
-      return res.status(401).end();
+      return res.status(401).end(`'UserID' must be type of 'INTEGER'`);
     }
   }
 })
 // GET person by id
-.get('/:id', function (req, res, next) {
-  if (isID(req.params.id)) {
-    db.selectRecordById({
-      text: sql.persons.SELECT_PERSON_BY_ID({id: Number(req.params.id)}, {id: 1})
-    }, function (status, data) {
-      if (status && status === 200) {
-        res.status(status).json(data).end();
-      } else if (status && status === 204) {
-        res.status(status).end();
-      } else {
-        res.status(500).end();
+.get('/:id', function (req, res) {
+  if (!req.headers['user-id']) {
+    return res.status(401).end();
+  } else if (isID(req.headers['user-id'])) {
+    let user = {
+      id: Number(req.headers['user-id'])
+    }
+    if (isID(req.params.id)) {
+      let person = {
+        id: Number(req.params.id)
       }
-    });
+      db.selectRecordById({
+        text: sql.persons.SELECT_PERSON_BY_ID(person, user)
+      }, function (status, data) {
+        if (status && status === 200) {
+          return res.status(status).json(data).end();
+        } else if (status && status === 204) {
+          return res.status(status).end();
+        } else {
+          return res.status(500).end();
+        }
+      });
+    } else {
+      return res.status(400).end(`'ResourceID' is required`);
+    }
   } else {
-    res.status(400).end('Resource id is required');
-    next();
+    return res.status(401).end(`'UserID' must be type of 'INTEGER'`);
   }
 })
 // CREATE person
-.post('/', function (req, res, next) {
+.post('/', upload.array(), function (req, res) {
   console.log(req.body);
   if (!req.headers['user-id']) {
     return res.status(401).end();
@@ -86,7 +97,7 @@ router
             }
           });
         } else if (output.data) {
-          res.status(400).json(output.data).end();
+          return res.status(400).json(output.data).end();
         } else {
           return res.status(400).end();
         }
@@ -97,65 +108,97 @@ router
   }
 })
 // UPDATE person
-.put('/:id', upload.array(), function (req, res, next) {
-  if (isID(req.params.id)) {
-    isPerson(req.body, function (result, data) {
-      if (result) {
-        data.id = Number(req.params.id);
-        db.updateRecord({
-          text: sql.persons.UPDATE_PERSON(data, {id: 1})
-        }, function (status, data) {
-          if (status && status === 200) {
-            res.status(status).json(data).end();
-          } else if (status && status === 400) {
-            res.status(400).json(data);
-          } else {
-            res.status(500).end();
-          }
-        });
-      } else if (data) {
-        res.status(400).json(data).end();
-      } else {
-        res.status(400).end();
-      }
-    });
+.put('/:id', upload.array(), function (req, res) {
+  if (!req.headers['user-id']) {
+    return res.status(401).end();
+  } else if (isID(req.headers['user-id'])) {
+    let user = {
+      id: Number(req.headers['user-id'])
+    }
+    if (isID(req.params.id)) {
+      isPerson(req.body, function (output) {
+        if (output.result) {
+          output.data.id = Number(req.params.id);
+          db.updateRecord({
+            text: sql.persons.UPDATE_PERSON(output.data, user)
+          }, function (status, data) {
+            if (status && status === 200) {
+              return res.status(status).json(data).end();
+            } else if (status && status === 400) {
+              return res.status(400).json(data);
+            } else {
+              return res.status(500).end();
+            }
+          });
+        } else if (output.data) {
+          return res.status(400).json(output.data).end();
+        } else {
+          return res.status(400).end();
+        }
+      });
+    } else {
+      return res.status(400).end(`'ResourceID' is required`);
+    }
   } else {
-    res.status(400).end('Resource id is required');
-    next();
+    return res.status(401).end();
   }
 })
 // DELETE PERSON
-.delete('/:id', function (req, res, next) {
-  if (isID(req.params.id)) {
-    db.updateRecord({
-      text: sql.persons.DELETE_PERSON({id: Number(req.params.id)}, {id: 1})
-    }, function (status, data) {
-      if (status && status === 200) {
-        res.status(status).json(data).end();
-      } else {
-        res.status(500).end();
-      }
-    });
+.delete('/:id', function (req, res) {
+  if (!req.headers['user-id']) {
+    return res.status(401).end();
   } else {
-    res.status(400).end('Resource id is required');
-    next();
+    if (isID(req.headers['user-id'])) {
+      let user = {
+        id: Number(req.headers['user-id'])
+      }
+      if (isID(req.params.id)) {
+        let person = {
+          id: Number(req.params.id)
+        }
+        db.updateRecord({
+          text: sql.persons.DELETE_PERSON(person, user)
+        }, function (status, data) {
+          if (status && status === 200) {
+            return res.status(status).json(data).end();
+          } else {
+            return res.status(500).end();
+          }
+        });
+      } else {
+        return res.status(400).end(`'ResourceID' is required`);
+      }
+    } else {
+      return res.status(401).end(`'UserID' must be type of 'INTEGER'`);
+    }
   }
 })
 // RESTORE person
-.options('/:id', function (req, res, next) {
-  if (isID(req.params.id)) {
-    db.updateRecord({
-      text: sql.persons.RESTORE_PERSON({id: Number(req.params.id)}, {id: 1})
-    }, function (status, data) {
-      if (status && status === 200) {
-        res.status(status).json(data).end();
-      } else {
-        res.status(500).end();
+.options('/:id', function (req, res) {
+  if (!req.headers['user-id']) {
+    return res.status(401).end();
+  } else if (isID(req.headers['user-id'])) {
+    let user = {
+      id: Number(req.headers['user-id'])
+    }
+    if (isID(req.params.id)) {
+      let person = {
+        id: Number(req.params.id)
       }
-    });
+      db.updateRecord({
+        text: sql.persons.RESTORE_PERSON(person, user)
+      }, function (status, data) {
+        if (status && status === 200) {
+          return res.status(status).json(data).end();
+        } else {
+          return res.status(500).end();
+        }
+      });
+    } else {
+      return res.status(400).end('Resource id is required');
+    }
   } else {
-    res.status(400).end('Resource id is required');
-    next();
+    return res.status(401).end(`'UserID' must be type of 'INTEGER'`);
   }
 });
 
