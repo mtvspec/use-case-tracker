@@ -49,7 +49,7 @@ class OrganizationAPI {
     let result;
     if (organizationValidationResult.result) {
       if (organizationValidationResult.data.bin) {
-        getOrganizationByBIN(req, res, function (response) {
+        OrganizationAPI.getOrganizationByBIN(req, res, function (response) {
           if (response && response.status === 200) {
             return res.status(400).json(`duplicate 'bin': ${req.body.bin}`).end();
           } else if (response && response.status === 204) {
@@ -79,7 +79,7 @@ class OrganizationAPI {
     let result;
     if (organization.id && organizationValidationResult.result) {
       req.body.id = idValidationResult.data.id;
-      getOrganizationByBIN(req, res, function (response) {
+      OrganizationAPI.getOrganizationByBIN(req, res, function (response) {
         if (response && (response.status === 200 || response.status === 204)) {
           if (response.id != req.body.id) {
             db.updateRecord({
@@ -149,7 +149,7 @@ class OrganizationAPI {
   }
 }
 
-function getOrganizationByBIN(req, res, cb) {
+OrganizationAPI.getOrganizationByBIN = function (req, res, cb) {
   db.selectRecordById({
     text: sql.organizations.SELECT_ORGANIZATION_BY_BIN(req.body.bin)
   }, function (response) {
