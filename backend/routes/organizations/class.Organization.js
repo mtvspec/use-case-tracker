@@ -1,6 +1,5 @@
 'use strict';
 
-const isValidOrganization = require('./isValidOrganization.js');
 const Database = require('./../../db.js');
 const db = new Database();
 const sql = require('./sql.js');
@@ -24,6 +23,23 @@ class Organization {
         return res.status(500).end();
       }
     });
+  }
+  getOrganizationByID(req, res) {
+    let idValidationResult = isValidID(req.params.id);
+    if (idValidationResult.res) {
+      db.selectRecordById({
+        text: sql.organizations.SELECT_ORGANIZATION_BY_ID(
+          idValidationResult.data,
+          req.User
+        )
+      }, function (response) {
+        if (response) {
+          if (response.status === 200) {
+            return res.status(response.status).json(response.data).end();
+          }
+        }
+      })
+    }
   }
   createOrganization(req, res) {
     let organizationValidationResult = isValidOrganization(req.body);
