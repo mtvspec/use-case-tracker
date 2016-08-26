@@ -1,10 +1,11 @@
 'use strict';
 
+const ID = require ('./../../common/classes/id');
 const Database = require('./../../db.js');
 const db = new Database();
 const sql = require('./sql.js');
 
-class Organization {
+class OrganizationAPI {
   constructor() {
     let instance = this;
     if (instance) {
@@ -25,20 +26,22 @@ class Organization {
     });
   }
   getOrganizationByID(req, res) {
-    let idValidationResult = isValidID(req.params.id);
-    if (idValidationResult.res) {
+    let organization = new ID(req.params.id);
+    if (organization.id) {
       db.selectRecordById({
         text: sql.organizations.SELECT_ORGANIZATION_BY_ID(
-          idValidationResult.data,
+          organization,
           req.User
         )
       }, function (response) {
         if (response) {
-          if (response.status === 200) {
-            return res.status(response.status).json(response.data).end();
-          }
+          return res.status(response.status).json(response.data).end();
+        } else {
+          return res.status(500).end();
         }
       })
+    } else {
+      return res.status(400).send(`'id' is required`);
     }
   }
   createOrganization(req, res) {
@@ -71,10 +74,10 @@ class Organization {
     }
   }
   updateOrganization(req, res) {
-    let idValidationResult = isValidID(req.params.id);
+    let organization = new ID(req.params.id);
     let organizationValidationResult = Organization.validate(req.body);
     let result;
-    if (idValidationResult.result && organizationValidationResult.result) {
+    if (organization.id && organizationValidationResult.result) {
       req.body.id = idValidationResult.data.id;
       getOrganizationByBIN(req, res, function (response) {
         if (response && (response.status === 200 || response.status === 204)) {
@@ -107,9 +110,8 @@ class Organization {
     }
   }
   deleteOrganization(req, res) {
-    let idValidationResult = isValidID(req.params.id);
-    let result;
-    if (idValidationResult.result) {
+    let organization = new ID(req.params.id);
+    if (organization.id) {
       db.updateRecord({
         text: sql.organizations.DELETE_ORGANIZATION(
           idValidationResult.data,
@@ -127,9 +129,8 @@ class Organization {
     }
   }
   restoreOrganization(req, res) {
-    let idValidationResult = isValidID(req.params.id);
-    let result;
-    if (idValidationResult.result) {
+    let organization = new ID(req.params.id);
+    if (organization.id) {
       db.updateRecord({
         text: sql.organizations.RESTORE_ORGANIZATION(
           idValidationResult.data,
@@ -165,40 +166,7 @@ function getOrganizationByBIN(req, res, cb) {
   });
 }
 
-class ID {
-  constructor() {
-
-  }
-}
-
-function isValidID(data) {
-  let id = Number(data);
-  let messages = {};
-  if (id) {
-    if (typeof id === 'number'
-    && Number.isInteger(+id)
-    && id > 0) {
-      return {
-        result: true,
-        data: {
-          id: Number(id)
-        }
-      }
-    } else {
-      messages.id = `incorrect 'id': ${id}`;
-    }
-  } else {
-    messages.id = `'id' is required`;
-  }
-  if (Object.keys(messages).length > 0) {
-    return {
-      result: false,
-      data: messages
-    }
-  }
-}
-
-Organization.validate = function (data) {
+OrganizationAPI.validate = function (data) {
   if (data) {
     let messages = {};
     let organization = {};
@@ -270,4 +238,4 @@ function isValidOfficialName (officialName) {
   }
 }
 
-module.exports = Organization;
+module.exports = OrganizationAPI;
