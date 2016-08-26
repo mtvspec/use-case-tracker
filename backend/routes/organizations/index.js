@@ -11,28 +11,7 @@ const sql = require('./sql.js');
 
 router
 .get('/', function (req, res) {
-  if (!req.headers['user-id']) {
-    return res.status(401).end();
-  } else {
-    let user = {
-      id: Number(req.headers['user-id'])
-    }
-    if (isID(req.headers['user-id'])) {
-      db.selectAllRecords({
-        text: sql.organizations.SELECT_ALL_ORGANIZATIONS(user)
-      }, function (response) {
-        if (response && response.status && response.status === 200) {
-          return res.status(response.status).json(response.data).end();
-        } else if (response && response.status && response.status === 204) {
-          return res.status(response.status).end();
-        } else {
-          return res.status(500).end();
-        }
-      });
-    } else {
-      return res.status(401).end(`'UserID' must be type of 'INTEGER'`);
-    }
-  }
+  org.getOrganizations(req, res);
 })
 .get('/:id', function (req, res) {
   if (!req.headers['user-id']) {
