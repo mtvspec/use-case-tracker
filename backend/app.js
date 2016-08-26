@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -25,7 +27,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+app.use(function (req, res, next) {
+  isAuthentificated(req, req.headers['user-id'], res);
+  requestLogger(req);
+  console.log(req.User);
+  next();
+});
 app.use('/api', routes);
 app.use('/api/users', users);
 app.use('/api/persons', persons);
@@ -67,5 +74,18 @@ app.use(function(err, req, res, next) {
   });
 });
 
+function isAuthentificated(req, id, res) {
+  if (!id) {
+    return res.status(401).end();
+  }
+  let User = {
+    id: id
+  }
+  req.User = User;
+}
+
+function requestLogger(req) {
+  console.log(req.originalUrl);
+}
 
 module.exports = app;
