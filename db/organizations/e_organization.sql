@@ -195,3 +195,42 @@ VALUES (
 RETURNING
   e_organization_id;
 $$ LANGUAGE sql;
+
+CREATE FUNCTION organizations.restore_organization (
+  IN v_e_organization_id INTEGER,
+  IN v_user_id INTEGER,
+  OUT e_organization_id INTEGER
+)
+AS $$
+WITH upd AS (
+  UPDATE
+    organizations.e_organization
+  SET
+    is_deleted = 'F'
+  WHERE
+    id = v_e_organization_id
+  RETURNING
+    *
+)
+INSERT INTO
+  organizations.e_organization_log (
+    d_operation_type_id,
+    user_id,
+    e_organization_id,
+    bin,
+    short_name,
+    official_name,
+    is_deleted
+  )
+VALUES (
+  4,
+  v_user_id,
+  (SELECT id FROM upd),
+  (SELECT bin FROM upd),
+  (SELECT short_name FROM upd),
+  (SELECT official_name FROM upd),
+  (SELECT is_deleted FROM upd)
+)
+RETURNING
+  e_organization_id;
+$$ LANGUAGE sql;
