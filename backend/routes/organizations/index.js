@@ -66,6 +66,7 @@ router
 
 })
 .post('/', upload.array(), function (req, res) {
+  organization.createOrganization(req.body, req.headers['user-id']);
   if (!req.headers['user-id']) {
     return res.status(401).end();
   } else {
@@ -86,15 +87,6 @@ router
               }
             });
           }
-          db.insertRecord({
-            text: sql.organizations.INSERT_ORGANIZATION(organization, user)
-          }, function (status, data) {
-            if (status && status === 201) {
-              return res.status(status).json(data).end();
-            } else {
-              return res.status(500).end();
-            }
-          });
         } else if (output.data) {
           return res.status(400).json(output.data).end();
         } else {
@@ -107,6 +99,7 @@ router
   }
 })
 .put('/:id', upload.array(), function (req, res) {
+  isAuthentificated(req.headers['user-id']);
   if (!req.headers['user-id']) {
     return res.status(401).end();
   } else if (isID(req.headers['user-id'])) {
@@ -141,6 +134,9 @@ router
   } else {
     return res.status(401).end(`Incorrect 'UserID'`);
   }
+})
+.delete('/:id', function (req, res) {
+  res.status(200).send('fail').end();
 })
 
 function isID(id) {
@@ -233,3 +229,28 @@ function isValidOfficialName (officialName) {
 }
 
 module.exports = router;
+
+function isAuthentificated(id, res) {
+  if (!id) {
+    return res.status(401).end();
+  }
+}
+
+class Organization {
+  constructor() {
+
+  }
+  createOrganization(organization) {
+    if (isValidOrganization(organization)) {
+      db.insertRecord({
+        text: sql.organizations.INSERT_ORGANIZATION(organization, user)
+      }, function (status, data) {
+        if (status && status === 201) {
+          return res.status(status).json(data).end();
+        } else {
+          return res.status(500).end();
+        }
+      });
+    }
+  }
+}
