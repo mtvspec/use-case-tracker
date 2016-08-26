@@ -12,6 +12,19 @@ class Organization {
       return instance;
     }
   }
+  getOrganizations(req, res) {
+    db.selectAllRecords({
+      text: sql.organizations.SELECT_ALL_ORGANIZATIONS(req.User)
+    }, function (response) {
+      if (response && response.status && response.status === 200) {
+        return res.status(response.status).json(response.data).end();
+      } else if (response && response.status && response.status === 204) {
+        return res.status(response.status).end();
+      } else {
+        return res.status(500).end();
+      }
+    });
+  }
   createOrganization(req, res) {
     let organizationValidationResult = isValidOrganization(req.body);
     let result;
