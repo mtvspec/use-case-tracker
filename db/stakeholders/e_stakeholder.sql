@@ -140,3 +140,40 @@ VALUES (
 RETURNING
   e_stakeholder_id;
 $$ LANGUAGE sql;
+
+CREATE FUNCTION stakeholders.restore_stakeholder (
+  IN v_e_stakeholder_id INTEGER,
+  IN v_user INTEGER,
+  OUT e_stakeholder_id INTEGER
+)
+AS $$
+WITH upd AS (
+  UPDATE
+    stakeholders.e_stakeholder
+  SET
+    is_deleted = 'F'
+  WHERE
+    id = v_e_stakeholder_id
+  RETURNING
+    *
+)
+INSERT INTO
+  stakeholders.e_stakeholder_log (
+    d_operation_type_id,
+    user_id,
+    e_stakeholder_id,
+    e_person_id,
+    a_description,
+    is_deleted
+  )
+VALUES (
+  4,
+  v_user,
+  (SELECT id FROM upd),
+  (SELECT e_person_id FROM upd),
+  (SELECT a_description FROM upd),
+  (SELECT is_deleted FROM upd)
+)
+RETURNING
+  e_stakeholder_id;
+$$ LANGUAGE sql;
