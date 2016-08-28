@@ -19,6 +19,31 @@ CREATE TABLE use_cases.e_use_case (
       FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
 );
 
+CREATE TABLE use_cases.e_use_case_log (
+  id SERIAL,
+  d_operation_type_id INTEGER NOT NULL,
+  operation_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  user_id INTEGER NOT NULL,
+  e_component_id INTEGER NOT NULL,
+  e_actor_id INTEGER NOT NULL,
+  a_code CHAR (3),
+  a_name VARCHAR (1000) NOT NULL,
+  a_description VARCHAR (4000),
+  d_use_case_decision_id INTEGER,
+  d_use_case_type_id INTEGER NOT NULL,
+  d_use_case_level_id INTEGER NOT NULL
+    is_deleted CHAR (1) NOT NULL,
+      PRIMARY KEY (id),
+      FOREIGN KEY (d_operation_type_id) REFERENCES system.d_operation_type (id),
+      FOREIGN KEY (user_id) REFERENCES users.e_user (id),
+      FOREIGN KEY (e_component_id) REFERENCES use_cases.e_component (id),
+      FOREIGN KEY (e_actor_id) REFERENCES use_cases.e_actor (id),
+      FOREIGN KEY (d_use_case_level_id) REFERENCES use_cases.d_use_case_level (id),
+      FOREIGN KEY (d_use_case_type_id) REFERENCES use_cases.d_use_case_type (id),
+      FOREIGN KEY (e_use_case_version_id) REFERENCES use_cases.e_use_case_version (id),
+      FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
+);
+
 create view use_cases.v_use_cases
 as
 select
