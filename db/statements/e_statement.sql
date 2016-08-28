@@ -1,6 +1,7 @@
 CREATE TABLE statements.e_statement (
   id SERIAL,
   e_stakeholder_id INTEGER NOT NULL,
+  a_create_date DATE NOT NULL DEFAULT CURRENT_DATE,
   a_name VARCHAR (1000) NOT NULL,
   a_description VARCHAR (4000),
   d_statement_type_id INTEGER NOT NULL,
@@ -16,9 +17,10 @@ CREATE TABLE statements.e_statement (
 CREATE TABLE statements.e_statement_log (
   id SERIAL,
   d_operation_type_id INTEGER NOT NULL,
-  operation_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT LOCALTIMESTAMP,
+  operation_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   user_id INTEGER NOT NULL,
   e_stakeholder_id INTEGER NOT NULL,
+  a_create_date DATE NOT NULL DEFAULT CURRENT_DATE,
   a_name VARCHAR (1000) NOT NULL,
   a_description VARCHAR (4000),
   d_statement_type_id INTEGER NOT NULL,
