@@ -189,7 +189,8 @@ return user_id (updated users id);
 CREATE FUNCTION users.update_user_status (
   IN v_user_id INTEGER,
   IN v_status_id INTEGER,
-  IN v_user INTEGER
+  IN v_user INTEGER,
+  OUT e_user_id INTEGER
 )
 AS $$
 WITH upd AS (
@@ -209,7 +210,9 @@ INSERT INTO
     e_user_id,
     e_person_id,
     u_username,
-    u_password
+    u_password,
+    status_id,
+    is_deleted
   )
 VALUES (
   2,
@@ -222,7 +225,7 @@ VALUES (
   (SELECT is_deleted FROM upd)
 )
 RETURNING
-  (SELECT id FROM upd) "v_user_id";
+  e_user_id;
 $$ LANGUAGE sql;
 /*
 change_user_password (v_user_id, v_password, v_user);
@@ -231,7 +234,8 @@ return user_id (updated users id);
 CREATE FUNCTION users.change_user_password (
   IN v_user_id INTEGER,
   IN v_password VARCHAR (4000),
-  IN v_user INTEGER
+  IN v_user INTEGER,
+  OUT e_user_id INTEGER
 )
 AS $$
 WITH upd AS (
@@ -251,7 +255,9 @@ INSERT INTO
     e_user_id,
     e_person_id,
     u_username,
-    u_password
+    u_password,
+    status_id,
+    is_deleted
   )
 VALUES (
   2,
@@ -264,7 +270,7 @@ VALUES (
   (SELECT is_deleted FROM upd)
 )
 RETURNING
-  (SELECT id FROM upd) "v_user_id";
+  e_user_id;
 $$ LANGUAGE sql;
 /*
 delete_user (v_user_id, v_user);
@@ -272,7 +278,8 @@ return user_id (deleted user id);
 */
 CREATE FUNCTION users.delete_user (
   IN v_user_id INTEGER,
-  IN v_user INTEGER
+  IN v_user INTEGER,
+  OUT e_user_id INTEGER
 )
 AS $$
 WITH upd AS (
@@ -305,7 +312,7 @@ VALUES (
   (SELECT is_deleted FROM upd)
 )
 RETURNING
-  (SELECT id FROM upd) "v_user_id";
+  e_user_id;
 $$ LANGUAGE sql;
 /*
 restore_user (v_user_id, v_user);
@@ -314,7 +321,8 @@ return user_id (restored user id);
 CREATE FUNCTION users.restore_user (
   IN v_user_id INTEGER,
   IN v_password VARCHAR (4000),
-  IN v_user INTEGER
+  IN v_user INTEGER,
+  OUT e_user_id INTEGER
 )
 AS $$
 WITH upd AS (
@@ -330,11 +338,13 @@ WITH upd AS (
 INSERT INTO
   users.e_user_log (
     d_operation_type_id,
-    user,
+    user_id,
     e_user_id,
     e_person_id,
     u_username,
-    u_password
+    u_password,
+    status_id,
+    is_deleted
   )
 VALUES (
   4,
@@ -347,7 +357,7 @@ VALUES (
   (SELECT is_deleted FROM upd)
 )
 RETURNING
-  (SELECT id FROM upd) "v_user_id";
+  e_user_id;
 $$ LANGUAGE sql;
 /*
 select_user (v_user_id, v_user);
@@ -374,7 +384,7 @@ WITH sel AS (
 INSERT INTO
   users.e_user_log (
     d_operation_type_id,
-    user,
+    user_id,
     e_user_id,
     e_person_id,
     u_username,
@@ -384,21 +394,18 @@ INSERT INTO
   )
 VALUES (
   5,
-  v_user_id,
+  v_user,
   (SELECT id FROM sel),
   (SELECT e_person_id FROM sel),
   (SELECT u_username FROM sel),
   'PASSWORD',
   (SELECT status_id FROM sel),
   (SELECT is_deleted FROM sel)
-)
-RETURNING
-  (SELECT
-    id,
-    e_person_id,
-    u_username,
-    status_id,
-    is_deleted
-  FROM
-    sel);
+);
+SELECT
+  *
+FROM
+  users.e_user
+WHERE
+  id = v_user_id;
 $$ LANGUAGE sql;
