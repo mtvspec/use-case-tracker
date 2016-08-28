@@ -144,3 +144,46 @@ VALUES (
 RETURNING
   e_statement_id;
 $$ LANGUAGE sql;
+
+CREATE FUNCTION statements.delete_statement (
+  IN v_e_statement_id INTEGER,
+  IN v_user INTEGER,
+  OUT e_statement_id INTEGER
+)
+AS $$
+WITH upd AS (
+  UPDATE
+    statements.e_statement
+  SET
+    is_deleted = 'T'
+  WHERE
+    id = v_e_statement_id
+  RETURNING
+    *
+)
+INSERT INTO
+  statements.e_statement_log (
+    d_operation_type_id,
+    user_id,
+    e_statement_id,
+    e_stakeholder_id,
+    a_create_date,
+    a_name,
+    a_description,
+    d_statement_type_id,
+    d_statement_state_id
+  )
+VALUES (
+  3,
+  v_user,
+  (SELECT id FROM ins),
+  (SELECT e_stakeholder_id FROM ins),
+  (SELECT a_create_date FROM ins),
+  (SELECT a_name FROM ins),
+  (SELECT a_description FROM ins),
+  (SELECT d_statement_type_id FROM ins),
+  (SELECT d_statement_state_id FROM ins)
+)
+RETURNING
+  e_statement_id;
+$$ LANGUAGE sql;
