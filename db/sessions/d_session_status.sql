@@ -4,3 +4,18 @@ CREATE TABLE sessions.d_session_status (
     PRIMARY KEY (id),
     UNIQUE (status)
 );
+
+INSERT INTO
+  sessions.d_session_status (
+    id,
+    status
+  )
+VALUES
+(
+  'O',
+  'Opened'
+),
+(
+  'C',
+  'Closed'
+);
