@@ -15,8 +15,8 @@ CREATE TABLE users.e_user (
 INSERT INTO
   users.e_user (
     e_person_id,
-    v_username,
-    v_password
+    u_username,
+    u_password
   )
 VALUES (
   1,
