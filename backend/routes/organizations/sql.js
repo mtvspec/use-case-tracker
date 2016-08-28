@@ -52,6 +52,22 @@ const Queries = {
           '${organization.officialName}',
           ${user.id}
         );`;
+    },
+    DELETE_ORGANIZATION(organization, user) {
+      return `
+      SELECT
+        organizations.delete_organization (
+          ${organization.id},
+          ${user.id}
+        );`;
+    },
+    RESTORE_ORGANIZATION(organization, user) {
+      return `
+      SELECT
+        organizations.restore_organization (
+          ${organization.id},
+          ${user.id}
+        );`;
     }
   }
 }

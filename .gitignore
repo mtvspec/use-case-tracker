@@ -1,3 +1,4 @@
-/node_modules
-/backend/node_modules
-/frontend/public/bower_components
+node_modules/
+backend/node_modules/
+frontend/public/bower_components/
+.vscode/

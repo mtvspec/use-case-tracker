@@ -29,8 +29,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function (req, res, next) {
   isAuthentificated(req, req.headers['user-id'], res);
-  requestLogger(req);
-  console.log(req.User);
   next();
 });
 app.use('/api', routes);
@@ -82,10 +80,6 @@ function isAuthentificated(req, id, res) {
     id: id
   }
   req.User = User;
-}
-
-function requestLogger(req) {
-  console.log(req.originalUrl);
 }
 
 module.exports = app;

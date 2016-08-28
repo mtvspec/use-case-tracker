@@ -6,7 +6,6 @@ const pool = new Pool();
 pool.on('error', function (err) {
   if (err) {
     console.error(err);
-    return cb(500);
   }
 });
 
@@ -18,25 +17,59 @@ module.exports = class Database {
       }
   }
   selectAllRecords(config, cb) {
+    if (!config) {
+      throw new Error(`
+        'selectAllRecords':
+        'config' is required`);
+      return;
+    }
+    if (!config.text) {
+      throw new Error(`'
+        selectAllRecords':
+        'config.text' is required`);
+      return;
+    }
+    if (!typeof config.text === 'string') {
+      throw new Error(`'
+        selectAllRecords':
+        incorrect 'config.text':
+        ${config.text}`);
+      return;
+    }
     pool.connect(function (err, client, release) {
       if (err) {
         console.error(err);
-        return cb(500);
+        return cb({
+          status: 500,
+          data: null
+        });
       } else {
         client.query(config.text, function (err, result) {
           if (err) {
             console.error(err);
-            return cb(500);
+            return cb({
+              status: 500,
+              data: null
+            });
           } else {
             release();
             if (result.rowCount > 0) {
-              return cb(200, result.rows)
+              return cb({
+                status: 200,
+                data: result.rows
+              })
             } else {
               if (result.rowCount === 0) {
-                return cb(204);
+                return cb({
+                  status: 204,
+                  data: null
+                });
               } else {
                 console.error(result);
-                return cb(500);
+                return cb({
+                  status: 500,
+                  data: null
+                });
               }
             }
           }
@@ -45,47 +78,122 @@ module.exports = class Database {
     });
   }
   selectRecordById(config, cb) {
+    if (!config) {
+      throw new Error(`
+        'selectRecordById':
+        'config' is required`);
+      return;
+    }
+    if (!config.text) {
+      throw new Error(`
+        'selectRecordById':
+        'config.text' is required`);
+      return;
+    }
+    if (!typeof config.text === 'string') {
+      throw new Error(`
+        'selectRecordById':
+        incorrect 'config.text':
+        ${config.text}`);
+      return;
+    }
     pool.connect(function (err, client, release) {
       if (err) {
         console.error(err);
-        return cb(500);
+        return cb({
+          status: 500,
+          data: null
+        });
       } else {
         client.query(config.text, function (err, result) {
           if (err) {
             console.error(err);
-            return cb(500);
+            return cb({
+              status: 500,
+              data: null
+            });
           } else {
             release();
             if (result.rowCount === 1) {
-              return cb(200, result.rows[0]);
+              return cb({
+                status: 200,
+                data: result.rows[0]
+              });
             } else if (result.rowCount === 0) {
-              return cb(204);
+              return cb({
+                status: 204,
+                data: null
+              });
             } else {
               console.error(result);
-              return cb(500);
+              return cb({
+                status: 500,
+                data: null
+              });
             }
           }
-        })
+        });
       }
     });
   }
   insertRecord(config, cb) {
+    if (!config) {
+      throw new Error(`
+        'insertRecord':
+        'config' is required`);
+      return;
+    }
+    if (!config.text) {
+      throw new Error(`
+        'insertRecord':
+        'config.text' is required`);
+      return;
+    }
+    if (!typeof config.text === 'string') {
+      throw new Error(`
+        'insertRecord':
+        incorrect 'config.text':
+        ${config.text}`);
+      return;
+    }
     pool.connect(function (err, client, release) {
       if (err) {
-        console.error(err);
-        return cb(500);
+        console.error(`
+          'insertRecord':
+          ${err}`);
+        return cb({
+          status: 500,
+          data: null
+        });
       } else {
         client.query(config.text, function (err, result) {
           if (err) {
-            console.error(err);
-            return cb(500);
+            if (err.code === '23505') {
+              return cb({
+                status: 400,
+                data: err.detail
+              });
+            }
+            console.error(`
+              'insertRecord':
+              ${err}`);
+            return cb({
+              status: 500,
+              data: null
+            });
           } else {
             release();
             if (result.rowCount === 1) {
-              return cb(201, result.rows[0]);
+              return cb({
+                status: 201,
+                data: result.rows[0]
+              });
             } else {
               console.error(result);
-              return cb(500);
+              return cb({
+                status: 500,
+                data: null
+              });
             }
           }
         })
@@ -93,25 +201,59 @@ module.exports = class Database {
     });
   }
   updateRecord(config, cb) {
+    if (!config) {
+      throw new Error(`
+        'updateRecord':
+        'config' is required`);
+      return;
+    }
+    if (!config.text) {
+      throw new Error(`
+        'updateRecord':
+        'config.text' is required`);
+      return;
+    }
+    if (!typeof config.text === 'string') {
+      throw new Error(`
+        'updateRecord':
+        incorrect 'config.text':
+        ${config.text}`);
+      return;
+    }
     pool.connect(function (err, client, release) {
       if (err) {
         console.error(err);
-        return cb(500);
+        return cb({
+          status: 500,
+          data: null
+        });
       } else {
         client.query(config.text, function (err, result) {
           if (err) {
             if (err.code === '23505') {
-              return cb(400, err.detail);
+              return cb({
+                status: 400,
+                data: err.detail
+              });
             }
             console.error(err);
-            return cb(err.code, err.detail);
+            return cb({
+              status: 500,
+              data: err.detail
+            });
           } else {
             release();
             if (result.rowCount === 1) {
-              return cb(200, result.rows[0]);
+              return cb({
+                status: 200,
+                data: result.rows[0]
+              });
             } else {
               console.error(result);
-              return cb(500);
+              return cb({
+                status: 500,
+                data: null
+              });
             }
           }
         });
