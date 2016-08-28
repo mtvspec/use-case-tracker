@@ -6,7 +6,7 @@ CREATE TABLE users.e_user (
   status_id INTEGER NOT NULL DEFAULT 1,
     is_deleted CHAR (1) NOT NULL DEFAULT 'F',
       PRIMARY KEY (id),
-      UNIQUE (v_username),
+      UNIQUE (u_username),
       FOREIGN KEY (e_person_id) REFERENCES persons.e_person (id),
       FOREIGN KEY (status_id) REFERENCES users.d_user_status (id),
       FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
