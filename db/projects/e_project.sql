@@ -14,7 +14,7 @@ CREATE TABLE projects.e_project (
   state_id INTEGER NOT NULL,
     is_deleted CHAR (1) NOT NULL DEFAULT 'F',
       PRIMARY KEY (id),
-      UNIQUE (name),
+      UNIQUE (short_name),
       UNIQUE (description),
       FOREIGN KEY (cr_user) REFERENCES users.e_user (id),
       FOREIGN KEY (customer_id) REFERENCES customers.e_customer (id),
@@ -28,7 +28,7 @@ CREATE TABLE projects.e_project_log (
   operation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT LOCALTIMESTAMP,
   e_project_id INTEGER NOT NULL,
   customer_id INTEGER,
-  name VARCHAR (1000) NOT NULL,
+  short_name VARCHAR (1000) NOT NULL,
   official_name VARCHAR (4000),
   description VARCHAR (4000),
   plan_start_date DATE,
@@ -53,7 +53,7 @@ CREATE TABLE projects.e_project_log (
 
 CREATE FUNCTION projects.create_project (
   IN v_customer_id INTEGER,
-  IN v_name VARCHAR (1000),
+  IN v_short_name VARCHAR (1000),
   IN v_official_name VARCHAR (4000),
   IN v_description VARCHAR (4000),
   IN v_plan_start_date DATE,
@@ -71,7 +71,7 @@ WITH ins AS (
   INSERT INTO
     projects.e_project (
       customer_id,
-      name,
+      short_name,
       official_name,
       description,
       plan_start_date,
@@ -81,7 +81,7 @@ WITH ins AS (
     )
   VALUES (
     v_customer_id,
-    v_name,
+    v_short_name,
     v_official_name,
     v_description,
     v_plan_start_date,
@@ -98,7 +98,7 @@ INSERT INTO
     user_id,
     e_project_id,
     customer_id,
-    name,
+    short_name,
     official_name,
     description,
     plan_start_date,
@@ -117,7 +117,7 @@ VALUES
     v_user_id,
     (SELECT id FROM ins),
     (SELECT customer_id FROM ins),
-    (SELECT name FROM ins),
+    (SELECT short_name FROM ins),
     (SELECT official_name FROM ins),
     (SELECT description FROM ins),
     (SELECT plan_start_date FROM ins),
