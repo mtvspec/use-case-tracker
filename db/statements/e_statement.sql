@@ -230,3 +230,47 @@ VALUES (
 RETURNING
   e_statement_id;
 $$ LANGUAGE sql;
+
+CREATE TABLE statements.select_statement (
+  IN v_e_statement_id INTEGER,
+  IN v_user INTEGER
+)
+RETURNS statements.e_statement
+AS $$
+WITH sel AS (
+  SELECT
+    *
+  FROM
+    statements.e_statement
+  WHERE
+    id = v_e_statement_id
+)
+INSERT INTO
+  statements.e_statement_log (
+    d_operation_type_id,
+    user_id,
+    e_statement_id,
+    e_stakeholder_id,
+    a_create_date,
+    a_name,
+    a_description,
+    d_statement_type_id,
+    d_statement_state_id
+  )
+VALUES (
+  5,
+  v_user,
+  (SELECT id FROM sel),
+  (SELECT e_stakeholder_id FROM sel),
+  (SELECT a_create_date FROM sel),
+  (SELECT a_name FROM sel),
+  (SELECT a_description FROM sel),
+  (SELECT d_statement_type_id FROM sel),
+  (SELECT d_statement_state_id FROM sel)
+)
+RETURNING
+  (SELECT
+    *
+  FROM
+    sel);
+$$ LANGUAGE sql;
