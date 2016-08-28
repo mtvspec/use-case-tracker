@@ -1,1 +1,1 @@
-create schema organizations;
+CREATE SCHEMA organizations;
