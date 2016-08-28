@@ -1,21 +1,22 @@
-create table use_cases.e_use_case (
-  id serial,
-  e_component_id integer not null,
-  e_actor_id integer not null,
-  code char (3),
-  name varchar (1000) not null,
-  description varchar (4000),
-  d_use_case_decision_id integer,
-  d_use_case_level_id integer not null,
-  d_use_case_type_id integer not null,
-  e_use_case_version_id integer not null,
-    primary key (id),
-    foreign key (e_component_id) references use_cases.e_component (id),
-    foreign key (e_actor_id) references use_cases.e_actor (id),
-    foreign key (d_use_case_level_id) references use_cases.d_use_case_level (id),
-    foreign key (d_use_case_type_id) references use_cases.d_use_case_type (id),
-    foreign key (e_use_case_version_id) references use_cases.e_use_case_version (id),
-    unique (e_component_id, e_actor_id, code)
+CREATE TABLE use_cases.e_use_case (
+  id SERIAL,
+  e_component_id INTEGER NOT NULL,
+  e_actor_id INTEGER NOT NULL,
+  a_code CHAR (3),
+  a_name VARCHAR (1000) NOT NULL,
+  a_description VARCHAR (4000),
+  d_use_case_decision_id INTEGER,
+  d_use_case_level_id INTEGER NOT NULL,
+  d_use_case_type_id INTEGER NOT NULL,
+  e_use_case_version_id INTEGER NOT NULL,
+    is_deleted CHAR (1) NOT NULL DEFAULT 'F',
+      PRIMARY KEY (id),
+      FOREIGN KEY (e_component_id) REFERENCES use_cases.e_component (id),
+      FOREIGN KEY (e_actor_id) REFERENCES use_cases.e_actor (id),
+      FOREIGN KEY (d_use_case_level_id) REFERENCES use_cases.d_use_case_level (id),
+      FOREIGN KEY (d_use_case_type_id) REFERENCES use_cases.d_use_case_type (id),
+      FOREIGN KEY (e_use_case_version_id) REFERENCES use_cases.e_use_case_version (id),
+      FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
 );
 
 create view use_cases.v_use_cases
