@@ -1,1 +1,1 @@
-create schema users;
+CREATE SCHEMA users;
