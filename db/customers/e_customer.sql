@@ -72,3 +72,47 @@ VALUES (
 RETURNING
   e_customer_id;
 $$ LANGUAGE sql;
+
+CREATE FUNCTION customers.update_customer (
+  IN v_e_customer_id INTEGER,
+  IN v_e_organization_id INTEGER,
+  IN v_a_name VARCHAR (1000),
+  IN v_a_description VARCHAR (4000),
+  IN v_user_id INTEGER,
+  OUT e_customer_id INTEGER
+)
+AS $$
+WITH upd AS (
+  UPDATE
+    customers.e_customer
+  SET
+    e_organization_id = v_e_organization_id,
+    a_name = v_a_name,
+    a_description = v_a_descrition
+  WHERE
+    id = v_e_customer_id
+  RETURNING
+    *
+)
+INSERT INTO
+  customers.e_customer_log (
+    d_operation_type_id,
+    user_id,
+    e_customer_id,
+    e_organization_id,
+    a_name,
+    a_description,
+    is_deleted
+  )
+VALUES (
+  2,
+  v_user_id,
+  (SELECT id FROM upd),
+  (SELECT e_organization_id FROM upd),
+  (SELECT a_name FROM upd),
+  (SELECT a_description FROM upd),
+  (SELECT is_deleted FROM upd)
+)
+RETURNING
+  e_customer_id;
+$$ LANGUAGE sql;
