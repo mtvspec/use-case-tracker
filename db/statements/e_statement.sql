@@ -39,7 +39,7 @@ CREATE TABLE statements.e_statement_log (
 
 CREATE FUNCTION statements.create_statement (
   IN v_e_stakeholder_id INTEGER,
-  IN v_create_date DATE,
+  IN v_a_create_date DATE,
   IN v_a_name VARCHAR (1000),
   IN v_a_description VARCHAR (4000),
   IN v_d_statement_type_id INTEGER,
@@ -58,7 +58,7 @@ WITH ins AS (
     )
   VALUES (
     v_e_stakeholder_id,
-    v_create_date,
+    v_a_create_date,
     v_a_name,
     v_a_description,
     v_d_statement_type_id
