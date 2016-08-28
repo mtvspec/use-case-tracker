@@ -177,3 +177,40 @@ VALUES (
 RETURNING
   e_stakeholder_id;
 $$ LANGUAGE sql;
+
+CREATE FUNCTION stakeholders.select_stakeholder (
+  IN v_e_stakeholder_id INTEGER,
+  IN v_user INTEGER
+)
+RETURNS stakeholders.e_stakeholder
+AS $$
+WITH sel AS (
+  SELECT
+    *
+  FROM
+    stakeholders.e_stakeholder
+  WHERE
+    id = v_e_stakeholder_id
+)
+INSERT INTO
+  stakeholders.e_stakeholder_log (
+    d_operation_type_id,
+    user_id,
+    e_stakeholder_id,
+    e_person_id,
+    a_description,
+    is_deleted
+  )
+VALUES (
+  5,
+  v_user,
+  (SELECT id FROM sel),
+  (SELECT e_person_id FROM sel),
+  (SELECT a_description FROM sel),
+  (SELECT is_deleted FROM sel)
+);
+SELECT
+  *
+FROM
+  sel;
+$$ LANGUAGE sql;
