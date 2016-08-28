@@ -22,5 +22,20 @@ VALUES (
   v_e_user_id
 )
 RETURNING
-  e_session_id;
+  id "e_session_id";
+$$ LANGUAGE sql;
+
+CREATE FUNCTION sessions.close_session (
+  IN v_session_id INTEGER,
+  OUT e_session_id INTEGER
+)
+AS $$
+UPDATE
+  sessions.e_session
+SET
+  close_timestamp = CURRENT_TIMESTAMP
+WHERE
+  id = v_session_id
+RETURNING
+  id "e_session_id";
 $$ LANGUAGE sql;
