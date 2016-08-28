@@ -1,1 +1,1 @@
-create schema stakeholders;
+CREATE SCHEMA stakeholders;
