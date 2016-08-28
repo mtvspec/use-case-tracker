@@ -26,3 +26,49 @@ CREATE TABLE customers.e_customer_log (
       FOREIGN KEY (e_organization_id) REFERENCES organizations.e_organization (id),
       FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
 );
+
+CREATE TABLE customers.create_customer (
+  IN v_e_organization_id INTEGER,
+  IN v_name VARCHAR (1000),
+  IN v_description VARCHAR (4000),
+  IN v_user_id INTEGER,
+  OUT e_customer_id INTEGER
+)
+AS $$
+WITH ins AS (
+  INSERT INTO
+    customers.e_customer (
+      e_organization_id,
+      c_name,
+      c_description
+    )
+  VALUES (
+    v_e_organization_id,
+    v_name,
+    v_description
+  )
+  RETURNING
+    *
+)
+INSERT INTO
+  customers.e_customer_log (
+    d_operation_type_id,
+    user_id,
+    e_customer_id,
+    e_organization_id,
+    a_name,
+    a_description,
+    is_deleted
+  )
+VALUES (
+  1,
+  v_user_id,
+  (SELECT id FROM ins),
+  (SELECT e_organization_id FROM ins),
+  (SELECT a_name FROM ins),
+  (SELECT a_description FROM ins),
+  (SELECT is_deleted FROM ins)
+)
+RETURNING
+  e_customer_id;
+$$ LANGUAGE sql;
