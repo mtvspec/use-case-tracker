@@ -1,12 +1,12 @@
 CREATE TABLE customers.e_customer (
   id SERIAL,
   e_organization_id INTEGER NOT NULL,
-  name VARCHAR (1000) NOT NULL,
-  description VARCHAR (4000),
-  is_deleted CHAR (1) NOT NULL DEFAULT 'F',
-    PRIMARY KEY (id),
-    FOREIGN KEY (e_organization_id) REFERENCES organizations.e_organization (id),
-    FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
+  a_name VARCHAR (1000) NOT NULL,
+  a_description VARCHAR (4000),
+    is_deleted CHAR (1) NOT NULL DEFAULT 'F',
+      PRIMARY KEY (id),
+      FOREIGN KEY (e_organization_id) REFERENCES organizations.e_organization (id),
+      FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
 );
 
 CREATE TABLE customers.e_customer_log (
