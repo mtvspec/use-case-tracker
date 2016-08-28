@@ -10,9 +10,9 @@ const Queries = {
         middle_name "middleName",
         to_char(dob, 'YYYY-MM-DD') "dob",
         gender_id "gender",
-        is_deleted
+        is_deleted "isDeleted"
       FROM
-        persons.select_persons()
+        persons.e_person
       ORDER BY
         id ASC;`;
     },

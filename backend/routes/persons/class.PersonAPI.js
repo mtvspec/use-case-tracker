@@ -1,21 +1,22 @@
 'use strict';
 
 const ID = require ('./../../common/classes/id');
-const Organization = require('./class.Organization.js');
+const Person = require('./class.Person.js');
 const Database = require('./../../db.js');
 const db = new Database();
 const sql = require('./sql.js');
 
-class OrganizationAPI {
+class PersonAPI {
   constructor() {
     let instance = this;
     if (instance) {
       return instance;
     }
   }
-  getOrganizations(req, res) {
+  getPersons(req, res) {
+    console.log('persons');
     db.selectAllRecords({
-      text: sql.organizations.SELECT_ALL_ORGANIZATIONS(req.User)
+      text: sql.persons.SELECT_ALL_PERSONS()
     }, function (response) {
       if (response && response.status && response.status === 200) {
         return res.status(response.status).json(response.data).end();
@@ -26,12 +27,12 @@ class OrganizationAPI {
       }
     });
   }
-  getOrganizationByID(req, res) {
-    let organization = new ID(req.params.id);
-    if (organization.id) {
+  getPersonByID(req, res) {
+    let person = new ID(req.params.id);
+    if (person.id) {
       db.selectRecordById({
-        text: sql.organizations.SELECT_ORGANIZATION_BY_ID(
-          organization,
+        text: sql.persons.SELECT_PERSON_BY_ID(
+          person,
           req.User
         )
       }, function (response) {
@@ -45,13 +46,13 @@ class OrganizationAPI {
       return res.status(400).send(`'id' is required`);
     }
   }
-  createOrganization(req, res) {
-    let org = new Organization(req.body);
-    if (org.shortName) {
-      if (org.bin) {
-        OrganizationAPI.getOrganizationByBIN(org.bin, res, function (response) {
+  createPerson(req, res) {
+    let person = new Person(req.body);
+    if (person.firstName) {
+      if (person.iin) {
+        PersonAPI.getPersonByIIN(person.iin, res, function (response) {
           if (response && response.status === 200) {
-            return res.status(400).json(`duplicate 'bin': ${org.bin}`).end();
+            return res.status(400).json(`duplicate 'iin': ${person.iin}`).end();
           }
         });
       }
@@ -59,40 +60,39 @@ class OrganizationAPI {
         return;
       }
       db.insertRecord({
-        text: sql.organizations.INSERT_ORGANIZATION(
-          org,
-          req.User
-        )
+        text: sql.persons.INSERT_PERSON(
+          person,
+          req.User)
       }, function (response) {
         if (response.status === 201) {
           return res.status(response.status).json({
-            id: response.data.create_organization
+            id: response.data.create_person
           }).end();
         } else {
           return res.status(response.status).json(response.data).end();
         }
       });
     } else {
-      return res.status(400).json(org).end();
+      res.status(400).json(person).end();
     }
   }
-  updateOrganization(req, res) {
+  updatePerson(req, res) {
     let id = new ID(req.params.id);
-    let organization = new Organization(req.body);
-    if (id.id && organization) {
-      organization.id = id.id;
-      OrganizationAPI.getOrganizationByBIN(organization.bin, res, function (response) {
+    let person = new Person(req.body);
+    if (id.id && person) {
+      person.id = id.id;
+      PersonsAPI.getPersonByIIN(person.iin, res, function (response) {
         if (response && (response.status === 200 || response.status === 204)) {
-          if (response.id != req.body.id) {
+          if (response.id != person.id) {
             db.updateRecord({
-              text: sql.organizations.UPDATE_ORGANIZATION(
-                organization,
+              text: sql.persons.UPDATE_PERSON (
+                person,
                 req.User
               )
             }, function (response) {
               if (response && response.status === 200) {
                 return res.status(response.status).json({
-                  id: response.data.update_organization
+                  id: response.data.update_person
                 }).end();
               } else if (response.status && response.data) {
                 return res.status(response.status).json(response.data).end();
@@ -101,26 +101,26 @@ class OrganizationAPI {
               }
             });
           } else {
-            return res.status(400).json(`duplicate 'bin': ${organization.bin}`);
+            return res.status(400).json(`duplicate 'iin': ${person.iin}`);
           }
         }
       });
     } else {
-      return res.status(400).json(organization).end();
+      return res.status(400).json(person).end();
     }
   }
-  deleteOrganization(req, res) {
-    let organization = new ID(req.params.id);
-    if (organization.id) {
+  deletePerson (req, res) {
+    let person = new ID(req.params.id);
+    if (person.id) {
       db.updateRecord({
-        text: sql.organizations.DELETE_ORGANIZATION(
-          organization,
+        text: sql.persons.DELETE_PERSON (
+          person,
           req.User
         )
       }, function (response) {
         if (response && response.status === 200) {
           return res.status(response.status).json({
-            id: response.data.delete_organization
+            id: response.data.delete_person
           }).end();
         } else {
           return res.status(response.status).json(response.data).end();
@@ -128,18 +128,18 @@ class OrganizationAPI {
       });
     }
   }
-  restoreOrganization(req, res) {
-    let organization = new ID(req.params.id);
-    if (organization.id) {
+  restorePerson (req, res) {
+    let person = new ID(req.params.id);
+    if (person.id) {
       db.updateRecord({
-        text: sql.organizations.RESTORE_ORGANIZATION(
-          organization,
+        text: sql.persons.RESTORE_PERSON (
+          person,
           req.User
         )
       }, function (response) {
         if (response && response.status === 200) {
           return res.status(response.status).json({
-            id: response.data.restore_organization
+            id: response.data.restore_person
           }).end();
         } else {
           return res.status(response.status).json(response.data).end();
@@ -149,9 +149,9 @@ class OrganizationAPI {
   }
 }
 
-OrganizationAPI.getOrganizationByBIN = function (bin, res, cb) {
+PersonAPI.getPersonByIIN = function (iin, res, cb) {
   db.selectRecordById({
-    text: sql.organizations.SELECT_ORGANIZATION_BY_BIN(bin)
+    text: sql.persons.SELECT_PERSON_BY_IIN(iin)
   }, function (response) {
     if (response && response.status && response.status === 200) {
       return cb({
@@ -166,4 +166,4 @@ OrganizationAPI.getOrganizationByBIN = function (bin, res, cb) {
   });
 }
 
-module.exports = OrganizationAPI;
+module.exports = PersonAPI;

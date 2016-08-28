@@ -58,7 +58,7 @@ CREATE FUNCTION persons.create_person (
   IN v_dob DATE,
   IN v_gender_id CHAR (1),
   IN v_user_id INTEGER,
-  OUT v_person_id INTEGER
+  OUT e_person_id INTEGER
 )
 AS $$
 WITH ins AS (
@@ -108,7 +108,7 @@ VALUES (
   (SELECT is_deleted FROM ins)
 )
 RETURNING
-  e_person_id "v_person_id";
+  e_person_id;
 $$ LANGUAGE sql;
 
 SELECT
