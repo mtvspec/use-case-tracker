@@ -357,7 +357,7 @@ CREATE FUNCTION select_user (
   IN v_user_id INTEGER,
   IN v_user INTEGER
 )
-RETURNS user
+RETURNS users.e_user
 AS $$
 WITH sel AS (
   SELECT
