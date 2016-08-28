@@ -194,3 +194,46 @@ VALUES (
 RETURNING
   e_customer_id;
 $$ LANGUAGE sql;
+
+CREATE FUNCTION customers.select_customer (
+  IN v_e_customer_id INTEGER,
+  IN v_user_id INTEGER
+)
+RETURNS customers.e_customer
+AS $$
+WITH sel AS (
+  SELECT
+    *
+  FROM
+    customers.e_customer
+  WHERE
+    id = v_e_customer_id
+  RETURNING
+    *
+)
+INSERT INTO
+  customers.e_customer_log (
+    d_operation_type_id,
+    user_id,
+    e_customer_id,
+    e_organization_id,
+    a_name,
+    a_description,
+    is_deleted
+  )
+VALUES (
+  5,
+  v_user_id,
+  (SELECT id FROM sel),
+  (SELECT e_organization_id FROM sel),
+  (SELECT a_name FROM sel),
+  (SELECT a_description FROM sel),
+  (SELECT is_deleted FROM sel)
+);
+SELECT
+  *
+FROM
+  customers.e_customer
+WHERE
+  id = v_e_customer_id;
+$$ LANGUAGE sql;
