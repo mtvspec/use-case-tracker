@@ -140,6 +140,7 @@ Customer
 --------------------------------------------------------------------------------
 A stakeholder who is paying for the development of the system or who is
 expected to purchase the system once it is complete.
+--------------------------------------------------------------------------------
 Requirement (RQ)
 --------------------------------------------------------------------------------
 What the software must do to satisfy the stakeholders.

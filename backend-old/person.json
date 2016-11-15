@@ -1,3 +1,0 @@
-{
-  "all": "select id, last_name as 'lastName', first_name as 'firstName', middle_name as 'middleName', dob, gender_id as 'gender' from persons.e_person order by id asc;"
-}
