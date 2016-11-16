@@ -6,11 +6,16 @@ CREATE TABLE persons.e_person (
   middle_name VARCHAR (500),
   dob DATE,
   gender_id CHAR(1) NOT NULL,
-    is_deleted CHAR(1) NOT NULL DEFAULT 'F',
-      PRIMARY KEY (id),
-      UNIQUE (iin),
-      FOREIGN KEY (gender_id) REFERENCES persons.d_gender (id),
-      FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+      PRIMARY KEY (
+        id
+      ),
+      UNIQUE (
+        iin
+      ),
+      FOREIGN KEY (
+        gender_id
+      ) REFERENCES persons.d_gender (id)
 );
 
 INSERT INTO
@@ -34,7 +39,7 @@ VALUES (
 CREATE TABLE persons.e_person_log (
   id SERIAL,
   d_operation_type_id INTEGER NOT NULL,
-  operation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT LOCALTIMESTAMP,
+  operation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   user_id INTEGER NOT NULL,
   e_person_id INTEGER NOT NULL,
   iin CHAR (12),
@@ -43,7 +48,7 @@ CREATE TABLE persons.e_person_log (
   middle_name VARCHAR (500),
   dob DATE,
   gender_id CHAR(1),
-    is_deleted CHAR(1) NOT NULL,
+    is_deleted BOOLEAN NOT NULL,
       PRIMARY KEY (id),
       FOREIGN KEY (d_operation_type_id) REFERENCES system.d_operation_type (id),
       FOREIGN KEY (user_id) REFERENCES users.e_user (id),
@@ -113,17 +118,17 @@ $$ LANGUAGE sql;
 
 SELECT
   create_person (
-    '871215301501',
-    'Дарибаев',
-    'Арай',
-    'Мэлсович',
-    '1972-08-25',
+    '871215301496',
+    'Маусумбаев',
+    'Тимур',
+    'Владимирович',
+    '1987-12-15',
     'M',
-    1
+    1 -- user_id
   );
 
 CREATE FUNCTION persons.update_person (
-  IN v_id INTEGER,
+  IN v_e_person_id INTEGER,
   IN v_iin CHAR (12),
   IN v_last_name VARCHAR (400),
   IN v_first_name VARCHAR (300),
@@ -145,7 +150,7 @@ WITH upd AS (
     dob = v_dob,
     gender_id = v_gender_id
   WHERE
-    id = v_id
+    id = v_e_person_id
   RETURNING
     *
 )
@@ -172,7 +177,7 @@ VALUES (
   (SELECT middle_name FROM upd),
   (SELECT dob FROM upd),
   (SELECT gender_id FROM upd),
-  (SELECT is_deleted FROM persons.e_person WHERE id = v_id)
+  (SELECT is_deleted FROM upd) -- TODO: test with func
 )
 RETURNING
   (SELECT id FROM upd) "e_person_id";
@@ -188,7 +193,7 @@ WITH upd AS (
   UPDATE
     persons.e_person
   SET
-    is_deleted = 'T'
+    is_deleted = TRUE
   WHERE
     id = v_e_person_id
   RETURNING
@@ -233,7 +238,7 @@ WITH upd AS (
   UPDATE
     persons.e_person
   SET
-    is_deleted = 'F'
+    is_deleted = FALSE
   WHERE
     id = v_e_person_id
   RETURNING
