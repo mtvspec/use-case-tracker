@@ -13,7 +13,7 @@ CREATE TABLE persons.e_person (
       ) REFERENCES persons.d_persons_ibd (id)
 );
 
-CREATE TABLE persons.d_persons_gbd (
+CREATE TABLE persons.d_persons_gdb (
   id SERIAL,
   iin CHAR (12) NOT NULL,
   last_name VARCHAR (400) NOT NULL,
