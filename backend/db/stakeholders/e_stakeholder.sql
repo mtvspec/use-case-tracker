@@ -2,10 +2,13 @@ CREATE TABLE stakeholders.e_stakeholder (
   id SERIAL,
   e_person_id INTEGER NOT NULL,
   a_description VARCHAR (4000),
-    is_deleted CHAR (1) NOT NULL DEFAULT 'F',
-      PRIMARY KEY (id),
-      FOREIGN KEY (e_person_id) REFERENCES persons.e_person (id),
-      FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+      PRIMARY KEY (
+        id
+      ),
+      FOREIGN KEY (
+        e_person_id
+      ) REFERENCES persons.e_person (id)
 );
 
 CREATE TABLE stakeholders.e_stakeholder_log (
