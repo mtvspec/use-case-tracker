@@ -1,7 +1,8 @@
 CREATE TABLE projects.e_project (
   id SERIAL,
   customer_id INTEGER,
-  short_name VARCHAR (1000) NOT NULL,
+  short_name VARCHAR (3),
+  work_name VARCHAR (1000) NOT NULL,
   official_name VARCHAR (4000),
   description VARCHAR (4000),
   plan_start_date DATE,
@@ -12,14 +13,28 @@ CREATE TABLE projects.e_project (
   fact_budget NUMERIC,
   project_manager_id INTEGER,
   state_id INTEGER NOT NULL,
-    is_deleted CHAR (1) NOT NULL DEFAULT 'F',
-      PRIMARY KEY (id),
-      UNIQUE (short_name),
-      UNIQUE (description),
-      FOREIGN KEY (cr_user) REFERENCES users.e_user (id),
-      FOREIGN KEY (customer_id) REFERENCES customers.e_customer (id),
-      FOREIGN KEY (project_manager_id) REFERENCES persons.e_person (id),
-      FOREIGN KEY (state_id) REFERENCES projects.d_state (id)
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+      PRIMARY KEY (
+        id
+      ),
+      UNIQUE (
+        short_name
+      ),
+      UNIQUE (
+        work_name
+      ),
+      UNIQUE (
+        description
+      ),
+      FOREIGN KEY (
+        customer_id
+      ) REFERENCES customers.e_customer (id),
+      FOREIGN KEY (
+        project_manager_id
+      ) REFERENCES persons.e_person (id),
+      FOREIGN KEY (
+        state_id
+      ) REFERENCES projects.d_project_state (id)
 );
 
 CREATE TABLE projects.e_project_log (
