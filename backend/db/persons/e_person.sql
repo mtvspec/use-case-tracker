@@ -11,7 +11,7 @@ CREATE TABLE persons.e_person (
       FOREIGN KEY (
         e_person_id
       ) REFERENCES persons.d_persons_ibd (id)
-)
+);
 
 CREATE TABLE persons.d_persons_gbd (
   id SERIAL,
@@ -21,6 +21,26 @@ CREATE TABLE persons.d_persons_gbd (
   middle_name VARCHAR (500),
   dob DATE,
   gender_id CHAR(1) NOT NULL,
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+      PRIMARY KEY (
+        id
+      ),
+      UNIQUE (
+        iin
+      ),
+      FOREIGN KEY (
+        gender_id
+      ) REFERENCES persons.d_gender (id)
+);
+
+CREATE TABLE persons.d_persons_ibd (
+  id SERIAL,
+  iin CHAR (12),
+  last_name VARCHAR (400),
+  first_name VARCHAR (300) NOT NULL,
+  middle_name VARCHAR (500),
+  dob (DATE),
+  gender_id CHAR (1) NOT NULL,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
         id
