@@ -1,29 +1,39 @@
 CREATE TABLE organizations.e_organization (
   id SERIAL,
-  bin CHAR (12),
+  bin CHAR (12), -- TODO: make NOT NULL or drop UNIQUE constraint
   short_name VARCHAR (1000) NOT NULL,
   official_name VARCHAR (4000),
-  is_deleted CHAR (1) NOT NULL DEFAULT 'F',
-    PRIMARY KEY (id),
-    UNIQUE (bin),
-    FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+      PRIMARY KEY (
+        id
+      ),
+      UNIQUE (
+        bin
+      )
 );
 
 CREATE TABLE organizations.e_organization_log (
   id SERIAL,
   d_operation_type_id INTEGER NOT NULL,
-  operation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT LOCALTIMESTAMP,
+  operation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   user_id INTEGER NOT NULL,
   e_organization_id INTEGER NOT NULL,
   bin CHAR (12) NOT NULL,
   short_name VARCHAR (1000) NOT NULL,
   official_name VARCHAR (4000),
-  is_deleted CHAR (1) NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (d_operation_type_id) REFERENCES system.d_operation_type (id),
-    FOREIGN KEY (user_id) REFERENCES users.e_user (id),
-    FOREIGN KEY (e_organization_id) REFERENCES organizations.e_organization (id),
-    FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
+    is_deleted BOOLEAN NOT NULL,
+      PRIMARY KEY (
+        id
+      ),
+      FOREIGN KEY (
+        d_operation_type_id
+      ) REFERENCES system.d_operation_type (id),
+      FOREIGN KEY (
+        user_id
+      ) REFERENCES users.e_user (id),
+      FOREIGN KEY (
+        e_organization_id
+      ) REFERENCES organizations.e_organization (id)
 );
 
 CREATE FUNCTION organizations.create_organization (
@@ -167,7 +177,7 @@ WITH upd AS (
   UPDATE
     organizations.e_organization
   SET
-    is_deleted = 'T'
+    is_deleted = TRUE
   WHERE
     id = v_e_organization_id
   RETURNING
@@ -206,7 +216,7 @@ WITH upd AS (
   UPDATE
     organizations.e_organization
   SET
-    is_deleted = 'F'
+    is_deleted = FALSE
   WHERE
     id = v_e_organization_id
   RETURNING
