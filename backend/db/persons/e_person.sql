@@ -13,9 +13,9 @@ CREATE TABLE persons.e_person (
       ) REFERENCES persons.d_persons_ibd (id)
 )
 
-CREATE TABLE persons.e_person (
+CREATE TABLE persons.d_persons_gbd (
   id SERIAL,
-  iin CHAR (12),
+  iin CHAR (12) NOT NULL,
   last_name VARCHAR (400) NOT NULL,
   first_name VARCHAR (300) NOT NULL,
   middle_name VARCHAR (500),
