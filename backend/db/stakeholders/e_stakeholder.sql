@@ -14,16 +14,23 @@ CREATE TABLE stakeholders.e_stakeholder (
 CREATE TABLE stakeholders.e_stakeholder_log (
   id SERIAL,
   d_operation_type_id INTEGER NOT NULL,
-  operation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT LOCALTIMESTAMP,
+  operation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   user_id INTEGER NOT NULL,
   e_person_id INTEGER NOT NULL,
   a_description VARCHAR (4000),
-    is_deleted CHAR (1) NOT NULL,
-      PRIMARY KEY (id),
-      FOREIGN KEY (d_operation_type_id) REFERENCES system.d_operation_type (id),
-      FOREIGN KEY (user_id) REFERENCES users.e_user (id),
-      FOREIGN KEY (e_person_id) REFERENCES persons.e_person (id),
-      FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
+    is_deleted BOOLEAN NOT NULL,
+      PRIMARY KEY (
+        id
+      ),
+      FOREIGN KEY (
+        d_operation_type_id
+      ) REFERENCES system.d_operation_type (id),
+      FOREIGN KEY (
+        user_id
+      ) REFERENCES users.e_user (id),
+      FOREIGN KEY (
+        e_person_id
+      ) REFERENCES persons.e_person (id)
 );
 
 CREATE FUNCTION stakeholders.create_stakeholder (
