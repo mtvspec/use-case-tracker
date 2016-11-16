@@ -38,7 +38,7 @@ INSERT INTO
   )
 VALUES
 (
-  'New'
+  'Created'
 ),
 (
   'Active'
