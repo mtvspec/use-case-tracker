@@ -1,6 +1,6 @@
 CREATE TABLE persons.e_person (
   id SERIAL,
-  iin CHAR (12),
+  iin CHAR (12), -- TODO: make NOT NULL or drop UNIQUE constraint
   last_name VARCHAR (400) NOT NULL,
   first_name VARCHAR (300) NOT NULL,
   middle_name VARCHAR (500),
