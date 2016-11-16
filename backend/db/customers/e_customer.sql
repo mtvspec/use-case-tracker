@@ -3,10 +3,9 @@ CREATE TABLE customers.e_customer (
   e_organization_id INTEGER NOT NULL,
   a_name VARCHAR (1000) NOT NULL,
   a_description VARCHAR (4000),
-    is_deleted CHAR (1) NOT NULL DEFAULT 'F',
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (id),
-      FOREIGN KEY (e_organization_id) REFERENCES organizations.e_organization (id),
-      FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
+      FOREIGN KEY (e_organization_id) REFERENCES organizations.e_organization (id)
 );
 
 CREATE TABLE customers.e_customer_log (

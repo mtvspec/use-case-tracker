@@ -33,7 +33,8 @@ AS $$
 UPDATE
   sessions.e_session
 SET
-  close_timestamp = CURRENT_TIMESTAMP
+  close_timestamp = CURRENT_TIMESTAMP,
+  status_id = 'C'
 WHERE
   id = v_session_id
 RETURNING

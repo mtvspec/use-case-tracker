@@ -1,18 +1,18 @@
 'use strict';
 
 const router = require('express').Router();
-
-const multer = require('multer');
-const upload = multer();
-const Database = require('./../../db.js');
-const db = new Database();
-
-const sql = require('./sql.js');
+const ProjectAPI = require('./class.ProjectAPI.js');
 
 router
 // GET projects
-.get('/', function (req, res, next) {
-  res.status(200).send('Projects').end();
+.get('/', function (req, res) {
+  ProjectAPI.getProjects(req, res);
 })
+.get('/:id', function (req, res) {
+  ProjectAPI.getProjectByID(req, res);
+})
+.post('/', function (req, res) {
+  ProjectAPI.createProject(req, res);
+});
 
 module.exports = router;

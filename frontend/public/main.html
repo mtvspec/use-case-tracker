@@ -31,7 +31,7 @@
     <th>Дата рождения</th>
     <th>Пол</th>
   </tr>
-  <tr ng-repeat="person in vm.persons | filter: SearchPerson">
+  <tr ng-repeat="person in persons | filter: SearchPerson">
     <td>{{person.id}}</td>
     <td>{{person.iin}}</td>
     <td>{{person.lastName}}</td>

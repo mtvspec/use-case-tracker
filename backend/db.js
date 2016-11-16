@@ -5,18 +5,18 @@ const pool = new Pool();
 
 pool.on('error', function (err) {
   if (err) {
-    console.error(err);
+    console.error(`
+      'db':
+      'pool':
+      ${err}`);
   }
 });
 
 module.exports = class Database {
     constructor() {
-      let instance = this;
-      if (instance) {
-        return instance;
-      }
+
   }
-  selectAllRecords(config, cb) {
+  static selectAllRecords(config, cb) {
     if (!config) {
       throw new Error(`
         'selectAllRecords':
@@ -24,21 +24,24 @@ module.exports = class Database {
       return;
     }
     if (!config.text) {
-      throw new Error(`'
-        selectAllRecords':
+      throw new Error(`
+        'selectAllRecords':
         'config.text' is required`);
       return;
     }
     if (!typeof config.text === 'string') {
-      throw new Error(`'
-        selectAllRecords':
+      throw new Error(`
+        'selectAllRecords':
         incorrect 'config.text':
         ${config.text}`);
       return;
     }
     pool.connect(function (err, client, release) {
       if (err) {
-        console.error(err);
+        console.error(`
+          'selectAllRecords':
+          'connect':
+          ${err}`);
         return cb({
           status: 500,
           data: null
@@ -46,7 +49,10 @@ module.exports = class Database {
       } else {
         client.query(config.text, function (err, result) {
           if (err) {
-            console.error(err);
+            console.error(`
+              'selectRecordById':
+              'query':
+              ${err}`);
             return cb({
               status: 500,
               data: null
@@ -77,7 +83,7 @@ module.exports = class Database {
       }
     });
   }
-  selectRecordById(config, cb) {
+  static selectRecordById(config, cb) {
     if (!config) {
       throw new Error(`
         'selectRecordById':
@@ -99,7 +105,10 @@ module.exports = class Database {
     }
     pool.connect(function (err, client, release) {
       if (err) {
-        console.error(err);
+        console.error(`
+          'selectRecordById':
+          'connect':
+          ${err}`);
         return cb({
           status: 500,
           data: null
@@ -107,7 +116,10 @@ module.exports = class Database {
       } else {
         client.query(config.text, function (err, result) {
           if (err) {
-            console.error(err);
+            console.error(`
+              'selectRecordById':
+              'query':
+              ${err}`);
             return cb({
               status: 500,
               data: null
@@ -125,7 +137,10 @@ module.exports = class Database {
                 data: null
               });
             } else {
-              console.error(result);
+              console.error(`
+                'selectRecordById':
+                'result':
+                ${result}`);
               return cb({
                 status: 500,
                 data: null
@@ -136,7 +151,7 @@ module.exports = class Database {
       }
     });
   }
-  insertRecord(config, cb) {
+  static insertRecord(config, cb) {
     if (!config) {
       throw new Error(`
         'insertRecord':
@@ -160,6 +175,7 @@ module.exports = class Database {
       if (err) {
         console.error(`
           'insertRecord':
+          'connect':
           ${err}`);
         return cb({
           status: 500,
@@ -176,6 +192,7 @@ module.exports = class Database {
             }
             console.error(`
               'insertRecord':
+              'query':
               ${err}`);
             return cb({
               status: 500,
@@ -200,7 +217,7 @@ module.exports = class Database {
       }
     });
   }
-  updateRecord(config, cb) {
+  static updateRecord(config, cb) {
     if (!config) {
       throw new Error(`
         'updateRecord':
@@ -222,7 +239,10 @@ module.exports = class Database {
     }
     pool.connect(function (err, client, release) {
       if (err) {
-        console.error(err);
+        console.error(`
+          'updateRecord':
+          'connect':
+          ${err}`);
         return cb({
           status: 500,
           data: null
@@ -236,7 +256,10 @@ module.exports = class Database {
                 data: err.detail
               });
             }
-            console.error(err);
+            console.error(`
+              'updateRecord':
+              'query':
+              ${err}`);
             return cb({
               status: 500,
               data: err.detail
@@ -249,7 +272,10 @@ module.exports = class Database {
                 data: result.rows[0]
               });
             } else {
-              console.error(result);
+              console.error(`
+                'updateRecord':
+                'result':
+                ${result}`);
               return cb({
                 status: 500,
                 data: null

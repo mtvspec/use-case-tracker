@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 
 const UserAPI = require('./class.UserAPI.js');
-const api = new UserAPI();
 
 router
 .get('/', function(req, res, next) {
@@ -10,11 +9,17 @@ router
 })
 .get('/:id', function (req, res) {
 })
-.post('/', function (req, res) {
-  api.createUser(req, res);
+.post('/username', function (req, res) {
+  UserAPI.checkUsername(req, res);
 })
-.post('/authentificateUser', function (req, res) {
-  api.authentificateUser(req, res);
+.post('/', function (req, res) {
+  UserAPI.createUser(req, res);
+})
+.post('/login', function (req, res) {
+  UserAPI.authentificateUser(req, res);
+})
+.post('/logout', function (req, res) {
+  UserAPI.logOut(req, res);
 })
 
 module.exports = router;

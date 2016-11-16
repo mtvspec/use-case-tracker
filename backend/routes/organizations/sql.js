@@ -7,7 +7,8 @@ const Queries = {
       FROM
         organizations.e_organization
       ORDER BY
-        id ASC;`;
+        id ASC;
+      `;
     },
     SELECT_ORGANIZATION_BY_ID(organization, user) {
       return `

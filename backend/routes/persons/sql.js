@@ -33,6 +33,15 @@ const Queries = {
           ${user.id}
         );`;
     },
+    SELECT_PERSON (id) {
+      return `
+      SELECT
+        id
+      FROM
+        persons.e_person
+      WHERE
+        id = ${id};`;
+    },
     SELECT_PERSON_BY_IIN(iin) {
       return `
       SELECT

@@ -2,19 +2,14 @@
 
 const ID = require ('./../../common/classes/id');
 const Person = require('./class.Person.js');
-const Database = require('./../../db.js');
-const db = new Database();
+const db = require('./../../db.js');
 const sql = require('./sql.js');
 
 class PersonAPI {
   constructor() {
-    let instance = this;
-    if (instance) {
-      return instance;
-    }
+
   }
-  getPersons(req, res) {
-    console.log('persons');
+  static getPersons(req, res) {
     db.selectAllRecords({
       text: sql.persons.SELECT_ALL_PERSONS()
     }, function (response) {
@@ -27,7 +22,7 @@ class PersonAPI {
       }
     });
   }
-  getPersonByID(req, res) {
+  static getPersonByID(req, res) {
     let person = new ID(req.params.id);
     if (person.id) {
       db.selectRecordById({
@@ -46,40 +41,56 @@ class PersonAPI {
       return res.status(400).send(`'id' is required`);
     }
   }
-  createPerson(req, res) {
+  static createPerson(req, res) {
     let person = new Person(req.body);
     if (person.firstName) {
       if (person.iin) {
         PersonAPI.getPersonByIIN(person.iin, res, function (response) {
-          if (response && response.status === 200) {
-            return res.status(400).json(`duplicate 'iin': ${person.iin}`).end();
+          if (response) {
+            if (response.status === 200) {
+              return res.status(400).json(`duplicate 'iin': ${person.iin}`).end();
+            } else if (response.status === 204){
+              db.insertRecord({
+                text: sql.persons.INSERT_PERSON(
+                  person,
+                  req.User)
+              }, function (response) {
+                if (response.status === 201) {
+                  return res.status(response.status).json({
+                    id: response.data.create_person
+                  }).end();
+                } else {
+                  return res.status(response.status).json(response.data).end();
+                }
+              });
+            }
+          } else {
+            return res.status(500).end();
+          }
+        });
+      } else {
+        db.insertRecord({
+          text: sql.persons.INSERT_PERSON(
+            person,
+            req.User)
+        }, function (response) {
+          if (response.status === 201) {
+            return res.status(response.status).json({
+              id: response.data.create_person
+            }).end();
+          } else {
+            return res.status(response.status).json(response.data).end();
           }
         });
       }
-      if (res.headersSent) {
-        return;
-      }
-      db.insertRecord({
-        text: sql.persons.INSERT_PERSON(
-          person,
-          req.User)
-      }, function (response) {
-        if (response.status === 201) {
-          return res.status(response.status).json({
-            id: response.data.create_person
-          }).end();
-        } else {
-          return res.status(response.status).json(response.data).end();
-        }
-      });
     } else {
-      res.status(400).json(person).end();
+      return res.status(400).json(person).end();
     }
   }
-  updatePerson(req, res) {
+  static updatePerson(req, res) {
     let id = new ID(req.params.id);
     let person = new Person(req.body);
-    if (id.id && person) {
+    if (id.id && person.firstName) {
       person.id = id.id;
       PersonsAPI.getPersonByIIN(person.iin, res, function (response) {
         if (response && (response.status === 200 || response.status === 204)) {
@@ -109,7 +120,7 @@ class PersonAPI {
       return res.status(400).json(person).end();
     }
   }
-  deletePerson (req, res) {
+  static deletePerson (req, res) {
     let person = new ID(req.params.id);
     if (person.id) {
       db.updateRecord({
@@ -128,7 +139,7 @@ class PersonAPI {
       });
     }
   }
-  restorePerson (req, res) {
+  static restorePerson (req, res) {
     let person = new ID(req.params.id);
     if (person.id) {
       db.updateRecord({

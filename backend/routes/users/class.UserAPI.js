@@ -2,23 +2,41 @@
 
 const ID = require('./../../common/classes/id');
 const User = require('./class.User.js');
-const Database = require('./../../db.js');
-const db = new Database();
+const SessionAPI = require('./sessions/class.SessionAPI.js');
+const db = require('./../../db.js');
 const sql = require('./sql.js');
 
-class UserAPI {
+module.exports = class UserAPI {
   constructor() {
-    let instance = this;
-    if (instance) {
-      return instance;
-    }
+
+  }
+  static checkUsername (req, res) {
+    db.selectRecordById({
+      text: `
+      SELECT
+        id
+      FROM
+        users.e_user
+      WHERE
+        u_username = '${req.body.username}';`
+    }, function (response) {
+      if (response.status === 200) {
+        return res.status(400).json({
+          username: `'username': '${req.body.username}' is unavailable`
+        }).end();
+      } else if (response.status === 204) {
+        return res.status(200).json({
+          username: `'username': '${req.body.username}' is available`
+        }).end();
+      }
+    });
   }
   /***
   * @param user_id
   * @param user
   * @return user_id
   */
-  createUser(req, res) {
+  static createUser(req, res) {
     let user = new User(req.body);
     if (user.username && user.password) {
       db.insertRecord({
@@ -44,20 +62,20 @@ class UserAPI {
   * @param password
   * @return user_id
   */
-  authentificateUser(req, res) {
+  static authentificateUser(req, res) {
     let user = new User(req.body);
     if (user.username && user.password) {
       db.selectRecordById({
-        text: sql.users.SELECT_USER ({
-          user
-        });
+        text: sql.users.SELECT_USER(user)
       }, function(response) {
         if (response.status === 200) {
-          openSession(user, function (response) {
+          user.id = response.data.id;
+          SessionAPI.openSession(user.id, function (response) {
             if (response.status === 201) {
-              return res.status(200).json({
-                id: response.data.open_session
-              });
+              return res.status(200)
+              .set({
+                'session-id': response.data.open_session
+              }).end();
             } else {
               return res.status(response.status).json(response.data).end();
             }
@@ -69,5 +87,10 @@ class UserAPI {
     } else {
       return res.status(400).json(user).end();
     }
+  }
+  static logOut(req, res) {
+    SessionAPI.closeSession(req.headers['session-id'], function (response) {
+      return res.status(response.status).json(response.data).end();
+    });
   }
 }

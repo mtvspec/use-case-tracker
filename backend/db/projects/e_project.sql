@@ -1,7 +1,8 @@
 CREATE TABLE projects.e_project (
   id SERIAL,
+  project_kind_id INTEGER,
   customer_id INTEGER,
-  short_name VARCHAR (3),
+  formal_name VARCHAR (3),
   work_name VARCHAR (1000) NOT NULL,
   official_name VARCHAR (4000),
   description VARCHAR (4000),
@@ -12,13 +13,11 @@ CREATE TABLE projects.e_project (
   fact_end_date DATE,
   fact_budget NUMERIC,
   project_manager_id INTEGER,
-  state_id INTEGER NOT NULL,
+  state_id INTEGER NOT NULL DEFAULT 1,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
-      PRIMARY KEY (
-        id
-      ),
+      PRIMARY KEY (id),
       UNIQUE (
-        short_name
+        formal_name
       ),
       UNIQUE (
         work_name
@@ -29,43 +28,24 @@ CREATE TABLE projects.e_project (
       UNIQUE (
         description
       ),
+      UNIQUE (
+        formal_name,
+        work_name,
+        official_name,
+        description
+      ),
+      FOREIGN KEY (
+        project_kind_id
+      ) REFERENCES ontology.e_ontology_element (id),
       FOREIGN KEY (
         customer_id
       ) REFERENCES customers.e_customer (id),
       FOREIGN KEY (
         project_manager_id
-      ) REFERENCES persons.e_person (id),
+      ) REFERENCES emp.e_emp (id),
       FOREIGN KEY (
         state_id
       ) REFERENCES projects.d_project_state (id)
-);
-
-CREATE TABLE projects.e_project (
-  id SERIAL,
-  work_name VARCHAR (1000) NOT NULL,
-    is_deleted BOOLEAN NOT NULL FALSE,
-      PRIMARY KEY (id),
-      UNIQUE (work_name)
-);
-
-CREATE TABLE projects.e_project_state (
-  id SERIAL,
-  e_project_id INTEGER NOT NULL,
-  d_project_state_id INTEGER NOT NULL,
-  e_user_id INTEGER NOT NULL,
-  state_change_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (
-      id
-    ),
-    FOREIGN KEY (
-      e_project_id
-    ) REFERENCES projects.e_project (id),
-    FOREIGN KEY (
-      d_project_state_id
-    ) REFERENCES projects.d_project_state (id),
-    FOREIGN KEY (
-      e_user_id
-    ) REFERENCES users.e_user (id)
 );
 
 CREATE TABLE projects.e_project_log (
@@ -73,8 +53,10 @@ CREATE TABLE projects.e_project_log (
   d_operation_type_id INTEGER NOT NULL,
   operation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT LOCALTIMESTAMP,
   e_project_id INTEGER NOT NULL,
+  project_kind_id INTEGER NOT NULL,
   customer_id INTEGER,
-  short_name VARCHAR (1000) NOT NULL,
+  formal_name VARCHAR (3),
+  work_name VARCHAR (1000) NOT NULL,
   official_name VARCHAR (4000),
   description VARCHAR (4000),
   plan_start_date DATE,
@@ -85,21 +67,39 @@ CREATE TABLE projects.e_project_log (
   fact_budget NUMERIC,
   project_manager_id INTEGER,
   state_id INTEGER NOT NULL,
-    is_deleted CHAR (1) NOT NULL,
+    is_deleted BOOLEAN NOT NULL,
       e_user_id INTEGER NOT NULL,
-        PRIMARY KEY (id)
-        FOREIGN KEY (d_operation_type_id) REFERENCES system.d_operation_type (id),
-        FOREIGN KEY (e_project_id) REFERENCES projects.e_project (id),
-        FOREIGN KEY (e_user_id) REFERENCES users.e_user (id)
-        FOREIGN KEY (customer_id) REFERENCES organizations.e_organizations (id),
-        FOREIGN KEY (project_manager_id) REFERENCES persons.e_person (id),
-        FOREIGN KEY (state_id) REFERENCES projects.d_state (id),
-        FOREIGN KEY (is_deleted) REFERENCES system.is_deleted (id)
+        PRIMARY KEY (
+          id
+        ),
+        FOREIGN KEY (
+          d_operation_type_id
+        ) REFERENCES system.d_operation_type (id),
+        FOREIGN KEY (
+          e_project_id
+        ) REFERENCES projects.e_project (id),
+        FOREIGN KEY (
+          project_kind_id
+        ) REFERENCES ontology.e_ontology_element (id),
+        FOREIGN KEY (
+          customer_id
+        ) REFERENCES organizations.e_organization (id),
+        FOREIGN KEY (
+          project_manager_id
+        ) REFERENCES persons.e_person (id),
+        FOREIGN KEY (
+          state_id
+        ) REFERENCES projects.d_project_state (id),
+        FOREIGN KEY (
+          e_user_id
+        ) REFERENCES users.e_user (id)
 );
 
 CREATE FUNCTION projects.create_project (
+  IN v_project_kind_id INTEGER,
   IN v_customer_id INTEGER,
-  IN v_short_name VARCHAR (1000),
+  IN v_formal_name VARCHAR (3),
+  IN v_work_name VARCHAR (1000),
   IN v_official_name VARCHAR (4000),
   IN v_description VARCHAR (4000),
   IN v_plan_start_date DATE,
@@ -116,8 +116,10 @@ AS $$
 WITH ins AS (
   INSERT INTO
     projects.e_project (
+      project_kind_id,
       customer_id,
-      short_name,
+      formal_name,
+      work_name,
       official_name,
       description,
       plan_start_date,
@@ -126,8 +128,10 @@ WITH ins AS (
       project_manager_id
     )
   VALUES (
+    v_project_kind_id,
     v_customer_id,
-    v_short_name,
+    v_formal_name,
+    v_work_name,
     v_official_name,
     v_description,
     v_plan_start_date,
@@ -141,10 +145,12 @@ WITH ins AS (
 INSERT INTO
   projects.e_project_log (
     d_operation_type_id,
-    user_id,
+    e_user_id,
     e_project_id,
+    project_kind_id,
     customer_id,
-    short_name,
+    formal_name,
+    work_name,
     official_name,
     description,
     plan_start_date,
@@ -163,7 +169,9 @@ VALUES
     v_user_id,
     (SELECT id FROM ins),
     (SELECT customer_id FROM ins),
-    (SELECT short_name FROM ins),
+    (SELECT project_kind_id FROM ins),
+    (SELECT formal_name FROM ins),
+    (SELECT work_name FROM ins),
     (SELECT official_name FROM ins),
     (SELECT description FROM ins),
     (SELECT plan_start_date FROM ins),
@@ -183,8 +191,10 @@ $$ LANGUAGE sql;
 CREATE FUNCTION projects.update_project (
   IN v_user_id INTEGER,
   IN v_project_id INTEGER,
+  IN v_project_kind_id INTEGER,
   IN v_customer_id INTEGER,
-  IN v_short_name VARCHAR (1000),
+  IN v_formal_name VARCHAR (3),
+  IN v_work_name VARCHAR (1000),
   IN v_official_name VARCHAR (4000),
   IN v_description VARCHAR (4000),
   IN v_plan_start_date DATE,
@@ -202,8 +212,10 @@ WITH upd AS (
   UPDATE
     projects.e_project
   SET
+    project_kind_id = v_project_kind_id,
     customer_id = v_customer_id,
-    short_name = v_short_name,
+    formal_name = v_formal_name,
+    work_name = v_work_name,
     official_name = v_official_name,
     description = v_description,
     plan_start_date = v_plan_start_date,
@@ -224,8 +236,10 @@ INSERT INTO
     d_operation_type_id,
     user_id,
     e_project_id,
+    project_kind_id,
     customer_id,
-    short_name,
+    formal_name,
+    work_name,
     official_name,
     description,
     plan_start_date,
@@ -242,8 +256,10 @@ VALUES (
   2,
   v_user_id,
   (SELECT id FROM upd),
+  (SELECT project_kind_id FROM upd),
   (SELECT customer_id FROM upd),
-  (SELECT short_name FROM upd),
+  (SELECT formal_name FROM upd),
+  (SELECT work_name FROM upd),
   (SELECT official_name FROM upd),
   (SELECT description FROM upd),
   (SELECT plan_start_date FROM upd),
@@ -258,3 +274,19 @@ VALUES (
 RETURNING
   e_project_id;
 $$ LANGUAGE sql;
+
+CREATE FUNCTION projects.open_project (
+  IN v_project_id INTEGER
+);
+
+CREATE FUNCTION projects.close_project (
+  IN v_project_id INTEGER
+);
+
+CREATE FUNCTION projects.reject_project (
+  IN v_project_id INTEGER
+);
+
+CREATE FUNCTION projects.delete_project (
+  IN v_project_id INTEGER
+);

@@ -1,18 +1,38 @@
 (function () {
   'use strict';
 
-  app.controller('PersonsCtrl', function PersonsCtrl(PersonAPI) {
+  app.controller('PersonsCtrl', function PersonsCtrl(PersonAPI, $scope, $http) {
+    console.log('PersonsCtrl');
 
-    var vm = this;
-
-    var persons = [];
+    $scope.persons = [];
 
     PersonAPI.getPersons().then(function (data) {
-      for (let i = 0; i < data.length; i++) {
-        persons.push(data[i]);
+      console.log(data);
+      for (let i = 0, len = data.length; i < len; i++) {
+        $scope.persons.push(data[i]);
       }
-      return persons;
+      return $scope.persons;
     });
+
+    $scope.createPerson = function CreatePerson(person) {
+        $http({
+          method: 'POST',
+          url: '/api/persons',
+          headers: {
+            'user-id': 1
+          },
+          data: person
+        }).then(function (response) {
+          if (response.status === 201 && typeof response.data.id === 'number') {
+            person.id = response.data.id;
+            $scope.persons.push(person);
+          };
+        }, function (error) {
+          console.log(error);
+        });
+
+      }
+
   });
 
   app.service('PersonAPI', function PersonAPI ($http) {

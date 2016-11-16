@@ -1,0 +1,31 @@
+Sign Up:
+1. Input username (
+who: user,
+what: username,
+when: user registration,
+why: want's to enter in system,
+how: input by keyboard in an Registration form
+);
+2. Check username availability (
+who: system,
+what: username,
+when: user registration,
+why: username must be valid,
+how: make request to user list
+):
+if username available, step 3, else step 1 with message: 'username is unavailable';
+3. Input password;
+4. Check password:
+if password is secure, step 5, else step 3 with message: 'password is insecure';
+5. Send user credentials;
+6. Check user credentials:
+if user credentials is valid, create user;
+
+
+--------------------------------------------------------------------------------
+1. Пользователь добавил объект физическое лицо {Иванов, Иван, Иванович}.
+Пользователь добавил знание о физическом лице {Ручка}.
+Знание {Ручка} спрашивает у системы: "Кто может использовать ручку?"
+Система отвечает: {'Писатель', 'Автор книги', 'Менеджер', 'Продавец', 'Клиент'}.
+Пользователь выбирает 'Писатель'.
+Система отвечает: {Что пишет писатель?}.

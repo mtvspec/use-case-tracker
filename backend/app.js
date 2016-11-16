@@ -28,8 +28,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function (req, res, next) {
-  isAuthentificated(req, req.headers['user-id'], res);
-  next();
+  if (req.url === '/api/users/login' ||
+  req.url === '/api/users/username') {
+    next();
+  } else {
+    isAuthentificated(req, req.headers['user-id'], res);
+    next();
+  }
 });
 app.use('/api', routes);
 app.use('/api/users', users);

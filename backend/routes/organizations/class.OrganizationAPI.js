@@ -2,18 +2,14 @@
 
 const ID = require ('./../../common/classes/id');
 const Organization = require('./class.Organization.js');
-const Database = require('./../../db.js');
-const db = new Database();
+const db = require('./../../db.js');
 const sql = require('./sql.js');
 
 class OrganizationAPI {
   constructor() {
-    let instance = this;
-    if (instance) {
-      return instance;
-    }
+    
   }
-  getOrganizations(req, res) {
+  static getOrganizations(req, res) {
     db.selectAllRecords({
       text: sql.organizations.SELECT_ALL_ORGANIZATIONS(req.User)
     }, function (response) {
@@ -26,7 +22,7 @@ class OrganizationAPI {
       }
     });
   }
-  getOrganizationByID(req, res) {
+  static getOrganizationByID(req, res) {
     let organization = new ID(req.params.id);
     if (organization.id) {
       db.selectRecordById({
@@ -45,7 +41,7 @@ class OrganizationAPI {
       return res.status(400).send(`'id' is required`);
     }
   }
-  createOrganization(req, res) {
+  static createOrganization(req, res) {
     let org = new Organization(req.body);
     if (org.shortName) {
       if (org.bin) {
@@ -76,7 +72,7 @@ class OrganizationAPI {
       return res.status(400).json(org).end();
     }
   }
-  updateOrganization(req, res) {
+  static updateOrganization(req, res) {
     let id = new ID(req.params.id);
     let organization = new Organization(req.body);
     if (id.id && organization) {
@@ -109,7 +105,7 @@ class OrganizationAPI {
       return res.status(400).json(organization).end();
     }
   }
-  deleteOrganization(req, res) {
+  static deleteOrganization(req, res) {
     let organization = new ID(req.params.id);
     if (organization.id) {
       db.updateRecord({
@@ -128,7 +124,7 @@ class OrganizationAPI {
       });
     }
   }
-  restoreOrganization(req, res) {
+  static restoreOrganization(req, res) {
     let organization = new ID(req.params.id);
     if (organization.id) {
       db.updateRecord({
