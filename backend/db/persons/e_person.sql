@@ -7,10 +7,10 @@ CREATE TABLE persons.e_person (
       ),
       FOREIGN KEY (
         e_person_id
-      ) REFERENCES persons.d_persons_gbd (id),
+      ) REFERENCES persons.d_persons_gdb (id),
       FOREIGN KEY (
         e_person_id
-      ) REFERENCES persons.d_persons_ibd (id)
+      ) REFERENCES persons.d_persons_idb (id)
 );
 
 CREATE TABLE persons.d_persons_gdb (
