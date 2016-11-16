@@ -57,6 +57,9 @@ VALUES
 ),
 (
   'Rejected'
+),
+(
+  'Deleted'
 );
 
 CREATE TABLE projects.r_project_state (
