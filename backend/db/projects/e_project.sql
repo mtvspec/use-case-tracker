@@ -24,6 +24,9 @@ CREATE TABLE projects.e_project (
         work_name
       ),
       UNIQUE (
+        official_name
+      ),
+      UNIQUE (
         description
       ),
       FOREIGN KEY (
