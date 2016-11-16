@@ -33,7 +33,7 @@ CREATE TABLE persons.d_persons_gbd (
       ) REFERENCES persons.d_gender (id)
 );
 
-CREATE TABLE persons.d_persons_ibd (
+CREATE TABLE persons.d_persons_idb (
   id SERIAL,
   iin CHAR (12),
   last_name VARCHAR (400),
