@@ -124,7 +124,7 @@ WITH upd AS (
   UPDATE
     stakeholders.e_stakeholder
   SET
-    is_deleted = 'T'
+    is_deleted = TRUE
   WHERE
     id = v_e_stakeholder_id
   RETURNING
