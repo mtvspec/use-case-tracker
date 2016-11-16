@@ -1,6 +1,6 @@
 CREATE TABLE organizations.e_organization (
   id SERIAL,
-  bin CHAR (12), -- TODO: make NOT NULL or drop UNIQUE constraint
+  bin CHAR (12),
   short_name VARCHAR (1000) NOT NULL,
   official_name VARCHAR (4000),
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
@@ -18,7 +18,7 @@ CREATE TABLE organizations.e_organization_log (
   operation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   user_id INTEGER NOT NULL,
   e_organization_id INTEGER NOT NULL,
-  bin CHAR (12) NOT NULL,
+  bin CHAR (12),
   short_name VARCHAR (1000) NOT NULL,
   official_name VARCHAR (4000),
     is_deleted BOOLEAN NOT NULL,
