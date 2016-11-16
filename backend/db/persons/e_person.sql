@@ -1,5 +1,20 @@
 CREATE TABLE persons.e_person (
   id SERIAL,
+  e_person_id INTEGER NOT NULL,
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+      PRIMARY KEY (
+        id
+      ),
+      FOREIGN KEY (
+        e_person_id
+      ) REFERENCES persons.d_persons_gbd (id),
+      FOREIGN KEY (
+        e_person_id
+      ) REFERENCES persons.d_persons_ibd (id)
+)
+
+CREATE TABLE persons.e_person (
+  id SERIAL,
   iin CHAR (12),
   last_name VARCHAR (400) NOT NULL,
   first_name VARCHAR (300) NOT NULL,
