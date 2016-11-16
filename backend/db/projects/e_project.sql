@@ -48,6 +48,26 @@ CREATE TABLE projects.e_project (
       UNIQUE (work_name)
 );
 
+CREATE TABLE projects.e_project_state (
+  id SERIAL,
+  e_project_id INTEGER NOT NULL,
+  d_project_state_id INTEGER NOT NULL,
+  e_user_id INTEGER NOT NULL,
+  state_change_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (
+      id
+    ),
+    FOREIGN KEY (
+      e_project_id
+    ) REFERENCES projects.e_project (id),
+    FOREIGN KEY (
+      d_project_state_id
+    ) REFERENCES projects.d_project_state (id),
+    FOREIGN KEY (
+      e_user_id
+    ) REFERENCES users.e_user (id)
+);
+
 CREATE TABLE projects.e_project_log (
   id SERIAL,
   d_operation_type_id INTEGER NOT NULL,
