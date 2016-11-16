@@ -1,3 +1,4 @@
+-- TODO: test with persons db structure
 CREATE TABLE persons.e_person (
   id SERIAL,
   e_person_id INTEGER NOT NULL,
@@ -52,7 +53,7 @@ CREATE TABLE persons.d_persons_idb (
         gender_id
       ) REFERENCES persons.d_gender (id)
 );
-
+-- TODO: update quieries
 INSERT INTO
   persons.e_person (
     iin,
