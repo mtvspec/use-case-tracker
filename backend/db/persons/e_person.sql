@@ -42,17 +42,25 @@ CREATE TABLE persons.e_person_log (
   operation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   user_id INTEGER NOT NULL,
   e_person_id INTEGER NOT NULL,
-  iin CHAR (12),
+  iin CHAR (12), -- TODO: make NOT NULL or drop UNIQUE constraint
   last_name VARCHAR (400) NOT NULL,
   first_name VARCHAR (300) NOT NULL,
   middle_name VARCHAR (500),
   dob DATE,
   gender_id CHAR(1),
     is_deleted BOOLEAN NOT NULL,
-      PRIMARY KEY (id),
-      FOREIGN KEY (d_operation_type_id) REFERENCES system.d_operation_type (id),
-      FOREIGN KEY (user_id) REFERENCES users.e_user (id),
-      FOREIGN KEY (e_person_id) REFERENCES persons.e_person (id)
+      PRIMARY KEY (
+        id
+      ),
+      FOREIGN KEY (
+        d_operation_type_id
+      ) REFERENCES system.d_operation_type (id),
+      FOREIGN KEY (
+        user_id
+      ) REFERENCES users.e_user (id),
+      FOREIGN KEY (
+        e_person_id
+      ) REFERENCES persons.e_person (id)
 );
 
 CREATE FUNCTION persons.create_person (
