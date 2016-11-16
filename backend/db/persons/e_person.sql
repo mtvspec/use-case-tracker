@@ -1,6 +1,6 @@
 CREATE TABLE persons.e_person (
   id SERIAL,
-  iin CHAR (12), -- TODO: make NOT NULL or drop UNIQUE constraint
+  iin CHAR (12),
   last_name VARCHAR (400) NOT NULL,
   first_name VARCHAR (300) NOT NULL,
   middle_name VARCHAR (500),
@@ -42,7 +42,7 @@ CREATE TABLE persons.e_person_log (
   operation_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   user_id INTEGER NOT NULL,
   e_person_id INTEGER NOT NULL,
-  iin CHAR (12), -- TODO: make NOT NULL or drop UNIQUE constraint
+  iin CHAR (12),
   last_name VARCHAR (400) NOT NULL,
   first_name VARCHAR (300) NOT NULL,
   middle_name VARCHAR (500),
