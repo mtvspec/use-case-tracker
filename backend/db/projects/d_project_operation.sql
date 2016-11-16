@@ -99,3 +99,59 @@ CREATE TABLE projects.r_project_operation_state (
         d_project_state_id
       ) REFERENCES projects.d_project_state (id)
 );
+
+CREATE TABLE projects.e_project_start (
+  id SERIAL,
+  e_project_operation_id INTEGER NOT NULL,
+  e_customer_id INTEGER NOT NULL,
+  e_project_manager_id NOT NULL,
+  e_contract_id NOT NULL,
+  e_project_plan_id NOT NULL,
+  plan_start_date DATE NOT NULL,
+  plan_end_date DATE NOT NULL,
+  plan_budget NUMERIC NOT NULL,
+    PRIMARY KEY (
+      id
+    ),
+    FOREIGN KEY (
+      e_project_operation_id
+    ) REFERENCES projects.e_project_operation (id),
+    FOREIGN KEY (
+      e_customer_id
+    ) REFERENCES customers.e_customer (id),
+    FOREIGN KEY (
+      e_project_manager_id
+    ) REFERENCES emp.e_emp (id),
+    FOREIGN KEY (
+      e_contract_id
+    ) REFERENCES documents.e_document (id),
+    FOREIGN KEY (
+      e_project_plan_id
+    ) REFERENCES documents.e_document (id)
+);
+
+CREATE TABLE projects.e_project_close (
+  id SERIAL,
+  e_project_operation_id INTEGER NOT NULL,
+  e_project_manager_id INTEGER NOT NULL,
+  e_contract_id INTEGER NOT NULL,
+  e_project_plan_id INTEGER NOT NULL,
+  fact_start_date DATE NOT NULL,
+  fact_end_date DATE NOT NULL,
+  fact_budget DATE NOT NULL,
+    PRIMARY KEY (
+      id
+    ),
+    FOREIGN KEY (
+      e_project_operation_id
+    ) REFERENCES projects.e_project_operation (id),
+    FOREIGN KEY (
+      e_project_manager_id
+    ) REFERENCES emp.e_emp (id),
+    FOREIGN KEY (
+      e_contract_id
+    ) REFERENCES documents.e_document (id),
+    FOREIGN KEY (
+      e_project_plan_id
+    ) REFERENCES documents.e_document (id)
+);
