@@ -1,4 +1,4 @@
-CREATE TABLE projects.d_project_operation (
+CREATE TABLE projects.e_project_operation (
   id SERIAL,
   cr_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (
@@ -73,7 +73,7 @@ CREATE TABLE projects.r_project_operation (
       ),
       FOREIGN KEY (
         d_project_operation_id
-      ) REFERENCES projects.d_project_operation (id),
+      ) REFERENCES projects.e_project_operation (id),
       FOREIGN KEY (
         tr_project_operation_id
       ) REFERENCES projects.tr_project_operation (id),
@@ -94,10 +94,10 @@ CREATE TABLE projects.r_project_operation_state (
       ),
       FOREIGN KEY (
         d_project_operation_id
-      ) REFERENCES projects.d_project_operation (id),
+      ) REFERENCES projects.e_project_operation (id),
       FOREIGN KEY (
         d_project_state_id
-      ) REFERENCES projects.d_project_state (id)
+      ) REFERENCES projects.e_project_state (id)
 );
 
 CREATE TABLE projects.e_project_start (
