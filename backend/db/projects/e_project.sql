@@ -40,6 +40,14 @@ CREATE TABLE projects.e_project (
       ) REFERENCES projects.d_project_state (id)
 );
 
+CREATE TABLE projects.e_project (
+  id SERIAL,
+  work_name VARCHAR (1000) NOT NULL,
+    is_deleted BOOLEAN NOT NULL FALSE,
+      PRIMARY KEY (id),
+      UNIQUE (work_name)
+);
+
 CREATE TABLE projects.e_project_log (
   id SERIAL,
   d_operation_type_id INTEGER NOT NULL,
