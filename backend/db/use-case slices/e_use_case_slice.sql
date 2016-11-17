@@ -57,3 +57,23 @@ CREATE TABLE use_case_slices.f_use_case_slice_status (
       e_user_id
     ) REFERENCES users.e_user (id)
 );
+
+CREATE VIEW use_case_slices.v_use_case_slices
+AS
+SELECT
+  u.id "Код",
+  ct.a_name "Компонент",
+  u.a_name "Наименование",
+  s.state_en "Статус"
+FROM
+  use_case_slices.e_use_case_slice u,
+  components.e_component ct,
+  use_case_slices.d_use_case_slice_state s
+WHERE
+  u.e_component_id = ct.id
+AND
+  u.d_use_case_slice_state_id = s.id
+ORDER BY
+  ct.a_name,
+  u.a_name
+ASC;
