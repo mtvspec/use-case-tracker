@@ -1,6 +1,7 @@
 CREATE TABLE defects.e_defect (
   id SERIAL,
   kind_id INTEGER NOT NULL DEFAULT 1,
+  e_component_id INTEGER,
   subject_id INTEGER NOT NULL,
   a_name VARCHAR (1000) NOT NULL,
   a_description VARCHAR,
@@ -13,6 +14,9 @@ CREATE TABLE defects.e_defect (
       FOREIGN KEY (
         kind_id
       ) REFERENCES defects.d_defect_kind (id),
+      FOREIGN KEY (
+        e_component_id
+      ) REFERENCES components.e_component (id),
       FOREIGN KEY (
         subject_id
       ) REFERENCES defects.e_subject (id),
@@ -106,17 +110,23 @@ ORDER BY
   d.id
 ASC;
 
+CREATE VIEW defects.v_defects
+AS
 SELECT
   d.id "Код",
+  ct.a_name "Компонент",
   s.a_name "Тема",
   d.a_name "Наименование",
   d.a_description "Описание"
 FROM
   defects.e_defect d,
   defects.e_subject s,
+  components.e_component ct,
   defects.d_defect_status c
 WHERE
   d.subject_id = s.id
+AND
+  d.e_component_id = ct.id
 AND
   d.status_id = c.id
 ORDER BY
