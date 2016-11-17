@@ -1,9 +1,27 @@
 CREATE TABLE projects.e_project_operation (
   id SERIAL,
-  cr_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (
-      id
-    )
+  operation_en VARCHAR (1000) NOT NULL,
+  operation_ru VARCHAR (1000),
+  operation_kz VARCHAR (1000),
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    cr_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (
+        id
+      ),
+      UNIQUE (
+        operation_en
+      ),
+      UNIQUE (
+        operation_ru
+      ),
+      UNIQUE (
+        operation_kz
+      ),
+      UNIQUE (
+        operation_en,
+        operation_ru,
+        operation_kz
+      )
 );
 
 CREATE TABLE projects.tr_project_operation (
@@ -33,33 +51,33 @@ CREATE TABLE projects.tr_project_operation (
 );
 
 INSERT INTO
-  projects.tr_project_state (
-    state_en
+  projects.e_project_operation (
+    operation_en
   )
 VALUES
 (
-  'Create'
+  'Create project'
 ),
 (
-  'Start'
+  'Start project'
 ),
 (
-  'Suspend'
+  'Suspend project'
 ),
 (
-  'Renew'
+  'Renew project'
 ),
 (
-  'Close'
+  'Close project'
 ),
 (
-  'Archieve'
+  'Archieve project'
 ),
 (
-  'Reject'
+  'Reject project'
 ),
 (
-  'Delete'
+  'Delete project'
 );
 
 CREATE TABLE projects.r_project_operation (
