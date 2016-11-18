@@ -1,5 +1,5 @@
 --============================================================================--
--- Create actor
+-- Actor operations (f_actor_operation)
 --============================================================================--
 CREATE TABLE use_cases.f_actor_operation (
   id SERIAL NOT NULL,
@@ -27,7 +27,9 @@ CREATE TABLE use_cases.f_actor_operation (
       e_user_id
     ) REFERENCES users.e_user (id)
 );
---------------------------------------------------------------------------------
+--============================================================================--
+-- Create actor
+--============================================================================--
 CREATE FUNCTION use_cases.create_actor (
   IN v_d_actor_type_id INTEGER DEFAULT NULL,
   IN v_a_short_name VARCHAR (100) DEFAULT NULL,
@@ -76,7 +78,7 @@ VALUES
   (SELECT a_description FROM ins)
 )
 RETURNING
-  id "e_actor_id";
+  (SELECT id FROM ins) "e_actor_id";
 $$ LANGUAGE sql;
 --============================================================================--
 -- Update actor
