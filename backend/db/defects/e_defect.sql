@@ -1,76 +1,90 @@
 CREATE TABLE defects.e_defect (
   id SERIAL,
-  kind_id INTEGER NOT NULL DEFAULT 1,
+  d_defect_kind_id INTEGER NOT NULL DEFAULT 1,
   e_component_id INTEGER,
-  subject_id INTEGER NOT NULL,
+  e_subject_id INTEGER NOT NULL,
   a_name VARCHAR (1000) NOT NULL,
   a_description VARCHAR,
-  status_id INTEGER NOT NULL DEFAULT 1,
+  d_defect_status_id INTEGER NOT NULL DEFAULT 1,
     cr_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT LOCALTIMESTAMP,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
         id
       ),
       FOREIGN KEY (
-        kind_id
+        d_defect_kind_id
       ) REFERENCES defects.d_defect_kind (id),
       FOREIGN KEY (
         e_component_id
       ) REFERENCES components.e_component (id),
       FOREIGN KEY (
-        subject_id
+        e_subject_id
       ) REFERENCES defects.e_subject (id),
       FOREIGN KEY (
-        status_id
+        d_defect_status_id
       ) REFERENCES defects.d_defect_status (id)
 );
 
 CREATE TABLE defects.d_defect_kind (
   id SERIAL,
-  kind VARCHAR (1000) NOT NULL,
+  defect_kind_name_en VARCHAR (1000) NOT NULL,
+  defect_kind_name_ru VARCHAR (1000),
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (id),
       UNIQUE (kind)
 );
 
 INSERT INTO defects.d_defect_kind (
-  kind
+  d_defect_kind_name_en,
+  d_defect_kind_name_ru
 )
 VALUES
 (
+  'Bug',
   'Замечание'
 ),
  (
+   'New requirement',
    'Новое требование'
  );
 
 CREATE TABLE defects.d_defect_status (
-  id SERIAL,
-  status VARCHAR (1000) NOT NULL,
+  id SERIAL NOT NULL,
+  defect_status_name_en VARCHAR (1000) NOT NULL,
+  defect_status_name_ru VARCHAR (1000),
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
-        id
+        defect_status_name_en
       ),
       UNIQUE (
-        status
+        id
       )
 );
 
 INSERT INTO defects.d_defect_status (
-  status
+  defect_status_name_en,
+  defect_status_name_ru
 )
 VALUES
 (
+  'New',
   'Новое'
 ),
 (
+  'Accepted',
   'Принято'
 ),
 (
+  'Implemented',
   'Реализовано'
 ),
 (
+  'Rejected',
   'Отклонено'
+),
+(
+  'Deleted',
+  'Удалено'
 );
 
 CREATE VIEW defects.v_defects
