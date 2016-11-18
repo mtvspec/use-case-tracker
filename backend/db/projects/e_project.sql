@@ -6,6 +6,7 @@ CREATE TABLE projects.e_project (
   e_customer_id INTEGER,
   a_project_name VARCHAR (1000) NOT NULL,
   a_project_description VARCHAR (4000),
+  e_project_manager_id INTEGER,
   a_official_project_name VARCHAR (4000),
   a_plan_start_date DATE,
   a_plan_end_date DATE,
@@ -23,7 +24,10 @@ CREATE TABLE projects.e_project (
       ),
       FOREIGN KEY (
         e_customer_id
-      ) REFERENCES customers.e_customer (id)
+      ) REFERENCES customers.e_customer (id),
+      FOREIGN KEY (
+        e_project_manager_id
+      ) REFERENCES emp.e_emp (id)
 );
 --------------------------------------------------------------------------------
 CREATE TABLE projects.e_project_log (

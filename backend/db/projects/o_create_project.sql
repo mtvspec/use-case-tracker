@@ -2,16 +2,16 @@
 -- Create project
 --============================================================================--
 CREATE TABLE projects.o_create_project (
-  id SERIAL,
+  id SERIAL NOT NULL,
   d_operation_type_id INTEGER NOT NULL,
   a_operation_timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   e_user_id INTEGER NOT NULL,
   e_project_id INTEGER NOT NULL,
     PRIMARY KEY (
-      id
+      e_project_id
     ),
     UNIQUE (
-      e_project_id
+      id
     ),
     FOREIGN KEY (
       d_operation_type_id

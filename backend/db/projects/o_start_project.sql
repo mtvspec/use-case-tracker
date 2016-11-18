@@ -4,16 +4,17 @@
 CREATE TABLE projects.o_start_project (
   id SERIAL NOT NULL,
   d_operation_type_id INTEGER NOT NULL,
+  operation_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   e_user_id INTEGER NOT NULL,
   e_project_id INTEGER NOT NULL,
   e_customer_id INTEGER NOT NULL,
-  e_contract_id INTEGER,
+  e_contract_id INTEGER NOT NULL,
   e_project_manager_id INTEGER NOT NULL,
   e_project_plan_id INTEGER NOT NULL,
     PRIMARY KEY (
       e_project_id,
       e_customer_id,
-      e_project_manager_id
+      e_contract_id
     ),
     UNIQUE (
       id

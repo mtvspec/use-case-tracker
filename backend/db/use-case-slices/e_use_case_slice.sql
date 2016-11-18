@@ -64,6 +64,7 @@ SELECT
   u.id "Код",
   ct.a_name "Компонент",
   u.a_name "Наименование",
+  u.a_description "Описание",
   s.state_en "Статус"
 FROM
   use_case_slices.e_use_case_slice u,

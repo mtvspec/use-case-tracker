@@ -1,20 +1,14 @@
-create table use_cases.e_actor (
-  id serial,
-  code char (3),
-  shortname varchar (100),
-  name varchar (1000) not null,
-  description varchar (4000),
-    create_date timestamp with time zone not null default localtimestamp,
-    create_user_id integer not null default 1,
-    primary key (id),
-    foreign key (create_user_id) references users.e_user (id)
+--============================================================================--
+-- Actor
+--============================================================================--
+CREATE TABLE use_cases.e_actor (
+  id SERIAL,
+  a_short_name VARCHAR (100),
+  a_long_name VARCHAR (1000) NOT NULL,
+  a_description VARCHAR (4000),
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+      PRIMARY KEY (
+        id
+      )
 );
-
-insert into use_cases.e_actor (code, shortname, name, description)
-select
-actor ->> 'code' as code,
-actor ->> 'shortname' as shortname,
-actor ->> 'name' as name,
-actor ->> 'description' as description
-from
-tmp.actor;
+--============================================================================--
