@@ -1,140 +1,57 @@
 'use strict';
 
 module.exports = class Project {
+  /*
+  * projectKindID (*)
+  * customerID
+  * projectName (*)
+  * projectDescription
+  */
   constructor(data) {
-    console.log(data);
     let project = {};
     let messages = {};
     if (data) {
       if (data.projectKindID) {
         if (typeof data.projectKindID === 'number'
         && data.projectKindID > 0) {
-          project.projectKindID = data.projectKindID;
+          project.projectKindID = Number(data.projectKindID);
         } else {
           messages.projectKindID = `incorrect 'projectKindID': ${data.projectKindID}`;
         }
       } else {
-        project.projectKindID = '';
+        project.projectKindID = null;
       }
       if (data.customerID) {
         if (typeof data.customerID === 'number'
         && data.customerID > 0) {
-          project.customerID = data.customerID;
+          project.customerID = Number(data.customerID);
         } else {
           messages.customerID = `incorrect 'customerID': ${data.customerID}`;
         }
       } else {
-        project.customerID = '';
+        project.customerID = null;
       }
-      if (data.formalName) {
-        if (typeof data.formalName === 'string'
-        && data.formalName.length >= 1
-        && data.formalName.length <= 3) {
-          project.formalName = data.formalName;
+      if (data.projectName) {
+        if (typeof data.projectName === 'string'
+        && data.projectName.length >= 1
+        && data.projectName.length <= 1000) {
+          project.projectName = data.projectName;
         } else {
-          messages.lastName = `incorrect 'formalName': ${data.formalName}`;
+          messages.projectName = `incorrect 'projectName': ${data.projectName}`;
         }
       } else {
-        project.formalName = '';
+        messages.projectName = `'projectName' is required`;
       }
-      if (data.workName) {
-        if (typeof data.workName === 'string'
-        && data.workName.length > 1
-        && data.workName.length <= 1000) {
-          project.workName = data.workName;
+      if (data.projectDescription) {
+        if (typeof data.projectDescription === 'string'
+        && data.projectDescription.length >= 1
+        && data.projectDescription.length <= 4000) {
+          project.projectDescription = data.projectDescription;
         } else {
-          messages.workName = `incorrect 'workName': ${data.workName}`;
+          messages.projectDescription = `incorrect 'projectDescription': ${data.projectDescription}`;
         }
       } else {
-        messages.workName = `'workName' is required`;
-      }
-      if (data.officialName) {
-        if (typeof data.officialName === 'string'
-        && data.officialName.length > 1
-        && data.officialName.length <= 1000) {
-          project.officialName = data.officialName;
-        } else {
-          messages.workName = `incorrect 'officialName': ${data.officialName}`;
-        }
-      } else {
-        project.officialName = '';
-      }
-      if (data.description) {
-        if (typeof data.description === 'string'
-        && data.description.length > 1
-        && data.description.length <= 4000) {
-          project.description = data.description;
-        } else {
-          messages.description = `incorrect 'description': ${data.description}`;
-        }
-      } else {
-        project.description = '';
-      }
-      if (data.planStartDate) {
-        if (isValidDate(data.planStartDate)) {
-          project.dob = data.planStartDate;
-        } else {
-          messages.dob = `incorrect 'planStartDate': ${data.planStartDate}`;
-        }
-      } else {
-        project.planStartDate = '';
-      }
-      if (data.planEndDate) {
-        if (isValidDate(data.planEndDate)) {
-          project.dob = data.planEndDate;
-        } else {
-          messages.dob = `incorrect 'planEndDate': ${data.planEndDate}`;
-        }
-      } else {
-        project.planEndDate = '';
-      }
-      if (data.planBudget) {
-        if (typeof data.planBudget === 'number'
-        && data.planBudget > 1) {
-          project.planBudget = data.planBudget;
-        } else {
-          messages.planBudget = `incorrect 'planBudget': ${data.planBudget}`;
-        }
-      } else {
-        project.planBudget = '';
-      }
-      if (data.factStartDate) {
-        if (isValidDate(data.factStartDate)) {
-          project.dob = data.factStartDate;
-        } else {
-          messages.dob = `incorrect 'factStartDate': ${data.factStartDate}`;
-        }
-      } else {
-        project.factStartDate = '';
-      }
-      if (data.factEndDate) {
-        if (isValidDate(data.factEndDate)) {
-          project.dob = data.factEndDate;
-        } else {
-          messages.dob = `incorrect 'factEndDate': ${data.factEndDate}`;
-        }
-      } else {
-        project.factEndDate = '';
-      }
-      if (data.factBudget) {
-        if (typeof data.factBudget === 'number'
-        && data.factBudget > 1) {
-          project.factBudget = data.factBudget;
-        } else {
-          messages.planBudget = `incorrect 'factBudget': ${data.factBudget}`;
-        }
-      } else {
-        project.factBudget = '';
-      }
-      if (data.projectManagerID) {
-        if (typeof data.projectManagerID === 'number'
-        && data.projectManagerID > 0) {
-          project.projectManagerID = data.projectManagerID;
-        } else {
-          messages.projectManagerID = `incorrect 'projectManagerID': ${data.projectManagerID}`;
-        }
-      } else {
-        project.projectManagerID = '';
+        project.projectDescription = `'projectDescription' is required`;
       }
       if (Object.keys(messages).length > 0) {
         return this.messages = messages;

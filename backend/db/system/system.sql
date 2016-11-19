@@ -1,1 +1,1 @@
-CREATE SCHEMA system;
+CREATE SCHEMA systems;

@@ -1,3 +1,5 @@
+'use strict';
+
 const Queries = {
   projects: {
     SELECT_ALL_PROJECTS: function () {
@@ -22,24 +24,14 @@ const Queries = {
       `;
     },
     INSERT_PROJECT(project, user) {
-      console.log(project);
       return `
       SELECT
         projects.create_project (
-          '${project.projectKindID}',
-          '${project.customerID}',
-          '${project.formalName}',
-          '${project.workName}',
-          '${project.officialName}',
-          '${project.description}',
-          '${project.planStartDate}',
-          '${project.planEndDate}',
-          '${project.planBudget}',
-          '${project.factStartDate}',
-          '${project.factEndDate}',
-          '${project.factBudget}',
-          '${project.projectManagerID}',
-          '${user.id}'
+          v_d_project_kind_id := ${project.projectKindID},
+          v_e_customer_id := ${project.customerID},
+          v_a_project_name := '${project.projectName}',
+          v_a_project_description := '${project.projectDescription}',
+          v_e_user_id := ${user.id}
         );
       `;
     }

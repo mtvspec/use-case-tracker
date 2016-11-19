@@ -36,6 +36,7 @@ app.use(function (req, res, next) {
     next();
   }
 });
+
 app.use('/api', routes);
 app.use('/api/users', users);
 app.use('/api/persons', persons);

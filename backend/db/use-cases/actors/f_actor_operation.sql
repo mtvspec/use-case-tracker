@@ -12,10 +12,10 @@ CREATE TABLE use_cases.f_actor_operation (
   a_long_name VARCHAR (1000),
   a_description VARCHAR (4000),
     PRIMARY KEY (
-      e_actor_id
+      id
     ),
     UNIQUE (
-      id
+      e_actor_id
     ),
     FOREIGN KEY (
       e_actor_id
@@ -28,7 +28,7 @@ CREATE TABLE use_cases.f_actor_operation (
     ) REFERENCES users.e_user (id)
 );
 --============================================================================--
--- Create actor
+-- Create actor (create_actor)
 --============================================================================--
 CREATE FUNCTION use_cases.create_actor (
   IN v_d_actor_type_id INTEGER DEFAULT NULL,

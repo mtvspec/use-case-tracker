@@ -1,88 +1,60 @@
+--============================================================================--
+-- Project State (d_project_state)
+--============================================================================--
 CREATE TABLE projects.d_project_state (
-  id SERIAL,
-  cr_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (
-      id
-    )
-);
-
-CREATE TABLE projects.tr_project_state (
-  id SERIAL,
-  state_en VARCHAR (1000) NOT NULL,
-  state_ru VARCHAR (1000),
-  state_kz VARCHAR (1000),
-    cr_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  id SERIAL NOT NULL,
+  project_state_name_en VARCHAR (1000) NOT NULL,
+  project_state_desc_en VARCHAR (4000),
+  project_state_name_ru VARCHAR (1000) NOT NULL,
+  project_state_desc_ru VARCHAR (4000),
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
+        project_state_name_en
+      ),
+      UNIQUE (
         id
       ),
       UNIQUE (
-        state_en
-      ),
-      UNIQUE (
-        state_ru
-      ),
-      UNIQUE (
-        state_kz
-      ),
-      UNIQUE (
-        state_en,
-        state_ru,
-        state_kz
+        project_state_name_ru
       )
 );
-
+--------------------------------------------------------------------------------
 INSERT INTO
-  projects.tr_project_state (
-    state_en
+  projects.d_project_state (
+    project_state_name_en,
+    project_state_name_ru
   )
 VALUES
 (
-  'Created'
+  'Created',
+  'Создан'
 ),
 (
-  'Active'
+  'Active',
+  'В производстве'
 ),
 (
-  'Suspended'
+  'Suspended',
+  'Приостановлен'
 ),
 (
-  'Renewed'
+  'Renewed',
+  'Возобновлен'
 ),
 (
-  'Closed'
+  'Closed',
+  'Закрыт'
 ),
 (
-  'Archieved'
+  'Archieved',
+  'В архиве'
 ),
 (
-  'Rejected'
+  'Rejected',
+  'Отклонен'
 ),
 (
-  'Deleted'
+  'Deleted',
+  'Удален'
 );
-
-CREATE TABLE projects.r_project_state (
-  id SERIAL,
-  d_project_state_id INTEGER NOT NULL,
-  tr_project_state_id INTEGER NOT NULL,
-    PRIMARY KEY (
-      id
-    ),
-    FOREIGN KEY (
-      d_project_state_id
-    ) REFERENCES projects.d_project_state (id),
-    FOREIGN KEY (
-      tr_project_state_id
-    ) REFERENCES projects.tr_project_state (id),
-    UNIQUE (
-      d_project_state_id
-    ),
-    UNIQUE (
-      tr_project_state_id
-    ),
-    UNIQUE (
-      d_project_state_id,
-      tr_project_state_id
-    )
-);
+--============================================================================--

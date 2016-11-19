@@ -55,16 +55,19 @@ class ProjectAPI {
   static createProject(req, res) {
     let project = new Project(req.body);
     let id = new ID(req.headers['user-id']);
-    if (project.workName) {
+    let user = {
+      id: id.id
+    }
+    if (project.projectName) {
       db.insertRecord({
         text: sql.projects.INSERT_PROJECT(
           project,
-          id
+          user
         )
       }, function (response) {
         if (response.status === 201) {
           return res.status(response.status).json({
-            id: response.data.create_ptoject
+            id: response.data.create_project
           }).end();
         } else {
           return res.status(response.status).json(response.data).end();
@@ -74,6 +77,25 @@ class ProjectAPI {
       return res.status(400).json(project).end();
     }
   }
+  static startProject(req, res) {
+    let project = new Project(req.body);
+  }
 }
 
 module.exports = ProjectAPI;
+
+function authentificateUser(id) {
+  db.selectRecordById({
+    text: sql.users.SELECT_USER_BY_ID(id)
+  }, function (response) {
+    if (response) {
+      if (response.status && response.status === 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  })
+};

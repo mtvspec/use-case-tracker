@@ -5,12 +5,14 @@ const Queries = {
     OPEN_SESSION(id) {
       return `
       SELECT
-        sessions.open_session(${id});`;
+        sessions.open_session(${id});
+      `;
     },
     CLOSE_SESSION(id) {
       return `
       SELECT
-        sessions.close_session(${id});`;
+        sessions.close_session(${id});
+      `;
     }
   }
 }

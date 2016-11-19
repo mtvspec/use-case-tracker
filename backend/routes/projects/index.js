@@ -12,7 +12,13 @@ router
   ProjectAPI.getProjectByID(req, res);
 })
 .post('/', function (req, res) {
+  if (!req.User) {
+    return;
+  }
   ProjectAPI.createProject(req, res);
+})
+.post('/start_project/:id', function (req, res) {
+  ProjectAPI.startProject(req, res);
 });
 
 module.exports = router;
