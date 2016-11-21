@@ -42,8 +42,9 @@ class PersonAPI {
     }
   }
   static createPerson(req, res) {
-    let person = new Person(req.body);
-    if (person.firstName) {
+    let result = new Person(req.body);
+    if (result.person) {
+      let person = result.person;
       if (person.iin) {
         PersonAPI.getPersonByIIN(person.iin, res, function (response) {
           if (response) {
@@ -84,7 +85,12 @@ class PersonAPI {
         });
       }
     } else {
-      return res.status(400).json(person).end();
+      let messages = result.messages;
+      if (Object.getOwnPropertyNames(messages).length === 1) {
+        return res.status(400).json(messages.message).end();
+      } else {
+        return res.status(400).json(messages).end();
+      }
     }
   }
   static updatePerson(req, res) {

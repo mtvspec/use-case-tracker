@@ -100,13 +100,13 @@ CREATE TABLE persons.e_person_log (
 );
 
 CREATE FUNCTION persons.create_person (
-  IN v_iin CHAR (12),
-  IN v_last_name VARCHAR (400),
-  IN v_first_name VARCHAR (300),
-  IN v_middle_name VARCHAR (500),
-  IN v_dob DATE,
-  IN v_gender_id CHAR (1),
-  IN v_user_id INTEGER,
+  IN v_iin CHAR (12) DEFAULT NULL,
+  IN v_last_name VARCHAR (400) DEFAULT NULL,
+  IN v_first_name VARCHAR (300) DEFAULT NULL,
+  IN v_middle_name VARCHAR (500) DEFAULT NULL,
+  IN v_dob DATE DEFAULT NULL,
+  IN v_gender_id CHAR (1) DEFAULT NULL,
+  IN v_user_id INTEGER DEFAULT NULL,
   OUT e_person_id INTEGER
 )
 AS $$

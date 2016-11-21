@@ -55,13 +55,13 @@ const Queries = {
       return `
       SELECT
         persons.create_person (
-          '${person.iin}',
-          '${person.lastName}',
-          '${person.firstName}',
-          '${person.middleName}',
-          '${person.dob}',
-          '${person.gender}',
-          ${user.id}
+          v_iin := '${person.iin}',
+          v_last_name := '${person.lastName}',
+          v_first_name := '${person.firstName}',
+          v_middle_name := '${person.middleName}',
+          v_dob := '${person.dob}',
+          v_gender_id := '${person.gender}',
+          v_user_id := ${user.id}
         );`;
     },
     UPDATE_PERSON(person, user) {

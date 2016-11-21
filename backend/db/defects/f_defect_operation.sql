@@ -2,7 +2,7 @@
 -- Defect operation (f_defect_operation)
 --============================================================================--
 CREATE TABLE defects.f_defect_operation (
-  id SERIAL,
+  f_defect_operation_id SERIAL,
   d_defect_operation_id INTEGER NOT NULL,
   a_operation_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   e_user_id INTEGER NOT NULL,
@@ -15,26 +15,26 @@ CREATE TABLE defects.f_defect_operation (
   d_defect_state_id INTEGER NOT NULL,
   is_deleted BOOLEAN NOT NULL,
     PRIMARY KEY (
-      id
+      f_defect_operation_id
     ),
     FOREIGN KEY (
       d_defect_operation_id
-    ) REFERENCES defects.d_defect_operation (id),
+    ) REFERENCES defects.d_defect_operation (d_defect_operation_id),
     FOREIGN KEY (
       e_user_id
-    ) REFERENCES users.e_user (id),
+    ) REFERENCES users.e_user (e_user_id),
     FOREIGN KEY (
       e_defect_id
-    ) REFERENCES defects.e_defect (id),
+    ) REFERENCES defects.e_defect (e_defect_id),
     FOREIGN KEY (
       e_component_id
-    ) REFERENCES components.e_component (id),
+    ) REFERENCES components.e_component (e_component_id),
     FOREIGN KEY (
       e_source_id
-    ) REFERENCES emp.e_emp (id),
+    ) REFERENCES emp.e_emp (e_emp_id),
     FOREIGN KEY (
       d_defect_state_id
-    ) REFERENCES defects.d_defect_state (id)
+    ) REFERENCES defects.d_defect_state (d_defect_state_id)
 );
 --============================================================================--
 -- Create defect (create_defect)

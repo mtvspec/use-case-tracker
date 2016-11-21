@@ -1,11 +1,12 @@
 'use strict';
 
 module.exports = class Project {
-  /*
-  * projectKindID (*)
-  * customerID
-  * projectName (*)
-  * projectDescription
+  /**
+  * @param projectKindID (*)
+  * @param customerID
+  * @param projectName (*)
+  * @param projectDescription
+  * @return projectID
   */
   constructor(data) {
     let project = {};
@@ -51,7 +52,7 @@ module.exports = class Project {
           messages.projectDescription = `incorrect 'projectDescription': ${data.projectDescription}`;
         }
       } else {
-        project.projectDescription = `'projectDescription' is required`;
+        project.projectDescription = null;
       }
       if (Object.keys(messages).length > 0) {
         return this.messages = messages;

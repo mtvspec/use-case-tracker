@@ -194,6 +194,7 @@ module.exports = class Database {
               'insertRecord':
               'query':
               ${err}`);
+              console.log(err);
             return cb({
               status: 500,
               data: null
