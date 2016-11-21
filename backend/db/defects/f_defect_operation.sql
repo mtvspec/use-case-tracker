@@ -4,7 +4,7 @@
 CREATE TABLE defects.f_defect_operation (
   f_defect_operation_id SERIAL,
   d_defect_operation_id INTEGER NOT NULL,
-  a_operation_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  a_operation_timestamp TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   e_user_id INTEGER NOT NULL,
   e_defect_id INTEGER NOT NULL,
   e_component_id INTEGER NOT NULL,
