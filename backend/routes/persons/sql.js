@@ -59,7 +59,7 @@ const Queries = {
           v_last_name := '${person.lastName}',
           v_first_name := '${person.firstName}',
           v_middle_name := '${person.middleName}',
-          v_dob := '${person.dob}',
+          v_dob := ${person.dob},
           v_gender_id := '${person.gender}',
           v_user_id := ${user.id}
         );`;
@@ -73,7 +73,7 @@ const Queries = {
           '${person.lastName}',
           '${person.firstName}',
           '${person.middleName}',
-          '${person.dob}',
+          ${person.dob},
           '${person.gender}',
           ${user.id}
         );`;

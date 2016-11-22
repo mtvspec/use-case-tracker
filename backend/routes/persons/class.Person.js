@@ -54,13 +54,11 @@ module.exports = class Person {
       person.middleName = null;
     }
     if (data.dob) {
-      if (isValidDate(data.dob)) {
+      if (new Date(data.dob).getTime() > 0) {
         person.dob = data.dob;
       } else {
         messages.dob = `incorrect 'dob': ${data.dob}`;
       }
-    } else {
-      person.dob = null;
     }
     if (data.gender) {
       if (typeof data.gender === 'string'

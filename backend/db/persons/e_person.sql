@@ -110,6 +110,7 @@ CREATE FUNCTION persons.create_person (
   OUT e_person_id INTEGER
 )
 AS $$
+-- if(upper(v_dob)=='NULL') then v_dob = null;
 WITH ins AS (
   INSERT INTO
     persons.e_person (

@@ -1,17 +1,26 @@
+--============================================================================--
+-- Use-case slice (e_use_case_slice)
+--============================================================================--
 CREATE TABLE use_case_slices.e_use_case_slice (
-  id SERIAL,
-  e_component_id INTEGER,
-  a_name VARCHAR (1000) NOT NULL,
-  a_description VARCHAR (4000),
+  id BIGSERIAL NOT NULL,
+  e_use_case_id INTEGER NOT NULL,
+  e_component_id INTEGER NOT NULL,
+  a_use_case_slice_name VARCHAR (1000) NOT NULL,
+  a_use_case_slice_desc TEXT,
+  a_story_points INTEGER,
   d_use_case_slice_state_id INTEGER NOT NULL DEFAULT 1,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
-        id
+        e_use_case_id,
+        e_component_id,
+        a_use_case_slice_name
       ),
       UNIQUE (
-        a_name,
-        a_description
+        id
       ),
+      FOREIGN KEY (
+        e_use_case_id
+      ) REFERENCES use_cases.e_use_case (id),
       FOREIGN KEY (
         e_component_id
       ) REFERENCES components.e_component (id),
@@ -19,7 +28,7 @@ CREATE TABLE use_case_slices.e_use_case_slice (
         d_use_case_slice_state_id
       ) REFERENCES use_case_slices.d_use_case_slice_state (id)
 );
-
+--============================================================================--
 CREATE TABLE use_case_slices.e_use_case_slice_log (
   id SERIAL,
   e_use_case_slice_id INTEGER NOT NULL,
@@ -37,7 +46,7 @@ CREATE TABLE use_case_slices.e_use_case_slice_log (
         d_use_case_slice_status_id
       ) REFERENCES use_case_slices.d_use_case_state (id)
 );
-
+--============================================================================--
 CREATE TABLE use_case_slices.f_use_case_slice_status (
   id SERIAL,
   e_use_case_slice_id INTEGER NOT NULL,

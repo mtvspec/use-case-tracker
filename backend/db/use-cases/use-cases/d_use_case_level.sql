@@ -1,15 +1,33 @@
-create table use_cases.d_use_case_level (
-  id serial,
-  level varchar (1000) not null,
-  description varchar (4000),
-    create_date timestamp with time zone not null default localtimestamp,
-    create_user_id integer not null default 1,
-    primary key (id),
-    foreign key (create_user_id) references users.e_user (id),
-    unique (level),
-    unique (description),
-    unique (level, description)
+--============================================================================--
+-- Use case levels (d_use_case_level)
+--============================================================================--
+CREATE TABLE use_cases.d_use_case_level (
+  id SERIAL NOT NULL,
+  d_use_case_level_name_en VARCHAR (1000) NOT NULL,
+  d_use_case_level_desc_en TEXT,
+  d_use_case_level_name_ru VARCHAR (1000),
+  d_use_case_level_desc_ru TEXT,
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (
+      d_use_case_level_name_en
+    ),
+    UNIQUE (
+      id
+    ),
+    UNIQUE (
+      d_use_case_level_name_ru
+    )
 );
-
-insert into use_cases.d_use_case_level (level) values ('Black Box');
-insert into use_cases.d_use_case_level (level) values ('White Box');
+--------------------------------------------------------------------------------
+INSERT INTO
+  use_cases.d_use_case_level (
+    d_use_case_level_name_en
+  )
+VALUES
+(
+  'Black box'
+),
+(
+  'White box'
+);
+--============================================================================--

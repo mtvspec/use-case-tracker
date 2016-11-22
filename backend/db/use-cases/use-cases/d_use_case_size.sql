@@ -1,32 +1,35 @@
 --============================================================================--
--- Actor types (d_actor_type)
+-- Use-case size (d_use_case_size)
 --============================================================================--
-CREATE TABLE use_cases.d_actor_type (
+CREATE TABLE use_cases.d_use_case_size (
   id SERIAL NOT NULL,
-  actor_type_name_en VARCHAR (1000) NOT NULL,
-  actor_type_desc_en TEXT,
-  actor_type_name_ru VARCHAR (1000),
-  actor_type_desc_ru TEXT,
+  a_use_case_size_name_en VARCHAR (1000) NOT NULL,
+  a_use_case_size_desc_en TEXT,
+  a_use_case_size_name_ru VARCHAR (1000),
+  a_use_case_size_desc_ru TEXT,
     PRIMARY KEY (
-      actor_type_name_en
+      a_use_case_size_name_en
     ),
     UNIQUE (
       id
-    ),
-    UNIQUE (
-      actor_type_name_ru
     )
 );
 --------------------------------------------------------------------------------
 INSERT INTO
-  use_cases.d_actor_type (
-    actor_type_name_en
+  use_cases.d_use_case_size (
+    a_use_case_size_name_en
   )
 VALUES
 (
-  'Human'
+  'Small'
 ),
 (
-  'System'
+  'Medium'
+),
+(
+  'Large'
+),
+(
+  'Very Large'
 );
 --============================================================================--

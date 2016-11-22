@@ -1,10 +1,17 @@
 CREATE TABLE defects.d_defect_kind (
-  id SERIAL,
-  defect_kind_name_en VARCHAR (1000) NOT NULL,
-  defect_kind_name_ru VARCHAR (1000),
+  id SERIAL NOT NULL,
+  a_defect_kind_name_en VARCHAR (1000) NOT NULL,
+  a_defect_kind_name_ru VARCHAR (1000),
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
-      PRIMARY KEY (id),
-      UNIQUE (kind)
+      PRIMARY KEY (
+        a_defect_kind_name_en
+      ),
+      UNIQUE (
+        id
+      ),
+      UNIQUE (
+        defect_kind_name_ru
+      )
 );
 
 INSERT INTO defects.d_defect_kind (

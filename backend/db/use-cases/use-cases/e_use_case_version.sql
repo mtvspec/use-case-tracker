@@ -1,4 +1,4 @@
-create table use_cases.e_use_case_version (
+CREATE TABLE use_cases.e_use_case_version (
   id serial,
   version varchar (1000) not null,
   description varchar (4000),

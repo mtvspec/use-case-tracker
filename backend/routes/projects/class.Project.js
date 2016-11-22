@@ -52,7 +52,7 @@ module.exports = class Project {
           messages.projectDescription = `incorrect 'projectDescription': ${data.projectDescription}`;
         }
       } else {
-        project.projectDescription = null;
+        project.projectDescription = '';
       }
       if (Object.keys(messages).length > 0) {
         return this.messages = messages;
