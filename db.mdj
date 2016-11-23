@@ -32213,7 +32213,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFYj1/nzW6IGMc="
 									},
-									"name": "a_emp_position_name",
+									"name": "a_position_name",
 									"type": "VARCHAR",
 									"length": "1000",
 									"primaryKey": false,
@@ -32227,7 +32227,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFYj1/nzW6IGMc="
 									},
-									"name": "a_emp_position_desc",
+									"name": "a_position_desc",
 									"type": "TEXT",
 									"length": 0,
 									"primaryKey": false,
@@ -32241,7 +32241,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFYj1/nzW6IGMc="
 									},
-									"name": "d_emp_position_state_id",
+									"name": "d_position_state_id",
 									"type": "INTEGER",
 									"length": 0,
 									"primaryKey": false,
