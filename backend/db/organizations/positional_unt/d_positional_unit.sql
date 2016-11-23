@@ -31,3 +31,4 @@ CREATE TABLE organizations.d_positional_unit (
         d_positional_unit_type_id
       ) REFERENCES organizations.d_positional_unit_type (id)
 );
+--============================================================================--

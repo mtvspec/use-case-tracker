@@ -29734,7 +29734,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFYjzUux20/84A="
 							},
-							"name": "r_e_emp_position_emp",
+							"name": "r_e_emp_e_positional_unit",
 							"ownedElements": [
 								{
 									"_type": "ERDRelationship",
@@ -29818,7 +29818,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFYj2KtBW7h/5E="
 									},
-									"name": "e_emp_position_id",
+									"name": "e_emp_id",
 									"type": "BIGINT",
 									"length": 0,
 									"primaryKey": true,
@@ -29832,7 +29832,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFYj2KtBW7h/5E="
 									},
-									"name": "e_emp_id",
+									"name": "e_positional_unit_id",
 									"type": "BIGINT",
 									"length": 0,
 									"primaryKey": true,
@@ -31490,7 +31490,7 @@
 									"height": 12,
 									"autoResize": false,
 									"underline": false,
-									"text": "e_emp_position",
+									"text": "e_positional_unit",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -31712,13 +31712,13 @@
 									"showShadow": false,
 									"containerChangeable": false,
 									"containerExtending": false,
-									"left": 272,
+									"left": 256,
 									"top": 357,
-									"width": 225,
+									"width": 257,
 									"height": 12,
 									"autoResize": false,
 									"underline": false,
-									"text": "r_e_emp_position_emp",
+									"text": "r_e_emp_e_positional_unit",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -31751,9 +31751,9 @@
 											"showShadow": false,
 											"containerChangeable": false,
 											"containerExtending": false,
-											"left": 277,
+											"left": 261,
 											"top": 379,
-											"width": 215,
+											"width": 247,
 											"height": 12,
 											"autoResize": false
 										},
@@ -31775,9 +31775,9 @@
 											"showShadow": false,
 											"containerChangeable": false,
 											"containerExtending": false,
-											"left": 277,
+											"left": 261,
 											"top": 393,
-											"width": 215,
+											"width": 247,
 											"height": 12,
 											"autoResize": false
 										},
@@ -31799,9 +31799,9 @@
 											"showShadow": false,
 											"containerChangeable": false,
 											"containerExtending": false,
-											"left": 277,
+											"left": 261,
 											"top": 407,
-											"width": 215,
+											"width": 247,
 											"height": 12,
 											"autoResize": false
 										},
@@ -31823,9 +31823,9 @@
 											"showShadow": false,
 											"containerChangeable": false,
 											"containerExtending": false,
-											"left": 277,
+											"left": 261,
 											"top": 421,
-											"width": 215,
+											"width": 247,
 											"height": 12,
 											"autoResize": false
 										}
@@ -31839,9 +31839,9 @@
 									"showShadow": false,
 									"containerChangeable": false,
 									"containerExtending": false,
-									"left": 272,
+									"left": 256,
 									"top": 374,
-									"width": 225,
+									"width": 257,
 									"height": 64,
 									"autoResize": false
 								}
@@ -31855,9 +31855,9 @@
 							"showShadow": false,
 							"containerChangeable": false,
 							"containerExtending": false,
-							"left": 272,
+							"left": 256,
 							"top": 352,
-							"width": 225,
+							"width": 257,
 							"height": 86,
 							"autoResize": false,
 							"nameLabel": {
@@ -31892,7 +31892,7 @@
 									"showShadow": false,
 									"containerChangeable": false,
 									"containerExtending": false,
-									"left": 528,
+									"left": 536,
 									"top": 347,
 									"width": 0,
 									"height": 12,
@@ -31923,7 +31923,7 @@
 									"showShadow": false,
 									"containerChangeable": false,
 									"containerExtending": false,
-									"left": 521,
+									"left": 537,
 									"top": 347,
 									"width": 0,
 									"height": 12,
@@ -31987,7 +31987,7 @@
 								"$ref": "AAAAAAFYj2KtBW7joR8="
 							},
 							"lineStyle": 2,
-							"points": "496:368;560:368",
+							"points": "512:368;560:368",
 							"nameLabel": {
 								"$ref": "AAAAAAFYj2SUU28bxKc="
 							},
@@ -32213,7 +32213,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFYj1/nzW6IGMc="
 									},
-									"name": "a_emp_position_name",
+									"name": "a_position_name",
 									"type": "VARCHAR",
 									"length": "1000",
 									"primaryKey": false,
@@ -32227,7 +32227,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFYj1/nzW6IGMc="
 									},
-									"name": "a_emp_position_desc",
+									"name": "a_position_desc",
 									"type": "TEXT",
 									"length": 0,
 									"primaryKey": false,
@@ -32241,7 +32241,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFYj1/nzW6IGMc="
 									},
-									"name": "d_emp_position_state_id",
+									"name": "d_position_state_id",
 									"type": "INTEGER",
 									"length": 0,
 									"primaryKey": false,
