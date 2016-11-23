@@ -1,8 +1,8 @@
 CREATE TABLE organizations.e_organization (
-  id SERIAL,
+  id BIGSERIAL,
   bin CHAR (12),
-  short_name VARCHAR (1000) NOT NULL,
-  official_name VARCHAR (4000),
+  a_organization_short_name VARCHAR (1000) NOT NULL,
+  a_organization_official_name VARCHAR (4000),
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
         id
