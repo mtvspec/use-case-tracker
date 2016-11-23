@@ -1,5 +1,6 @@
 'use strict';
 
+const bcrypt = require('bcrypt-nodejs');
 const ID = require('./../../common/classes/id');
 const User = require('./class.User.js');
 const SessionAPI = require('./sessions/class.SessionAPI.js');
@@ -64,22 +65,27 @@ module.exports = class UserAPI {
   */
   static authentificateUser(req, res) {
     let user = new User(req.body);
+    console.log(user);
     if (user.username && user.password) {
       db.selectRecordById({
         text: sql.users.SELECT_USER(user)
       }, function(response) {
         if (response.status === 200) {
-          user.id = response.data.id;
-          SessionAPI.openSession(user.id, function (response) {
-            if (response.status === 201) {
-              return res.status(200)
-              .set({
-                'session-id': response.data.open_session
-              }).end();
-            } else {
-              return res.status(response.status).json(response.data).end();
-            }
-          });
+          if (bcrypt.compareSync(user.password, response.data.u_password)) {
+            user.id = response.data.id;
+            SessionAPI.openSession(user.id, function (response) {
+              if (response.status === 201) {
+                return res
+                .status(200)
+                .cookie('session', response.data.open_session)
+                .end();
+              } else {
+                return res.status(response.status).json(response.data).end();
+              }
+            });
+          } else {
+            return res.status(400).json('wrong password').end();
+          }
         } else {
           return res.status(response.status).json(response.data).end();
         }
@@ -89,8 +95,11 @@ module.exports = class UserAPI {
     }
   }
   static logOut(req, res) {
-    SessionAPI.closeSession(req.headers['session-id'], function (response) {
-      return res.status(response.status).json(response.data).end();
+    SessionAPI.closeSession(req.cookies.session, function (response) {
+      return res
+      .status(response.status)
+      .json(response.data)
+      .end();
     });
   }
 }

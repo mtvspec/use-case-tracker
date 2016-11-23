@@ -1,8 +1,10 @@
+<!DOCTYPE html>
 <html ng-app="app">
 <head>
 <title>Angular</title>
 <link rel="stylesheet" href="./../bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
 <link rel="stylesheet" href="./../bower_components/bootstrap/dist/css/bootstrap.css">
+<link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./templates/login/login.css">
 <script src="./../bower_components/jquery/dist/jquery.min.js"></script>
 <script src="./../bower_components/bootstrap/dist/js/bootstrap.js"></script>
@@ -10,9 +12,12 @@
 <script src="./angular-ui-router.js"></script>
 <script src="./js/app.js"></script>
 <script src="./templates/login/LoginCtrl.js"></script>
+<script src="./templates/main/MainCtrl.js"></script>
 <script src="./app/modules/persons/components/model/PersonsCtrl.js"></script>
 </head>
 <body>
-<div ui-view></div>
+<div class="container">
+  <div ui-view></div>
+</div>
 </body>
 </html>

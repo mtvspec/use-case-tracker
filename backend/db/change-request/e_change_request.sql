@@ -2,7 +2,7 @@
 -- Change request (e_change_request)
 --============================================================================--
 CREATE TABLE change_requests.e_change_request (
-  id BIGSERIAL,
+  id BIGSERIAL NOT NULL,
   e_change_request_source_id INTEGER NOT NULL,
   e_change_request_subject_id INTEGER NOT NULL,
   a_change_request_name VARCHAR (1000) NOT NULL,
@@ -11,6 +11,9 @@ CREATE TABLE change_requests.e_change_request (
       PRIMARY KEY (
         e_change_request_source_id,
         a_change_request_name
+      ),
+      UNIQUE (
+        id
       ),
       UNIQUE (
         a_change_request_desc

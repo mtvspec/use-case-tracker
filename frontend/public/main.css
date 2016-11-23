@@ -1,0 +1,7 @@
+body {
+  font-family: 'Segoe UI';
+  font-weight: normal;
+}
+div.main-toolbar {
+  display: 'inline';
+}

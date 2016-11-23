@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt-nodejs');
  * @param credentials
  * @return User
  */
-class User {
+module.exports = class User {
   constructor(data) {
     let User = {};
     let messages = {};
@@ -29,8 +29,7 @@ class User {
       }
       if (data.password) {
         if (checkPassword(data.password)) {
-          // TODO: hash password
-          User.password = bcrypt.hashSync(data.password);
+          User.password = data.password;
         } else {
           messages.password = `invalid password: '${data.password}'`;
         }
@@ -45,13 +44,6 @@ class User {
     }
   }
 }
-
-let u = new User({
-  username: 'mtvspec',
-  password: 'mtvspec'
-});
-
-console.log(u);
 
 function createUser(User) {
   if (!User) {

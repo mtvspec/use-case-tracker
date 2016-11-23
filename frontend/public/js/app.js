@@ -10,6 +10,11 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     templateUrl: '/templates/login/login.html',
     controller: 'LoginCtrl'
   })
+  .state('main', {
+    url: '/',
+    templateUrl: '/templates/main/main.html',
+    controller: 'MainCtrl'
+  })
   .state('persons', {
     url: '/persons',
     templateUrl: 'main.html',
@@ -25,8 +30,6 @@ app.component('persons', {
   templateUrl: 'main.html',
   controller: 'PersonsCtrl'
 });
-
-console.log('app');
 
 // app.controller('TestCtrl', function TestCtrl($scope, $http, PersonAPI) {
 //

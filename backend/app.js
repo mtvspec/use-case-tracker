@@ -32,7 +32,7 @@ app.use(function (req, res, next) {
   req.url === '/api/users/username') {
     next();
   } else {
-    isAuthentificated(req, req.headers['user-id'], res);
+    isAuthentificated(req, req.cookies.session, res);
     next();
   }
 });
@@ -78,14 +78,14 @@ app.use(function(err, req, res, next) {
   });
 });
 
-function isAuthentificated(req, id, res) {
-  if (!id) {
+function isAuthentificated(req, sessionID, res) {
+  if (!sessionID) {
     return res.status(401).end();
   }
-  let User = {
-    id: id
+  let Session = {
+    id: sessionID
   }
-  req.User = User;
+  req.Session = Session;
 }
 
 module.exports = app;
