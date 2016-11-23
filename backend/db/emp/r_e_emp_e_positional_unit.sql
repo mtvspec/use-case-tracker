@@ -1,17 +1,19 @@
 --============================================================================--
--- Organization (e_organization)
+-- Emp - Positional unit (r_e_emp_e_positional_unit)
 --============================================================================--
-CREATE TABLE organizations.e_organization (
+CREATE TABLE emp.r_e_emp_e_positional_unit (
   id BIGSERIAL,
-  a_bin CHAR (12),
-  a_organization_short_name VARCHAR (1000) NOT NULL,
-  a_organization_official_name VARCHAR (4000),
+  e_emp_id BIGINT NOT NULL,
+  e_positional_unit_id BIGINT NOT NULL,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
         id
       ),
-      UNIQUE (
-        a_bin
-      )
+      FOREIGN KEY (
+        e_emp_id
+      ) REFERENCES emp.e_emp (id),
+      FOREIGN KEY (
+        e_positional_unit_id
+      ) REFERENCES organizations.e_positional_unit (id)
 );
 --============================================================================--
