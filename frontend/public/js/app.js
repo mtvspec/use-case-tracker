@@ -10,10 +10,19 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     templateUrl: '/templates/login/login.html',
     controller: 'LoginCtrl'
   })
-  .state('main', {
-    url: '/',
+  .state('auth', {
+    abstract: true
+  })
+  .state('auth.main', {
+    url: '/main',
     templateUrl: '/templates/main/main.html',
     controller: 'MainCtrl'
+  })
+  .state('use-case-slices', {
+    url: '/use-case-slices',
+    templateUrl: '/templates/use-case-slices/template.html',
+    controller: 'UseCaseSliceCtrl',
+    controllerAs: 'vm'
   })
   .state('persons', {
     url: '/persons',
@@ -25,6 +34,10 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     templateUrl: 'contacts.html'
   });
 });
+
+if (true) {
+
+}
 
 app.component('persons', {
   templateUrl: 'main.html',

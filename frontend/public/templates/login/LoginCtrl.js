@@ -11,7 +11,7 @@
         let sid = Number(response.headers('session-id'));
         if (typeof sid === 'number') {
           let sid = response.headers('session-id');
-          $state.go('main');
+          $state.go('auth.main');
         }
         console.log(response);
         console.log(response.headers('session-id'));

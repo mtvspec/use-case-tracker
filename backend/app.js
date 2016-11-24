@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 
 const routes = require('./routes/index');
 const users = require('./routes/users');
+const useCaseSlices = require('./routes/use-case-slices');
 const persons = require('./routes/persons');
 const organizations = require('./routes/organizations');
 const projects = require('./routes/projects');
@@ -38,6 +39,7 @@ app.use(function (req, res, next) {
 });
 
 app.use('/api', routes);
+app.use('/api/use-case-slices', useCaseSlices);
 app.use('/api/users', users);
 app.use('/api/persons', persons);
 app.use('/api/organizations', organizations);

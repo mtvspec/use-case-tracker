@@ -1,6 +1,7 @@
 'use strict';
 
 const bcrypt = require('bcrypt-nodejs');
+const uuid = require('uuid');
 const ID = require('./../../common/classes/id');
 const User = require('./class.User.js');
 const SessionAPI = require('./sessions/class.SessionAPI.js');
@@ -71,14 +72,42 @@ module.exports = class UserAPI {
         text: sql.users.SELECT_USER(user)
       }, function(response) {
         if (response.status === 200) {
+          let password = bcrypt.hashSync(user.password);
           if (bcrypt.compareSync(user.password, response.data.u_password)) {
             user.id = response.data.id;
             SessionAPI.openSession(user.id, function (response) {
               if (response.status === 201) {
-                return res
-                .status(200)
-                .cookie('session', response.data.open_session)
-                .end();
+                var session = {
+                  token: uuid.v4()
+                };
+                db.updateRecord({
+                  text: `
+                  UPDATE
+                    sessions.e_session
+                  SET
+                    token = '${session.token}'
+                  WHERE
+                    id = ${response.data.open_session}
+                  RETURNING
+                    id;`
+                }, function (response) {
+                  if (response) {
+                    if (response.status === 200) {
+                      return res
+                      .status(200)
+                      .cookie('session', session.token)
+                      .end();
+                    } else {
+                      return res
+                      .status(500)
+                      .end();
+                    }
+                  } else {
+                    return res
+                    .status(500)
+                    .end();
+                  }
+                });
               } else {
                 return res.status(response.status).json(response.data).end();
               }

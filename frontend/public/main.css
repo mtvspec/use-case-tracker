@@ -1,5 +1,11 @@
+@font-face {
+  font-family: 'Roboto Thin';
+  src: url('fonts/roboto/Roboto-Thin.woff2');
+}
+
 body {
-  font-family: 'Segoe UI';
+  font-family: 'Roboto Thin';
+  font-size: 14px;
   font-weight: normal;
 }
 div.main-toolbar {
