@@ -21,6 +21,7 @@
   ],
   "dependencies": {
     "bootstrap": "^3.3.7",
-    "materialize": "^0.97.8"
+    "materialize": "^0.97.8",
+    "angular-materialize": "^0.2.1"
   }
 }
