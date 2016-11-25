@@ -2,18 +2,19 @@
 -- Project operations (f_project_operation)
 --============================================================================--
 CREATE TABLE projects.f_project_operation (
-  id SERIAL,
-  d_project_operation_id INTEGER NOT NULL,
+  id BIGSERIAL,
+  d_project_operation_type_id INTEGER NOT NULL,
   a_operation_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  e_user_id INTEGER NOT NULL,
-  e_project_id INTEGER NOT NULL,
-  e_customer_id INTEGER,
+  e_user_id BIGINT NOT NULL,
+  e_project_id BIGINT NOT NULL,
+  d_project_kind_id INTEGER,
+  e_customer_id BIGINT,
   a_project_name VARCHAR (1000),
-  a_project_desc VARCHAR (4000),
-  e_contract_id INTEGER,
-  e_project_manager_id INTEGER,
-  e_project_plan_id INTEGER,
-  e_project_team_id INTEGER,
+  a_project_desc TEXT,
+  e_contract_id BIGINT,
+  e_project_manager_id BIGINT,
+  e_project_plan_id BIGINT,
+  e_project_team_id BIGINT,
   a_official_project_name VARCHAR (4000),
   a_plan_start_date DATE,
   a_plan_end_date DATE,
@@ -39,8 +40,17 @@ CREATE TABLE projects.f_project_operation (
       e_customer_id
     ) REFERENCES customers.e_customer (id),
     FOREIGN KEY (
+      e_contract_id
+    ) REFERENCES documents.e_document (id),
+    FOREIGN KEY (
       e_project_manager_id
     ) REFERENCES emp.e_emp (id),
+    FOREIGN KEY (
+      e_project_plan_id
+    ) REFERENCES documents.e_document (id),
+    FOREIGN KEY (
+      e_project_team_id
+    ) REFERENCES projects.e_project_team (id),
     FOREIGN KEY (
       d_project_state_id
     ) REFERENCES projects.d_project_state (id)
@@ -50,11 +60,11 @@ CREATE TABLE projects.f_project_operation (
 --============================================================================--
 CREATE FUNCTION projects.create_project (
   IN v_d_project_kind_id INTEGER DEFAULT NULL,
-  IN v_e_customer_id INTEGER DEFAULT NULL,
+  IN v_e_customer_id BIGINT DEFAULT NULL,
   IN v_a_project_name VARCHAR (1000) DEFAULT NULL,
-  IN v_a_project_description VARCHAR (4000) DEFAULT NULL,
-  IN v_e_user_id INTEGER DEFAULT NULL,
-  OUT e_project_id INTEGER
+  IN v_a_project_desc TEXT DEFAULT NULL,
+  IN v_e_user_id BIGINT DEFAULT NULL,
+  OUT e_project_id BIGINT
 )
 AS $$
 WITH ins AS (
@@ -63,14 +73,14 @@ WITH ins AS (
       d_project_kind_id,
       e_customer_id,
       a_project_name,
-      a_project_description,
+      a_project_desc,
       d_project_state_id
     )
   VALUES (
     v_d_project_kind_id,
     v_e_customer_id,
     v_a_project_name,
-    v_a_project_description,
+    v_a_project_desc,
     1
   )
   RETURNING
@@ -84,7 +94,7 @@ INSERT INTO
     d_project_kind_id,
     e_customer_id,
     a_project_name,
-    a_project_description,
+    a_project_desc,
     d_project_state_id
   )
 VALUES (
@@ -94,7 +104,7 @@ VALUES (
   (SELECT d_project_kind_id FROM ins),
   (SELECT e_customer_id FROM ins),
   (SELECT a_project_name FROM ins),
-  (SELECT a_project_description FROM ins),
+  (SELECT a_project_desc FROM ins),
   (SELECT d_project_state_id FROM ins)
 )
 RETURNING
@@ -105,7 +115,7 @@ SELECT
   projects.create_project (
     v_e_customer_id := null,
     v_a_project_name := 'Kanban cards',
-    v_a_project_description := 'Kanban cards for main project',
+    v_a_project_desc := 'Kanban cards for main project',
     v_e_user_id := 1
   );
 --============================================================================--

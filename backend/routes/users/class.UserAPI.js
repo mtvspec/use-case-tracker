@@ -59,6 +59,13 @@ module.exports = class UserAPI {
       return res.status(400).json(user).end();
     }
   }
+  static getUserID(session, cb) {
+    db.selectRecordById({
+      text: sql.users.SELECT_USER_BY_SESSION_ID(session)
+    }, function(response) {
+      cb(response);
+    });
+  }
   /***
   * @param username
   * @param password

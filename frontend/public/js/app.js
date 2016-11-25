@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('app', ['ui.router'], ['ui.materialize']);
+var app = angular.module('app', ['ui.router']);
 
 app.config(function ($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
@@ -17,6 +17,12 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     url: '/main',
     templateUrl: '/templates/main/main.html',
     controller: 'MainCtrl'
+  })
+  .state('projects', {
+    url: '/projects',
+    templateUrl: '/components/projects/views/template.html',
+    controller: 'ProjectsCtrl',
+    controllerAs: 'vm'
   })
   .state('use-case-slices', {
     url: '/use-case-slices',
@@ -35,9 +41,9 @@ app.config(function ($stateProvider, $urlRouterProvider) {
   });
 });
 
-if (true) {
-
-}
+app.factory('ProjectsAPI', function ProjectsAPI($scope, $http) {
+  console.log('ProjectsAPI');
+});
 
 app.component('persons', {
   templateUrl: 'main.html',

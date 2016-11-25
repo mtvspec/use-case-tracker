@@ -21,20 +21,17 @@ module.exports = class Database {
       throw new Error(`
         'selectAllRecords':
         'config' is required`);
-      return;
     }
     if (!config.text) {
       throw new Error(`
         'selectAllRecords':
         'config.text' is required`);
-      return;
     }
     if (!typeof config.text === 'string') {
       throw new Error(`
         'selectAllRecords':
         incorrect 'config.text':
         ${config.text}`);
-      return;
     }
     pool.connect(function (err, client, release) {
       if (err) {
@@ -88,20 +85,17 @@ module.exports = class Database {
       throw new Error(`
         'selectRecordById':
         'config' is required`);
-      return;
     }
     if (!config.text) {
       throw new Error(`
         'selectRecordById':
         'config.text' is required`);
-      return;
     }
     if (!typeof config.text === 'string') {
       throw new Error(`
         'selectRecordById':
         incorrect 'config.text':
         ${config.text}`);
-      return;
     }
     pool.connect(function (err, client, release) {
       if (err) {
@@ -156,25 +150,22 @@ module.exports = class Database {
       throw new Error(`
         'insertRecord':
         'config' is required`);
-      return;
     }
     if (!config.text) {
       throw new Error(`
         'insertRecord':
         'config.text' is required`);
-      return;
     }
     if (!typeof config.text === 'string') {
       throw new Error(`
         'insertRecord':
         incorrect 'config.text':
         ${config.text}`);
-      return;
     }
     pool.connect(function (err, client, release) {
       if (err) {
         console.error(`
-          'insertRecord':
+          'insertRecord': ${config.text}
           'connect':
           ${err}`);
         return cb({
@@ -191,7 +182,7 @@ module.exports = class Database {
               });
             }
             console.error(`
-              'insertRecord':
+              'insertRecord': ${config.text}
               'query':
               ${err}`);
               console.log(err);
@@ -223,20 +214,17 @@ module.exports = class Database {
       throw new Error(`
         'updateRecord':
         'config' is required`);
-      return;
     }
     if (!config.text) {
       throw new Error(`
         'updateRecord':
         'config.text' is required`);
-      return;
     }
     if (!typeof config.text === 'string') {
       throw new Error(`
         'updateRecord':
         incorrect 'config.text':
         ${config.text}`);
-      return;
     }
     pool.connect(function (err, client, release) {
       if (err) {

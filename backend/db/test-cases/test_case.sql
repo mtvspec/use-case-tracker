@@ -1,1 +1,1 @@
-CREATE SCHEMA test_case;
+CREATE SCHEMA test_cases;

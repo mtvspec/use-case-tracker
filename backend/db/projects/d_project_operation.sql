@@ -20,7 +20,7 @@ CREATE TABLE projects.d_project_operation (
 );
 --------------------------------------------------------------------------------
 INSERT INTO
-  projects.d_project_operation_type (
+  projects.d_project_operation (
     project_operation_name_en,
     project_operation_name_ru
   )

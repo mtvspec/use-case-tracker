@@ -1,0 +1,39 @@
+<div class="">
+  <div class="form-group">
+    <input class="form-control" type="text" nd-model="searchProject" name="" id="" placeholder="Search project...">
+  </div>
+  <table class="table table-striped table-hover">
+    <tr>
+      <th>
+        Project
+      </th>
+      <th>
+        Description
+      </th>
+    </tr>
+    <tr ng-repeat="Project in vm.projects | filter: searchProject">
+      <td>
+        {{Project.projectName}}
+      </td>
+      <td>
+        {{Project.projectDesc}}
+      </td>
+    </tr>
+  </table>
+</div>
+
+<form name="">
+  <div class="form-group">
+    <label class="" for="projectName">Name</label>
+    <input class="form-control" type="text" name="projectName" ng-model="vm.project.projectName">
+  </div>
+  <div class="form-group">
+    <label class="" for="projectDesc">Description</label>
+    <input class="form-control" type="text" name="projectDesc" ng-model="vm.project.projectDesc">
+  </div>
+</form>
+<button class="btn btn-default" type="button" name="button" ng-click="vm.createProject(vm.project)">Create project</button>
+
+<div class="well">
+  {{vm.project | json}}
+</div>

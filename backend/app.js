@@ -29,6 +29,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function (req, res, next) {
+  console.log(`Session: ${req.cookies.session}`);
+  console.log(req.body);
   if (req.url === '/api/users/login' ||
   req.url === '/api/users/username') {
     next();

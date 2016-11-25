@@ -1,6 +1,7 @@
 'use strict';
 
 const router = require('express').Router();
+const UserAPI = require('./../users/class.UserAPI.js');
 const ProjectAPI = require('./class.ProjectAPI.js');
 
 router
@@ -12,10 +13,22 @@ router
   ProjectAPI.getProjectByID(req, res);
 })
 .post('/', function (req, res) {
-  if (!req.User) {
-    return;
+  if (!req.cookies.session) {
+    return res
+    .status(401)
+    .end();
   }
-  ProjectAPI.createProject(req, res);
+  let session = req.cookies.session;
+  UserAPI.getUserID(session, function(response) {
+    if (response.status === 200) {
+      ProjectAPI.createProject(req, response.data.id, res);
+    } else {
+      return res
+      .status(401)
+      .end();
+    }
+  });
+  
 })
 .post('/start_project/:id', function (req, res) {
   ProjectAPI.startProject(req, res);

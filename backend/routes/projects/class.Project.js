@@ -5,13 +5,23 @@ module.exports = class Project {
   * @param projectKindID (*)
   * @param customerID
   * @param projectName (*)
-  * @param projectDescription
+  * @param projectDesc
   * @return projectID
   */
   constructor(data) {
     let project = {};
     let messages = {};
+    let result = {};
     if (data) {
+      if (!data || !typeof data === 'object') {
+        messages.message = `'project' is required`;
+        result.messages = messages;
+        return this.result = result;
+      } else if (Object.getOwnPropertyNames(data).length === 0) {
+        messages.message = `'project data' is required`;
+        result.messages = messages;
+        return this.result = result;
+      }     
       if (data.projectKindID) {
         if (typeof data.projectKindID === 'number'
         && data.projectKindID > 0) {
@@ -43,21 +53,23 @@ module.exports = class Project {
       } else {
         messages.projectName = `'projectName' is required`;
       }
-      if (data.projectDescription) {
-        if (typeof data.projectDescription === 'string'
-        && data.projectDescription.length >= 1
-        && data.projectDescription.length <= 4000) {
-          project.projectDescription = data.projectDescription;
+      if (data.projectDesc) {
+        if (typeof data.projectDesc === 'string'
+        && data.projectDesc.length >= 1
+        && data.projectDesc.length <= 4000) {
+          project.projectDesc = data.projectDesc;
         } else {
-          messages.projectDescription = `incorrect 'projectDescription': ${data.projectDescription}`;
+          messages.projectDesc = `incorrect 'projectDesc': ${data.projectDesc}`;
         }
       } else {
-        project.projectDescription = '';
+        project.projectDesc = '';
       }
       if (Object.keys(messages).length > 0) {
-        return this.messages = messages;
+        result.messages = messages;
+        return this.result = result;
       } else {
-        return this.project = project;
+        result.project = project;
+        return this.result = result;
       }
     } else {
       messages.project = `'project' is required`;

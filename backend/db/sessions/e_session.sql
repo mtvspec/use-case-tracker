@@ -1,12 +1,22 @@
 CREATE TABLE sessions.e_session (
   id SERIAL,
   e_user_id INTEGER NOT NULL,
+  session VARCHAR (4000),
   open_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   close_timestamp TIMESTAMP WITH TIME ZONE,
-  status_id CHAR (1) NOT NULL DEFAULT 'O',
-    PRIMARY KEY (id),
-    FOREIGN KEY (e_user_id) REFERENCES users.e_user (id),
-    FOREIGN KEY (status_id) REFERENCES sessions.d_session_status (id)
+  d_session_state_id CHAR (1) NOT NULL DEFAULT 'O',
+    PRIMARY KEY (
+      id
+    ),
+    UNIQUE (
+      token
+    ),
+    FOREIGN KEY (
+      e_user_id
+    ) REFERENCES users.e_user (id),
+    FOREIGN KEY (
+      e_session_state_id
+    ) REFERENCES sessions.d_session_state (id)
 );
 
 CREATE FUNCTION sessions.open_session (

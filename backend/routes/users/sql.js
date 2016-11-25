@@ -20,6 +20,18 @@ const Queries = {
       WHERE
         u.id = id;
       `;
+    },
+    SELECT_USER_BY_SESSION_ID(session) {
+      return `
+      SELECT
+        s.e_user_id "id"
+      FROM
+        sessions.e_session s
+      WHERE
+        s.token = '${session}'
+      AND
+        s.status_id = 'O';
+      `;
     }
   }
 }

@@ -52,16 +52,15 @@ class ProjectAPI {
       return res.status(400).json(project).end();
     }
   }
-  static createProject(req, res) {
-    let project = new Project(req.body);
-    let id = new ID(req.headers['user-id']);
+  static createProject(req, id, res) {
+    let result = new Project(req.body);
     let user = {
-      id: id.id
+      id: id
     }
-    if (project.projectName) {
+    if (result.project.projectName) {
       db.insertRecord({
         text: sql.projects.INSERT_PROJECT(
-          project,
+          result.project,
           user
         )
       }, function (response) {
@@ -74,7 +73,7 @@ class ProjectAPI {
         }
       });
     } else {
-      return res.status(400).json(project).end();
+      return res.status(400).json(result.messages).end();
     }
   }
   static startProject(req, res) {
