@@ -1,5 +1,5 @@
 --============================================================================--
--- Glossary term
+-- Glossary term (e_glossary_term)
 --============================================================================--
 CREATE TABLE knowledge_base.e_glossary_term (
   id BIGSERIAL NOT NULL,
@@ -12,6 +12,9 @@ CREATE TABLE knowledge_base.e_glossary_term (
     ),
     UNIQUE (
       id
+    ),
+    UNIQUE (
+      glossary_term_ru
     )
 );
 --============================================================================--

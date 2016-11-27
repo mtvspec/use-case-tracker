@@ -1,5 +1,5 @@
 --============================================================================--
--- Emp operations (d_emp_operation)
+-- Emp operation (d_emp_operation)
 --============================================================================--
 CREATE TABLE emp.d_emp_operation (
   id SERIAL NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE emp.d_emp_operation (
         a_emp_operation_name_ru
       )
 );
---------------------------------------------------------------------------------
+--============================================================================--
 INSERT INTO
   emp.d_emp_operation (
     a_emp_operation_name_en

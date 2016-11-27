@@ -1,3 +1,6 @@
+--============================================================================--
+-- Defect state (d_defect_state)
+--============================================================================--
 CREATE TABLE defects.d_defect_state (
   id SERIAL NOT NULL,
   defect_state_name_en VARCHAR (1000) NOT NULL,
@@ -13,7 +16,7 @@ CREATE TABLE defects.d_defect_state (
         id
       )
 );
-
+--============================================================================--
 INSERT INTO defects.d_defect_state (
   defect_state_name_en,
   defect_state_name_ru
@@ -39,3 +42,4 @@ VALUES
   'Deleted',
   'Удалено'
 );
+--============================================================================--

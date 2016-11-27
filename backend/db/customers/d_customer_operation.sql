@@ -5,10 +5,11 @@ CREATE TABLE customers.d_customer_operation (
   id SERIAL NOT NULL,
   a_customer_operation_name_en VARCHAR (1000) NOT NULL,
   a_customer_operation_desc_en TEXT,
-  a_customer_operation_name_ru VARCHAR (1000),
+  a_customer_operation_name_ru VARCHAR (1000) NOT NULL,
   a_customer_operation_desc_ru TEXT,
     PRIMARY KEY (
-      a_customer_operation_name_en
+      a_customer_operation_name_en,
+      a_customer_operation_name_ru
     ),
     UNIQUE (
       id

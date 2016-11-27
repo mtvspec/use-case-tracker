@@ -1,0 +1,27 @@
+<form class="form">
+  <h1>Create system</h1>
+  <div class="form-group">
+    <label for="aSystemKindID">System kind:</label>
+    <select class="form-control" id="aSystemKindID" name="aSystemKindID" ng-model="vm.system.aSystemKindID">
+      <option ng-repeat="systemKind in vm.systemKinds" value="{{systemKind.id}}">{{systemKind.aSystemKindName}}</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="aSystemTypeID">System type:</label>
+    <select class="form-control" id="aSystemTypeID" name="aSystemTypeID" ng-model="vm.system.aSystemTypeID">
+      <option ng-repeat="systemType in vm.systemTypes" value="{{systemType.id}}">{{systemType.aSystemTypeName}}</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="aSystemName">System name:</label>
+    <input class="form-control" type="text" name="" ng-model="vm.system.aSystemName">
+  </div>
+  <div class="form-group">
+    <label for="aSystemDesc">System desc:</label>
+    <input class="form-control" type="text" name="" ng-model="vm.system.aSystemDesc">
+  </div>
+</form>
+<button class="btn btn-default" type="button" name="button" ng-click="vm.createSystem(vm.system)">Create system</button>
+<pre class="well">
+  {{vm.system | json }}
+</pre>

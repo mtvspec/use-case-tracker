@@ -4,9 +4,9 @@
 CREATE TABLE projects.d_project_operation (
   id SERIAL NOT NULL,
   project_operation_name_en VARCHAR (1000) NOT NULL,
-  project_operation_desc_en VARCHAR (4000),
+  project_operation_desc_en TEXT,
   project_operation_name_ru VARCHAR (1000) NOT NULL,
-  project_operation_desc_ru VARCHAR (4000),
+  project_operation_desc_ru TEXT,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
         project_operation_name_en
@@ -18,7 +18,7 @@ CREATE TABLE projects.d_project_operation (
         project_operation_name_ru
       )
 );
---------------------------------------------------------------------------------
+--============================================================================--
 INSERT INTO
   projects.d_project_operation (
     project_operation_name_en,
@@ -57,7 +57,7 @@ VALUES
   'Delete project',
   'Удалить проект'
 );
---------------------------------------------------------------------------------
+--============================================================================--
 CREATE VIEW projects.v_project_operations
 AS
 SELECT
@@ -84,4 +84,4 @@ ORDER BY
   p.a_project_name,
   ot.id
 ASC;
---------------------------------------------------------------------------------
+--============================================================================--

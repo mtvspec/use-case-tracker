@@ -2,6 +2,7 @@
 
 const ID = require ('./../../common/classes/id');
 const Person = require('./class.Person.js');
+const UserAPI = require('./../users/class.UserAPI.js');
 const db = require('./../../db.js');
 const sql = require('./sql.js');
 
@@ -43,18 +44,93 @@ class PersonAPI {
   }
   static createPerson(req, res) {
     let result = new Person(req.body);
+    let token = req.cookies.session;
     if (result.person) {
       let person = result.person;
-      if (person.iin) {
-        PersonAPI.getPersonByIIN(person.iin, res, function (response) {
+      if (person.aPersonIIN) {
+        PersonAPI.getPersonByIIN(person.aPersonIIN, res, function (response) {
           if (response) {
             if (response.status === 200) {
-              return res.status(400).json(`duplicate 'iin': ${person.iin}`).end();
-            } else if (response.status === 204){
+              return res
+              .status(400)
+              .json(`duplicate 'iin': ${person.aPersonIIN}`)
+              .end();
+            } else if (response.status === 204) {
+
+              if (!token) {
+                return res
+                .status(401)
+                .end();
+              } else {
+                UserAPI.getUserID(token, function (response) {
+                  console.log(sql.persons.INSERT_PERSON(
+                    person,
+                    {
+                      id: response.data.sessionID
+                    },
+                    {
+                      id: response.data.userID
+                    }
+                  ));
+                  if (response.status === 200) {
+                    db.insertRecord({
+                      text: sql.persons.INSERT_PERSON(
+                        person,
+                        {
+                          id: response.data.sessionID
+                        },
+                        {
+                          id: response.data.userID
+                        }
+                      )
+                    }, function (response) {
+                      if (response.status === 201) {
+                        return res
+                        .status(response.status)
+                        .json({
+                          id: response.data.create_person
+                        })
+                        .end();
+                      } else {
+                        return res
+                        .status(response.status)
+                        .json(response.data)
+                        .end();
+                      }
+                    });
+                  } else {
+                    return res
+                    .status(401)
+                    .json(result.messages)
+                    .end();
+                  }
+                });
+              }
+            }
+          } else {
+            return res
+            .status(500)
+            .end();
+          }
+        });
+      } else {
+        if (!token) {
+          return res
+          .status(401)
+          .end();
+        } else {
+          UserAPI.getUserID(token, function (response) {
+            if (response.status === 200) {
               db.insertRecord({
                 text: sql.persons.INSERT_PERSON(
                   person,
-                  req.User)
+                  {
+                    id: response.data.sessionID
+                  },
+                  {
+                    id: response.data.userID
+                  }
+                )
               }, function (response) {
                 if (response.status === 201) {
                   return res.status(response.status).json({
@@ -64,32 +140,21 @@ class PersonAPI {
                   return res.status(response.status).json(response.data).end();
                 }
               });
+            } else {
+              return res
+              .status(401)
+              .end();
             }
-          } else {
-            return res.status(500).end();
-          }
-        });
-      } else {
-        db.insertRecord({
-          text: sql.persons.INSERT_PERSON(
-            person,
-            req.User)
-        }, function (response) {
-          if (response.status === 201) {
-            return res.status(response.status).json({
-              id: response.data.create_person
-            }).end();
-          } else {
-            return res.status(response.status).json(response.data).end();
-          }
-        });
+          });
+        }
       }
     } else {
       let messages = result.messages;
-      if (Object.getOwnPropertyNames(messages).length === 1) {
-        return res.status(400).json(messages.message).end();
-      } else {
-        return res.status(400).json(messages).end();
+      if (Object.getOwnPropertyNames(messages).length > 0) {
+        return res
+        .status(400)
+        .json(messages)
+        .end();
       }
     }
   }

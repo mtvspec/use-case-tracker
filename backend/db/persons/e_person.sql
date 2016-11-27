@@ -1,5 +1,24 @@
 --============================================================================--
--- Person (e_person)
+-- Person (e_person) - current
+--============================================================================--
+CREATE TABLE persons.e_person (
+  id BIGSERIAL,
+  a_person_iin CHAR (12),
+  a_person_last_name VARCHAR (100),
+  a_person_first_name VARCHAR (100),
+  a_person_middle_name VARCHAR (100),
+  a_person_dob DATE,
+  d_person_gender_id CHAR (1),
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+      PRIMARY KEY (
+        id
+      ),
+      FOREIGN KEY (
+        a_person_gender_id
+      ) REFERENCES persons.d_person_gender (id)
+);
+--============================================================================--
+-- Person (e_person) - future
 --============================================================================--
 -- TODO: test with persons db structure
 CREATE TABLE test.e_person (
@@ -18,6 +37,26 @@ CREATE TABLE test.e_person (
         e_person_idb_id
       ) REFERENCES persons.d_persons_idb (id)
 );
+--============================================================================--
+-- Person (e_person) - current
+--============================================================================--
+CREATE TABLE persons.e_person (
+  id BIGSERIAL,
+  a_person_iin CHAR (12),
+  a_person_last_name VARCHAR (100),
+  a_person_first_name VARCHAR (100),
+  a_person_middle_name VARCHAR (100),
+  a_person_dob DATE,
+  a_person_gender_id CHAR (1),
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+      PRIMARY KEY (
+        id
+      ),
+      FOREIGN KEY (
+        a_person_gender_id
+      ) REFERENCES persons.d_person_gender (id)
+);
+--============================================================================--
 -- TODO: update quieries
 INSERT INTO
   persons.e_person (

@@ -33,16 +33,19 @@ CREATE TABLE projects.e_project (
         e_customer_id
       ) REFERENCES customers.e_customer (id),
       FOREIGN KEY (
+        e_contract_id
+      ) REFERENCES documents.e_document (id),
+      FOREIGN KEY (
+        e_project_manager_id
+      ) REFERENCES emp.e_emp (id),
+      FOREIGN KEY (
         e_project_plan_id
       ) REFERENCES documents.e_document (id),
       FOREIGN KEY (
         e_project_team_id
       ) REFERENCES projects.e_project_team (id),
       FOREIGN KEY (
-        e_project_manager_id
-      ) REFERENCES emp.e_emp (id),
-      FOREIGN KEY (
         d_project_state_id
       ) REFERENCES projects.d_project_state (id)
 );
---------------------------------------------------------------------------------
+--============================================================================--

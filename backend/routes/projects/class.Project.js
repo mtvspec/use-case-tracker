@@ -1,5 +1,7 @@
 'use strict';
 
+const validator = require('./../../common/validator');
+
 module.exports = class Project {
   /**
   * @param projectKindID (*)
@@ -9,9 +11,9 @@ module.exports = class Project {
   * @return projectID
   */
   constructor(data) {
+    let result = {};
     let project = {};
     let messages = {};
-    let result = {};
     if (data) {
       if (!data || !typeof data === 'object') {
         messages.message = `'project' is required`;
@@ -21,55 +23,51 @@ module.exports = class Project {
         messages.message = `'project data' is required`;
         result.messages = messages;
         return this.result = result;
-      }     
-      if (data.projectKindID) {
-        if (typeof data.projectKindID === 'number'
-        && data.projectKindID > 0) {
-          project.projectKindID = Number(data.projectKindID);
-        } else {
-          messages.projectKindID = `incorrect 'projectKindID': ${data.projectKindID}`;
-        }
-      } else {
-        project.projectKindID = null;
       }
-      if (data.customerID) {
-        if (typeof data.customerID === 'number'
-        && data.customerID > 0) {
-          project.customerID = Number(data.customerID);
+      if (data.aProjectKindID) {
+        let result = validator.isNumber(data.aProjectKindID, 'not null');
+        if (result.result) {
+          project.aProjectKindID = result.data;
         } else {
-          messages.customerID = `incorrect 'customerID': ${data.customerID}`;
+          messages = result.data;
         }
-      } else {
-        project.customerID = null;
       }
-      if (data.projectName) {
-        if (typeof data.projectName === 'string'
-        && data.projectName.length >= 1
-        && data.projectName.length <= 1000) {
-          project.projectName = data.projectName;
+      if (data.aCustomerID) {
+        let result = validator.isNumber(data.aCustomerID, 'not null');
+        if (result.result) {
+          project.aCustomerID = result.data;
         } else {
-          messages.projectName = `incorrect 'projectName': ${data.projectName}`;
+          messages = result.data;
         }
-      } else {
-        messages.projectName = `'projectName' is required`;
       }
-      if (data.projectDesc) {
-        if (typeof data.projectDesc === 'string'
-        && data.projectDesc.length >= 1
-        && data.projectDesc.length <= 4000) {
-          project.projectDesc = data.projectDesc;
+      if (data.aProjectName) {
+        let result = validator.isString(data.aProjectName, 2, 1000, 'not null');
+        console.log(result);
+        if (result.result) {
+          project.aProjectName = result.data;
         } else {
-          messages.projectDesc = `incorrect 'projectDesc': ${data.projectDesc}`;
+          messages = result.data;
         }
-      } else {
-        project.projectDesc = '';
+      }
+      if (data.aProjectDesc) {
+        let result = validator.isString(data.aProjectDesc, 2, null, null);
+        if (result.result) {
+          project.aProjectDesc = result.data;
+        } else {
+          messages = result.data;
+        }
       }
       if (Object.keys(messages).length > 0) {
         result.messages = messages;
         return this.result = result;
       } else {
-        result.project = project;
-        return this.result = result;
+        if (Object.keys(project).length === 4) {
+          result.project = project;
+          return this.result = result;
+        } else {
+          result.messages = messages;
+          return this.result = result;
+        }
       }
     } else {
       messages.project = `'project' is required`;
@@ -77,29 +75,3 @@ module.exports = class Project {
     }
   }
 }
-
-function isValidDate(dateString)
-{
-    // First check for the pattern
-    if(!/^\d{4}\-\d{1,2}\-\d{1,2}$/.test(dateString))
-        return false;
-
-    // Parse the date parts to integers
-    let parts = dateString.split('-');
-    let day = parseInt(parts[2], 10);
-    let month = parseInt(parts[1], 10);
-    let year = parseInt(parts[0], 10);
-
-    // Check the ranges of month and year
-    if(year < 1000 || year > 3000 || month == 0 || month > 12)
-        return false;
-
-    let monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
-
-    // Adjust for leap years
-    if(year % 400 == 0 || (year % 100 != 0 && year % 4 == 0))
-        monthLength[1] = 29;
-
-    // Check the range of the day
-    return day > 0 && day <= monthLength[month - 1];
-};

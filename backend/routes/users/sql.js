@@ -21,14 +21,16 @@ const Queries = {
         u.id = id;
       `;
     },
-    SELECT_USER_BY_SESSION_ID(session) {
+    SELECT_USER_AND_SESSION_ID_BY_SESSION_TOKEN(token) {
+      console.log('token:\n', token);
       return `
       SELECT
-        s.e_user_id "id"
+        s.id "sessionID",
+        s.e_user_id "userID"
       FROM
         sessions.e_session s
       WHERE
-        s.token = '${session}'
+        s.token = '${token}'
       AND
         s.status_id = 'O';
       `;

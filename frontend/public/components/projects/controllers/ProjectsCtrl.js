@@ -1,4 +1,6 @@
 (function () {
+  'use strict';
+
   app.controller('ProjectsCtrl', function ProjectsCtrl($scope, $http) {
 
     var vm = this;

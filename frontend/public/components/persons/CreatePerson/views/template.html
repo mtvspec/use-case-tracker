@@ -1,0 +1,30 @@
+<h5>
+  Create person
+</h5>
+<form class="">
+  <div class="form-group">
+    <label for="aPersonIIN">IIN</label>
+    <input class="form-control" type="text" id="aPersonIIN" ng-model="vm.person.aPersonIIN">
+  </div>
+  <div class="form-group">
+    <label for="aPersonLastName">Last name</label>
+    <input class="form-control" type="text" id="aPersonLastName" ng-model="vm.person.aPersonLastName">
+  </div>
+  <div class="form-group">
+    <label for="aPersonFirstName">First name</label>
+    <input class="form-control" type="text" id="aPersonFirstName" ng-model="vm.person.aPersonFirstName">
+  </div>
+  <div class="form-group">
+    <label for="aPersonMiddleName">Middle name</label>
+    <input class="form-control" type="text" id="aPersonMiddleName" ng-model="vm.person.aPersonMiddleName">
+  </div>
+  <div class="form-group">
+    <label for="aPersonDob">Date of birth</label>
+    <input class="form-control" type="text" id="aPersonDob" ng-model="vm.person.aPersonDob">
+  </div>
+  <div class="form-group">
+    <label for="aPersonGenderID">Gender</label>
+    <input class="form-control" type="text" id="aPersonGenderID" ng-model="vm.person.aPersonGenderID">
+  </div>
+</form>
+<button class="btn btn-default" type="button" name="button" ng-click="vm.createPerson(vm.person)">Create person</button>

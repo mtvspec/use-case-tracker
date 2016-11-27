@@ -1,7 +1,11 @@
 (function () {
-  app.factory('ProjectsAPI', function ProjectsAPI($scope, $http) {
-    function getProjects() {
-      console.log('projects');
+  'use strict';
+
+  app.factory('ProjectsAPI', function ($scope, $http) {
+    return {
+      project: {
+        projectName: 'Project'
+      }
     }
   });
 })();

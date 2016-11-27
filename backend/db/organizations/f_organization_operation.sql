@@ -2,11 +2,11 @@
 -- Organization operation (f_organization_operation)
 --============================================================================--
 CREATE TABLE organizations.f_organization_operation (
-  id SERIAL,
+  id BIGSERIAL,
   d_organization_operation_type_id INTEGER NOT NULL,
   d_operation_timestamp TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  e_user_id INTEGER NOT NULL,
-  e_organization_id INTEGER NOT NULL,
+  e_user_id BIGINT NOT NULL,
+  e_organization_id BIGINT NOT NULL,
   e_bin CHAR (12),
   a_organization_short_name VARCHAR (1000) NOT NULL,
   a_organization_official_name VARCHAR (4000),
@@ -31,8 +31,8 @@ CREATE FUNCTION organizations.create_organization (
   IN v_bin CHAR (12),
   IN v_a_organization_short_name VARCHAR (1000),
   IN v_a_organization_official_name VARCHAR (4000),
-  IN v_e_user_id INTEGER,
-  OUT e_organization_id INTEGER
+  IN v_e_user_id BIGINT,
+  OUT e_organization_id BIGINT
 )
 AS $$
 WITH ins AS (
@@ -64,9 +64,9 @@ VALUES (
   1,
   v_user_id,
   (SELECT id FROM ins),
-  (SELECT bin FROM ins),
-  (SELECT short_name FROM ins),
-  (SELECT official_name FROM ins),
+  (SELECT a_bin FROM ins),
+  (SELECT a_organization_short_name FROM ins),
+  (SELECT a_organization_official_name FROM ins),
   (SELECT is_deleted FROM ins)
 )
 RETURNING
@@ -76,12 +76,12 @@ $$ LANGUAGE sql;
 -- Update organization (update_organization)
 --============================================================================--
 CREATE FUNCTION organizations.update_organization (
-  IN v_e_organization_id INTEGER,
+  IN v_e_organization_id BIGINT,
   IN v_a_bin CHAR (12),
   IN v_a_organization_short_name VARCHAR (1000),
   IN v_a_organization_official_name VARCHAR (4000),
-  IN v_e_user_id INTEGER,
-  OUT e_organization_id INTEGER
+  IN v_e_user_id BIGINT,
+  OUT e_organization_id BIGINT
 )
 AS $$
 WITH upd AS (
@@ -122,8 +122,8 @@ $$ LANGUAGE sql;
 -- Select organization (select_organization)
 --============================================================================--
 CREATE FUNCTION organizations.select_organization (
-  IN v_e_organization_id INTEGER,
-  IN v_user_id INTEGER
+  IN v_e_organization_id BIGINT,
+  IN v_e_user_id BIGINT
 )
 RETURNS organizations.e_organization
 AS $$
@@ -138,20 +138,20 @@ WITH sel AS (
 INSERT INTO
   organizations.e_organization_log (
     d_operation_type_id,
-    user_id,
+    e_user_id,
     e_organization_id,
-    bin,
-    short_name,
-    official_name,
+    a_bin,
+    a_organization_short_name,
+    a_organization_official_name,
     is_deleted
   )
 VALUES (
   5,
   v_user_id,
   (SELECT id FROM sel),
-  (SELECT bin FROM sel),
-  (SELECT short_name FROM sel),
-  (SELECT official_name FROM sel),
+  (SELECT a_bin FROM sel),
+  (SELECT a_organization_short_name FROM sel),
+  (SELECT a_organization_official_name FROM sel),
   (SELECT is_deleted FROM sel)
 );
 SELECT
@@ -165,9 +165,9 @@ $$ LANGUAGE sql;
 -- Delete organization (delete_organization)
 --============================================================================--
 CREATE FUNCTION organizations.delete_organization (
-  IN v_e_organization_id INTEGER,
-  IN v_user_id INTEGER,
-  OUT e_organization_id INTEGER
+  IN v_e_organization_id BIGINT,
+  IN v_e_user_id BIGINT,
+  OUT e_organization_id BIGINT
 )
 AS $$
 WITH upd AS (
@@ -183,20 +183,20 @@ WITH upd AS (
 INSERT INTO
   organizations.e_organization_log (
     d_operation_type_id,
-    user_id,
+    e_user_id,
     e_organization_id,
-    bin,
-    short_name,
-    official_name,
+    a_bin,
+    a_organization_short_name,
+    a_organization_official_name,
     is_deleted
   )
 VALUES (
   3,
   v_user_id,
   (SELECT id FROM upd),
-  (SELECT bin FROM upd),
-  (SELECT short_name FROM upd),
-  (SELECT official_name FROM upd),
+  (SELECT a_bin FROM upd),
+  (SELECT a_organization_short_name FROM upd),
+  (SELECT a_organization_official_name FROM upd),
   (SELECT is_deleted FROM upd)
 )
 RETURNING
@@ -206,9 +206,9 @@ $$ LANGUAGE sql;
 -- Restore organization (restore_organization)
 --============================================================================--
 CREATE FUNCTION organizations.restore_organization (
-  IN v_e_organization_id INTEGER,
-  IN v_user_id INTEGER,
-  OUT e_organization_id INTEGER
+  IN v_e_organization_id BIGINT,
+  IN v_e_user_id BIGINT,
+  OUT e_organization_id BIGINT
 )
 AS $$
 WITH upd AS (
@@ -224,20 +224,20 @@ WITH upd AS (
 INSERT INTO
   organizations.e_organization_log (
     d_operation_type_id,
-    user_id,
+    e_user_id,
     e_organization_id,
-    bin,
-    short_name,
-    official_name,
+    a_bin,
+    a_organization_short_name,
+    a_organization_official_name,
     is_deleted
   )
 VALUES (
   4,
   v_user_id,
   (SELECT id FROM upd),
-  (SELECT bin FROM upd),
-  (SELECT short_name FROM upd),
-  (SELECT official_name FROM upd),
+  (SELECT a_bin FROM upd),
+  (SELECT a_organization_short_name FROM upd),
+  (SELECT a_organization_official_name FROM upd),
   (SELECT is_deleted FROM upd)
 )
 RETURNING

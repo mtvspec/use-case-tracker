@@ -1,16 +1,19 @@
 --============================================================================--
--- Actor operations (f_actor_operation)
+-- Actor operation (f_actor_operation)
 --============================================================================--
 CREATE TABLE use_cases.f_actor_operation (
-  id SERIAL NOT NULL,
-  d_operation_type_id INTEGER NOT NULL,
-  a_operation_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  e_user_id INTEGER NOT NULL,
-  e_actor_id INTEGER NOT NULL,
-  d_actor_type_id INTEGER,
-  a_short_name VARCHAR (100),
-  a_long_name VARCHAR (1000),
-  a_description VARCHAR (4000),
+  id BIGSERIAL,
+  d_actor_operation_type_id INTEGER NOT NULL,
+  a_operation_ts TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  e_session_id BIGINT NOT NULL,
+  e_user_id BIGINT NOT NULL,
+  e_actor_id BIGINT NOT NULL,
+  d_actor_type_id INTEGER NOT NULL,
+  a_actor_short_name VARCHAR (100) NOT NULL,
+  a_actor_long_name VARCHAR (1000),
+  a_actor_desc TEXT,
+  d_actor_state_id INTEGER NOT NULL,
+  is_deleted BOOLEAN NOT NULL,
     PRIMARY KEY (
       id
     ),
@@ -18,14 +21,26 @@ CREATE TABLE use_cases.f_actor_operation (
       e_actor_id
     ),
     FOREIGN KEY (
-      e_actor_id
-    ) REFERENCES use_cases.e_actor (id),
+      d_actor_operation_type_id
+    ) REFERENCES actors.d_actor_operation_type (id),
     FOREIGN KEY (
       d_operation_type_id
     ) REFERENCES use_cases.d_actor_operation (id),
     FOREIGN KEY (
+      e_session_id
+    ) REFERENCES sessions.e_session (id),
+    FOREIGN KEY (
       e_user_id
-    ) REFERENCES users.e_user (id)
+    ) REFERENCES users.e_user (id),
+    FOREIGN KEY (
+      e_actor_id
+    ) REFERENCES use_cases.e_actor (id),
+    FOREIGN KEY (
+      d_actor_type_id
+    ) REFERENCES actors.d_actor_type (id),
+    FOREIGN KEY (
+      d_actor_state_id
+    ) REFERENCES actors.d_actor_state (id)
 );
 --============================================================================--
 -- Create actor (create_actor)

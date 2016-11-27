@@ -1,5 +1,5 @@
 --============================================================================--
--- Person from external database
+-- Person from external database (d_persons_edb)
 --============================================================================--
 CREATE TABLE persons.d_persons_edb (
   id BIGSERIAL,
@@ -8,7 +8,7 @@ CREATE TABLE persons.d_persons_edb (
   a_person_first_name VARCHAR (300) NOT NULL,
   a_person_middle_name VARCHAR (500),
   a_person_dob DATE NOT NULL,
-  a_person_gender_id CHAR (1) NOT NULL,
+  d_person_gender_id CHAR (1) NOT NULL,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
         id
@@ -17,7 +17,7 @@ CREATE TABLE persons.d_persons_edb (
         a_person_iin
       ),
       FOREIGN KEY (
-        a_person_gender_id
-      ) REFERENCES persons.d_gender (id)
+        d_person_gender_id
+      ) REFERENCES persons.d_person_gender (id)
 );
 --============================================================================--

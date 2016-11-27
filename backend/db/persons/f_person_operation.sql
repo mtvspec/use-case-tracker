@@ -1,5 +1,106 @@
 --============================================================================--
--- Person operation (f_person_operation)
+-- Person operation (f_person_operation) - current
+--============================================================================--
+CREATE TABLE persons.f_person_operation (
+  id BIGSERIAL,
+  d_person_operation_type_id INTEGER NOT NULL,
+  e_session_id BIGINT NOT NULL,
+  e_user_id BIGINT NOT NULL,
+  e_person_id BIGINT NOT NULL,
+  a_person_iin CHAR (12),
+  a_person_last_name VARCHAR (100),
+  a_person_first_name VARCHAR (100),
+  a_person_middle_name VARCHAR (100),
+  a_person_dob DATE,
+  d_person_gender_id CHAR (1),
+  is_deleted BOOLEAN,
+    PRIMARY KEY (
+      id
+    ),
+    FOREIGN KEY (
+      d_person_operation_type_id
+    ) REFERENCES persons.d_person_operation (id),
+    FOREIGN KEY (
+      e_session_id
+    ) REFERENCES sessions.e_session (id),
+    FOREIGN KEY (
+      e_user_id
+    ) REFERENCES users.e_user (id),
+    FOREIGN KEY (
+      e_person_id
+    ) REFERENCES persons.e_person (id),
+    FOREIGN KEY (
+      d_person_gender_id
+    ) REFERENCES persons.d_person_gender (id)
+);
+--============================================================================--
+-- Create person (create_person) - current
+--============================================================================--
+CREATE FUNCTION persons.create_person (
+  IN v_a_person_iin CHAR (12) DEFAULT NULL,
+  IN v_a_person_last_name VARCHAR (100) DEFAULT NULL,
+  IN v_a_person_first_name VARCHAR (100) DEFAULT NULL,
+  IN v_a_person_middle_name VARCHAR (100) DEFAULT NULL,
+  IN v_a_person_dob DATE DEFAULT NULL,
+  IN v_d_person_gender_id CHAR (1) DEFAULT NULL,
+  IN v_e_session_id BIGINT DEFAULT 0,
+  IN v_e_user_id BIGINT DEFAULT 0,
+  OUT e_person_id BIGINT
+)
+AS $$
+WITH ins AS (
+  INSERT INTO
+    persons.e_person (
+      a_person_iin,
+      a_person_last_name,
+      a_person_first_name,
+      a_person_middle_name,
+      a_person_dob,
+      d_person_gender_id
+    )
+  VALUES (
+    v_a_person_iin,
+    v_a_person_last_name,
+    v_a_person_first_name,
+    v_a_person_middle_name,
+    v_a_person_dob,
+    v_d_person_gender_id
+  )
+  RETURNING
+    *
+)
+INSERT INTO
+  persons.f_person_operation (
+    d_person_operation_type_id,
+    e_session_id,
+    e_user_id,
+    e_person_id,
+    a_person_iin,
+    a_person_last_name,
+    a_person_first_name,
+    a_person_middle_name,
+    a_person_dob,
+    d_person_gender_id,
+    is_deleted
+  )
+VALUES (
+  1,
+  v_e_session_id,
+  v_e_user_id,
+  (SELECT id FROM ins),
+  (SELECT a_person_iin FROM ins),
+  (SELECT a_person_last_name FROM ins),
+  (SELECT a_person_first_name FROM ins),
+  (SELECT a_person_middle_name FROM ins),
+  (SELECT a_person_dob FROM ins),
+  (SELECT d_person_gender_id FROM ins),
+  (SELECT is_deleted FROM ins)
+)
+RETURNING
+  e_person_id;
+$$ LANGUAGE SQL;
+--============================================================================--
+-- Person operation (f_person_operation) - future
 --============================================================================--
 CREATE TABLE persons.f_person_operation (
   id BIGSERIAL,
@@ -8,6 +109,7 @@ CREATE TABLE persons.f_person_operation (
   e_user_id BIGINT NOT NULL,
   e_person_edb_id BIGINT,
   e_person_idb_id BIGINT,
+  is_deleted BOOLEAN NOT NULL,
       PRIMARY KEY (
         id
       ),

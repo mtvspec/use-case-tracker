@@ -1,19 +1,30 @@
 --============================================================================--
--- System Kind (d_system_kind)
+-- System kind (d_system_kind)
 --============================================================================--
 CREATE TABLE systems.d_system_kind (
   id SERIAL NOT NULL,
-  system_kind_name_en VARCHAR (1000) NOT NULL,
-  system_kind_desc_en VARCHAR (4000),
-  system_kind_name_ru VARCHAR (1000) NOT NULL,
-  system_kind_desc_ru VARCHAR (4000),
+  a_system_kind_name_en VARCHAR (1000) NOT NULL,
+  a_system_kind_desc_en TEXT,
+  a_system_kind_name_ru VARCHAR (1000),
+  a_system_kind_desc_ru TEXT,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
-        system_kind_name_en,
-        system_kind_name_ru
+        a_system_kind_name_en
       ),
       UNIQUE (
         id
+      ),
+      UNIQUE (
+        a_system_kind_name_ru
       )
 );
---------------------------------------------------------------------------------
+--============================================================================--
+INSERT INTO
+  systems.d_system_kind (
+    a_system_kind_name_en
+  )
+VALUES
+(
+  'Information system'
+);
+--============================================================================--

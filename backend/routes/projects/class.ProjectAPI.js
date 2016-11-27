@@ -2,6 +2,8 @@
 
 const ID = require('./../../common/classes/id');
 const Project = require('./class.Project.js');
+const userSQL = require('./../users/sql.js');
+const UserAPI = require('./../users/class.UserAPI.js');
 const db = require('./../../db.js');
 const sql = require('./sql.js');
 
@@ -54,24 +56,43 @@ class ProjectAPI {
   }
   static createProject(req, id, res) {
     let result = new Project(req.body);
+    let session = {
+      token: req.cookies.session
+    }
     let user = {
       id: id
     }
-    if (result.project.projectName) {
-      db.insertRecord({
-        text: sql.projects.INSERT_PROJECT(
-          result.project,
-          user
-        )
-      }, function (response) {
-        if (response.status === 201) {
-          return res.status(response.status).json({
-            id: response.data.create_project
-          }).end();
+    if (result.project) {
+      let project = result.project;
+      UserAPI.getUserID(session.token, function (response) {
+        if (response.status === 200) {
+          db.insertRecord({
+            text: sql.projects.INSERT_PROJECT(
+              project,
+              {id: response.data.sessionID},
+              {id: response.data.userID}
+            )
+          }, function (response) {
+            if (response.status === 201) {
+              return res
+              .status(response.status)
+              .json({
+                id: response.data.create_project
+              })
+              .end();
+            } else {
+              return res
+              .status(response.status)
+              .json(response.data)
+              .end();
+            }
+          });
         } else {
-          return res.status(response.status).json(response.data).end();
+          return res
+          .status(401)
+          .end();
         }
-      });
+      })
     } else {
       return res.status(400).json(result.messages).end();
     }

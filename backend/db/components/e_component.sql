@@ -2,8 +2,8 @@
 -- Component (e_component)
 --============================================================================--
 CREATE TABLE components.e_component (
-  id SERIAL,
-  e_component_id INTEGER,
+  id BIGSERIAL,
+  e_component_id BIGINT,
   d_component_type_id INTEGER,
   a_component_name VARCHAR (1000) NOT NULL,
   a_component_desc TEXT,

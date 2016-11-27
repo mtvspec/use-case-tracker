@@ -5,11 +5,11 @@ CREATE TABLE customers.f_customer_operation (
   id BIGSERIAL,
   d_customer_operation_type_id INTEGER NOT NULL,
   operation_timestamp TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  e_session_id BIGINT NOT NULL,
   e_user_id BIGINT NOT NULL,
   e_customer_id BIGINT NOT NULL,
   e_organization_id BIGINT NOT NULL,
   a_customer_short_name VARCHAR (1000) NOT NULL,
-  a_customer_full_name VARCHAR (1000),
   a_customer_desc TEXT,
     is_deleted BOOLEAN NOT NULL,
       PRIMARY KEY (
@@ -18,6 +18,9 @@ CREATE TABLE customers.f_customer_operation (
       FOREIGN KEY (
         d_customer_operation_type_id
       ) REFERENCES customer.d_customer_operation (id),
+      FOREIGN KEY (
+        e_session_id
+      ) REFERENCES sessions.e_session (id),
       FOREIGN KEY (
         e_user_id
       ) REFERENCES users.e_user (id),
@@ -34,8 +37,8 @@ CREATE TABLE customers.f_customer_operation (
 CREATE TABLE customers.create_customer (
   IN v_e_organization_id BIGINT,
   IN v_a_customer_short_name VARCHAR (1000),
-  IN v_a_customer_full_name VARCHAR (1000),
   IN v_a_customer_desc TEXT,
+  IN v_e_session_id BIGINT,
   IN v_e_user_id BIGINT,
   OUT e_customer_id BIGINT
 )
@@ -45,21 +48,20 @@ WITH ins AS (
     customers.e_customer (
       e_organization_id,
       a_customer_short_name,
-      a_customer_full_name,
       a_customer_desc
     )
   VALUES (
     v_e_organization_id,
     v_a_customer_short_name,
-    v_a_customer_full_name,
     v_a_customer_desc
   )
   RETURNING
     *
 )
 INSERT INTO
-  customers.e_customer_log (
-    d_operation_type_id,
+  customers.f_customer_operation (
+    d_customer_operation_type_id,
+    e_session_id,
     e_user_id,
     e_customer_id,
     e_organization_id,
@@ -70,11 +72,11 @@ INSERT INTO
   )
 VALUES (
   1,
+  v_e_session_id,
   v_e_user_id,
   (SELECT id FROM ins),
   (SELECT e_organization_id FROM ins),
   (SELECT a_customer_short_name FROM ins),
-  (SELECT a_customer_full_name FROM ins),
   (SELECT a_customer_desc FROM ins),
   (SELECT is_deleted FROM ins)
 )
@@ -88,8 +90,8 @@ CREATE FUNCTION customers.update_customer (
   IN v_e_customer_id BIGINT,
   IN v_e_organization_id BIGINT,
   IN v_a_customer_short_name VARCHAR (1000),
-  IN v_a_customer_full_name VARCHAR (1000),
   IN v_a_customer_desc TEXT,
+  IN v_e_session_id BIGINT,
   IN v_e_user_id BIGINT,
   OUT e_customer_id BIGINT
 )
@@ -100,7 +102,6 @@ WITH upd AS (
   SET
     e_organization_id = v_e_organization_id,
     a_customer_short_name = v_a_customer_short_name,
-    a_customer_full_name = v_a_customer_full_name,
     a_customer_desc = v_a_customer_desc
   WHERE
     id = v_e_customer_id
@@ -108,8 +109,9 @@ WITH upd AS (
     *
 )
 INSERT INTO
-  customers.e_customer_log (
-    d_operation_type_id,
+  customers.f_customer_operation (
+    d_customer_operation_type_id,
+    e_session_id,
     e_user_id,
     e_customer_id,
     e_organization_id,
@@ -120,11 +122,11 @@ INSERT INTO
   )
 VALUES (
   2,
-  v_user_id,
+  v_e_session_id,
+  v_e_user_id,
   (SELECT id FROM upd),
   (SELECT e_organization_id FROM upd),
   (SELECT a_customer_short_name FROM upd),
-  (SELECT a_customer_full_name FROM upd),
   (SELECT a_customer_desc FROM upd),
   (SELECT is_deleted FROM upd)
 )
@@ -136,6 +138,7 @@ $$ LANGUAGE sql;
 --============================================================================--
 CREATE FUNCTION customers.delete_customer (
   IN v_e_customer_id BIGINT,
+  IN v_e_session_id BIGINT,
   IN v_e_user_id BIGINT,
   OUT e_customer_id BIGINT
 )
@@ -151,23 +154,23 @@ WITH upd AS (
     *
 )
 INSERT INTO
-  customers.e_customer_log (
+  customers.f_customer_operation (
     d_operation_type_id,
+    e_session_id,
     e_user_id,
     e_customer_id,
     e_organization_id,
     a_customer_short_name,
-    a_customer_full_name,
     a_customer_desc,
     is_deleted
   )
 VALUES (
   3,
+  v_e_session_id,
   v_e_user_id,
   (SELECT id FROM upd),
   (SELECT e_organization_id FROM upd),
   (SELECT a_customer_short_name FROM upd),
-  (SELECT a_customer_full_name FROM upd),
   (SELECT a_customer_desc FROM upd),
   (SELECT is_deleted FROM upd)
 )
@@ -179,6 +182,7 @@ $$ LANGUAGE sql;
 --============================================================================--
 CREATE FUNCTION customers.restore_customer (
   IN v_e_customer_id BIGINT,
+  IN v_e_session_id BIGINT,
   IN v_e_user_id BIGINT,
   OUT e_customer_id BIGINT
 )
@@ -194,23 +198,23 @@ WITH upd AS (
     *
 )
 INSERT INTO
-  customers.e_customer_log (
-    d_operation_type_id,
+  customers.f_customer_operation (
+    d_customer_operation_type_id,
+    e_session_id,
     e_user_id,
     e_customer_id,
     e_organization_id,
     a_customer_short_name,
-    a_customer_full_name,
     a_customer_desc,
     is_deleted
   )
 VALUES (
   4,
+  v_e_session_id,
   v_e_user_id,
   (SELECT id FROM upd),
   (SELECT e_organization_id FROM upd),
   (SELECT a_customer_short_name FROM upd),
-  (SELECT a_customer_full_name FROM upd),
   (SELECT a_customer_desc FROM upd),
   (SELECT is_deleted FROM upd)
 )

@@ -1,25 +1,20 @@
-create table tasks.e_task (
-  id serial,
-  asignee integer,
-  name text not null,
-  description text,
-    create_date timestamp with time zone not null default localtimestamp,
-    create_user_id integer not null default 1,
-      primary key (id),
-      foreign key (asignee) references persons.e_person (id),
-      foreign key (create_user_id) references users.e_user (id)
+--============================================================================--
+-- Task (e_task)
+--============================================================================--
+CREATE TABLE tasks.e_task (
+  id BIGINT,
+  e_asignee_id BIGINT,
+  a_task_name VARCHAR (1000) NOT NULL,
+  a_task_desc TEXT,
+    is_deleted NOT NULL DEFAULT FALSE,
+      PRIMARY KEY (
+        id
+      ),
+      FOREIGN KEY (
+        e_asignee_id
+      ) REFERENCES emp.e_emp (id),
+      FOREIGN KEY (
+        d_task_state_id
+      ) REFERENCES tasks.d_task_state (id)
 );
-
-create table tasks.e_task_ch (
-  id serial,
-  task_id integer not null,
-  asignee integer,
-  name text not null,
-  description text,
-    change_date timestamp with time zone not null default localtimestamp,
-    change_user_id integer not null default 1,
-      primary key (id),
-      foreign key (task_id) references tasks.e_task (id),
-      foreign key (asignee) references persons.e_person (id),
-      foreign key (change_user_id) references users.e_user (id)
-);
+--============================================================================--

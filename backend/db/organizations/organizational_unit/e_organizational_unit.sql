@@ -3,7 +3,7 @@
 --============================================================================--
 CREATE TABLE organizations.e_organizational_unit (
   id BIGSERIAL,
-  e_organizational_unit_id INTEGER,
+  e_organizational_unit_id BIGINT,
   d_organizational_unit_kind_id INTEGER NOT NULL,
   d_organizational_unit_type_id INTEGER NOT NULL,
   a_organizational_unit_name VARCHAR (1000) NOT NULL,

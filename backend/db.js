@@ -7,8 +7,12 @@ pool.on('error', function (err) {
   if (err) {
     console.error(`
       'db':
-      'pool':
-      ${err}`);
+      'pool':\n
+      'error':\n`, {
+        err: err,
+        stack: err.stack
+      }
+    );
   }
 });
 
@@ -18,27 +22,46 @@ module.exports = class Database {
   }
   static selectAllRecords(config, cb) {
     if (!config) {
-      throw new Error(`
+      console.error(`
         'selectAllRecords':
-        'config' is required`);
+        'config' is required`, {
+          err: err,
+          stack: err.stack
+        }
+      );
     }
     if (!config.text) {
-      throw new Error(`
+      console.error(`
         'selectAllRecords':
-        'config.text' is required`);
+        'config.text' is required
+        'error':\n`, {
+          err: err,
+          stack: err.stack
+        }
+      );
     }
     if (!typeof config.text === 'string') {
-      throw new Error(`
+      console.error(`
         'selectAllRecords':
         incorrect 'config.text':
-        ${config.text}`);
+        ${config.text}
+        'error':\n`, {
+          err: err,
+          stack: err.stack
+        }
+      );
     }
     pool.connect(function (err, client, release) {
       if (err) {
         console.error(`
           'selectAllRecords':
           'connect':
-          ${err}`);
+          ${config.text}
+          'error':\n`, {
+            err: err,
+            stack: err.stack
+          }
+        );
         return cb({
           status: 500,
           data: null
@@ -47,9 +70,14 @@ module.exports = class Database {
         client.query(config.text, function (err, result) {
           if (err) {
             console.error(`
-              'selectRecordById':
+              'selectAllRecord':
               'query':
-              ${err}`);
+              ${config.text}
+              'error':\n`, {
+                err: err,
+                stack: err.stack
+              }
+            );
             return cb({
               status: 500,
               data: null
@@ -68,7 +96,17 @@ module.exports = class Database {
                   data: null
                 });
               } else {
-                console.error(result);
+                console.error(`
+                  'selectAllRecord:'
+                  'query':
+                  ${config.text}
+                  'error:'\n`, {
+                    err: err,
+                    stack: err.stack
+                  },
+                  `'result:'\n`,
+                  result
+                );
                 return cb({
                   status: 500,
                   data: null
@@ -82,27 +120,47 @@ module.exports = class Database {
   }
   static selectRecordById(config, cb) {
     if (!config) {
-      throw new Error(`
+      console.error(`
         'selectRecordById':
-        'config' is required`);
+        'config' is required
+        'error':\n`, {
+          err: err,
+          stack: err.stack
+        }
+      );
     }
     if (!config.text) {
-      throw new Error(`
+      console.error(`
         'selectRecordById':
-        'config.text' is required`);
+        'config.text' is required
+        'error':\n`, {
+          err: err,
+          stack: err.stack
+        }
+      );
     }
     if (!typeof config.text === 'string') {
-      throw new Error(`
+      console.error(`
         'selectRecordById':
         incorrect 'config.text':
-        ${config.text}`);
+        ${config.text}
+        'error':\n`, {
+          err: err,
+          stack: err.stack
+        }
+      );
     }
     pool.connect(function (err, client, release) {
       if (err) {
         console.error(`
           'selectRecordById':
           'connect':
-          ${err}`);
+          ${config.text}
+          'error':\n`, {
+            err: err,
+            stack: err.stack
+          }
+        );
         return cb({
           status: 500,
           data: null
@@ -110,10 +168,16 @@ module.exports = class Database {
       } else {
         client.query(config.text, function (err, result) {
           if (err) {
+            release();
             console.error(`
               'selectRecordById':
               'query':
-              ${err}`);
+              ${config.text}
+              'error':\n`, {
+                err: err,
+                stack: err.stack
+              }
+            );
             return cb({
               status: 500,
               data: null
@@ -133,8 +197,15 @@ module.exports = class Database {
             } else {
               console.error(`
                 'selectRecordById':
-                'result':
-                ${result}`);
+                'query':
+                ${config.text}
+                'error'\n`, {
+                  err: err,
+                  stack: err.stack
+                },
+                `'result':\n`,
+                result
+              );
               return cb({
                 status: 500,
                 data: null
@@ -147,27 +218,34 @@ module.exports = class Database {
   }
   static insertRecord(config, cb) {
     if (!config) {
-      throw new Error(`
+      console.error(`
         'insertRecord':
-        'config' is required`);
+        'config' is required`
+      );
     }
     if (!config.text) {
-      throw new Error(`
+      console.error(`
         'insertRecord':
-        'config.text' is required`);
+        'config.text' is required`
+      );
     }
     if (!typeof config.text === 'string') {
-      throw new Error(`
+      console.error(`
         'insertRecord':
         incorrect 'config.text':
-        ${config.text}`);
+        ${config.text}`
+      );
     }
     pool.connect(function (err, client, release) {
       if (err) {
+        release();
         console.error(`
           'insertRecord': ${config.text}
-          'connect':
-          ${err}`);
+          'connect':\n`, {
+            err: err,
+            stack: err.stack
+          }
+        );
         return cb({
           status: 500,
           data: null
@@ -182,10 +260,14 @@ module.exports = class Database {
               });
             }
             console.error(`
-              'insertRecord': ${config.text}
+              'insertRecord':
               'query':
-              ${err}`);
-              console.log(err);
+              ${config.text}
+              'error':\n`, {
+                err: err,
+                stack: err.stack
+              }
+            );
             return cb({
               status: 500,
               data: null
@@ -198,7 +280,17 @@ module.exports = class Database {
                 data: result.rows[0]
               });
             } else {
-              console.error(result);
+              console.error(`
+                'insertRecord':
+                'query':
+                ${config.text}
+                'error':\n`, {
+                  err: err,
+                  stack: err.stack
+                },
+                `'result':\n`,
+                result
+              );
               return cb({
                 status: 500,
                 data: null
@@ -211,27 +303,47 @@ module.exports = class Database {
   }
   static updateRecord(config, cb) {
     if (!config) {
-      throw new Error(`
+      console.error(`
         'updateRecord':
-        'config' is required`);
+        'config' is required
+        'error':\n`, {
+          err: err,
+          stack: err.stack
+        }
+      );
     }
     if (!config.text) {
-      throw new Error(`
+      console.error(`
         'updateRecord':
-        'config.text' is required`);
+        'config.text' is required
+        'error':\n`, {
+          err: err,
+          stack: err.stack
+        }
+      );
     }
     if (!typeof config.text === 'string') {
-      throw new Error(`
+      console.error(`
         'updateRecord':
         incorrect 'config.text':
-        ${config.text}`);
+        ${config.text}
+        'error':\n`, {
+          err: err,
+          stack: err.stack
+        }
+      );
     }
     pool.connect(function (err, client, release) {
       if (err) {
         console.error(`
           'updateRecord':
           'connect':
-          ${err}`);
+          ${config.text}
+          'error':\n`, {
+            err: err,
+            stack: err.stack
+          }
+        );
         return cb({
           status: 500,
           data: null
@@ -248,7 +360,12 @@ module.exports = class Database {
             console.error(`
               'updateRecord':
               'query':
-              ${err}`);
+              ${config.text}
+              'error':\n`, {
+                err: err,
+                stack: err.stack
+              }
+            );
             return cb({
               status: 500,
               data: err.detail
@@ -263,8 +380,15 @@ module.exports = class Database {
             } else {
               console.error(`
                 'updateRecord':
-                'result':
-                ${result}`);
+                'query':
+                ${config.text}`,
+                `'error':\n`, {
+                  err: err,
+                  stack: err.stack
+                },
+                `'result':\n`,
+                result
+              );
               return cb({
                 status: 500,
                 data: null

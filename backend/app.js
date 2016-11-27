@@ -7,12 +7,16 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+const UserAPI = require('./routes/users/class.UserAPI.js');
+
 const routes = require('./routes/index');
 const users = require('./routes/users');
-const useCaseSlices = require('./routes/use-case-slices');
+const slices = require('./routes/use-case-slices');
 const persons = require('./routes/persons');
 const organizations = require('./routes/organizations');
+const customers = require('./routes/customers');
 const projects = require('./routes/projects');
+const systems = require('./routes/systems');
 
 const app = express();
 
@@ -29,23 +33,28 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function (req, res, next) {
-  console.log(`Session: ${req.cookies.session}`);
-  console.log(req.body);
   if (req.url === '/api/users/login' ||
   req.url === '/api/users/username') {
     next();
   } else {
+    if (!req.cookies.session) {
+      return res
+      .status(401)
+      .end();
+    }
     isAuthentificated(req, req.cookies.session, res);
     next();
   }
 });
 
 app.use('/api', routes);
-app.use('/api/use-case-slices', useCaseSlices);
+app.use('/api/use-case-slices', slices);
 app.use('/api/users', users);
 app.use('/api/persons', persons);
 app.use('/api/organizations', organizations);
+app.use('/api/customers', customers);
 app.use('/api/projects', projects);
+app.use('/api/systems', systems);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -82,14 +91,16 @@ app.use(function(err, req, res, next) {
   });
 });
 
-function isAuthentificated(req, sessionID, res) {
-  if (!sessionID) {
-    return res.status(401).end();
-  }
-  let Session = {
-    id: sessionID
-  }
-  req.Session = Session;
+function isAuthentificated(req, token, res) {
+  UserAPI.getUserID(token, function (response) {
+    if (response.status === 200) {
+      req.token = token;
+    } else {
+      return res
+      .status(401)
+      .end();
+    }
+  });
 }
 
 module.exports = app;

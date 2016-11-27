@@ -3,8 +3,8 @@
 --============================================================================--
 CREATE TABLE use_case_slices.e_use_case_slice (
   id BIGSERIAL NOT NULL,
-  e_use_case_id INTEGER NOT NULL,
-  e_component_id INTEGER NOT NULL,
+  e_use_case_id BIGINT NOT NULL,
+  e_component_id BIGINT NOT NULL,
   a_use_case_slice_name VARCHAR (1000) NOT NULL,
   a_use_case_slice_desc TEXT,
   a_story_points INTEGER,

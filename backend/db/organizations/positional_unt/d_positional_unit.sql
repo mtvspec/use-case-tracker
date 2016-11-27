@@ -3,7 +3,7 @@
 --============================================================================--
 CREATE TABLE organizations.d_positional_unit (
   id SERIAL,
-  e_organizational_unit_id INTEGER NOT NULL,
+  e_organizational_unit_id BIGINT NOT NULL,
   d_positional_unit_kind_id INTEGER NOT NULL,
   d_positional_unit_type_id INTEGER NOT NULL,
   a_positional_unit_type_name_en VARCHAR (1000) NOT NULL,

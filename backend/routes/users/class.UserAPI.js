@@ -23,13 +23,19 @@ module.exports = class UserAPI {
         u_username = '${req.body.username}';`
     }, function (response) {
       if (response.status === 200) {
-        return res.status(400).json({
+        return res
+        .status(400)
+        .json({
           username: `'username': '${req.body.username}' is unavailable`
-        }).end();
+        })
+        .end();
       } else if (response.status === 204) {
-        return res.status(200).json({
+        return res
+        .status(200)
+        .json({
           username: `'username': '${req.body.username}' is available`
-        }).end();
+        })
+        .end();
       }
     });
   }
@@ -48,20 +54,28 @@ module.exports = class UserAPI {
         )
       }, function(response) {
         if (response.status === 201) {
-          return res.status(response.status).json({
+          return res
+          .status(response.status)
+          .json({
             id: response.data.create_user
           }).end();
         } else {
-          return res.status(response.status).json(response.data).end();
+          return res
+          .status(response.status)
+          .json(response.data)
+          .end();
         }
       });
     } else {
-      return res.status(400).json(user).end();
+      return res
+      .status(400)
+      .json(user)
+      .end();
     }
   }
-  static getUserID(session, cb) {
+  static getUserID(token, cb) {
     db.selectRecordById({
-      text: sql.users.SELECT_USER_BY_SESSION_ID(session)
+      text: sql.users.SELECT_USER_AND_SESSION_ID_BY_SESSION_TOKEN(token)
     }, function(response) {
       cb(response);
     });
@@ -73,8 +87,8 @@ module.exports = class UserAPI {
   */
   static authentificateUser(req, res) {
     let user = new User(req.body);
-    console.log(user);
     if (user.username && user.password) {
+      console.log(bcrypt.hashSync(user.password));
       db.selectRecordById({
         text: sql.users.SELECT_USER(user)
       }, function(response) {
@@ -116,18 +130,30 @@ module.exports = class UserAPI {
                   }
                 });
               } else {
-                return res.status(response.status).json(response.data).end();
+                return res
+                .status(response.status)
+                .json(response.data)
+                .end();
               }
             });
           } else {
-            return res.status(400).json('wrong password').end();
+            return res
+            .status(400)
+            .json('wrong password')
+            .end();
           }
         } else {
-          return res.status(response.status).json(response.data).end();
+          return res
+          .status(response.status)
+          .json(response.data)
+          .end();
         }
       });
     } else {
-      return res.status(400).json(user).end();
+      return res
+      .status(400)
+      .json(user)
+      .end();
     }
   }
   static logOut(req, res) {

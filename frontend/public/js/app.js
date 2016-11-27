@@ -8,7 +8,10 @@ app.config(function ($stateProvider, $urlRouterProvider) {
   .state('login', {
     url: '/login',
     templateUrl: '/templates/login/login.html',
-    controller: 'LoginCtrl'
+    controller: 'LoginCtrl',
+    data: {
+      pageTitle: 'Authorization'
+    }
   })
   .state('auth', {
     abstract: true
@@ -16,13 +19,46 @@ app.config(function ($stateProvider, $urlRouterProvider) {
   .state('auth.main', {
     url: '/main',
     templateUrl: '/templates/main/main.html',
-    controller: 'MainCtrl'
+    controller: 'MainCtrl',
+    data: {
+      pageTitle: 'Main'
+    }
+  })
+  .state('createPerson', {
+    url: '/createPerson',
+    templateUrl: '/components/persons/CreatePerson/views/template.html',
+    controller: 'CreatePersonCtrl',
+    controllerAs: 'vm',
+    data: {
+      pageTitle: 'Create person'
+    }
   })
   .state('projects', {
     url: '/projects',
     templateUrl: '/components/projects/views/template.html',
     controller: 'ProjectsCtrl',
-    controllerAs: 'vm'
+    controllerAs: 'vm',
+    data: {
+      pageTitle: 'Projects'
+    }
+  })
+  .state('systems', {
+    url: '/systems',
+    templateUrl: '/components/systems/views/template.html',
+    controller: 'SystemsCtrl',
+    controllerAs: 'vm',
+    data: {
+      pageTitle: 'Systems'
+    }
+  })
+  .state('createSystem', {
+    url: '/createSystem',
+    templateUrl: '/components/systems/views/createSystem.html',
+    controller: 'CreateSystemCtrl',
+    controllerAs: 'vm',
+    data: {
+      pageTitle: 'Create system'
+    }
   })
   .state('use-case-slices', {
     url: '/use-case-slices',
@@ -32,8 +68,12 @@ app.config(function ($stateProvider, $urlRouterProvider) {
   })
   .state('persons', {
     url: '/persons',
-    templateUrl: 'main.html',
-    controller: 'PersonsCtrl'
+    templateUrl: '/components/persons/PersonsList/views/template.html',
+    controller: 'PersonsListCtrl',
+    controllerAs: 'vm',
+    data: {
+      pageTitle: 'Persons'
+    }
   })
   .state('contacts', {
     url: '/contacts',
@@ -41,14 +81,35 @@ app.config(function ($stateProvider, $urlRouterProvider) {
   });
 });
 
-app.factory('ProjectsAPI', function ProjectsAPI($scope, $http) {
-  console.log('ProjectsAPI');
-});
+app.directive('title', ['$rootScope', '$timeout',
+  function($rootScope, $timeout) {
+    console.log($rootScope);
+    return {
+      link: function() {
 
-app.component('persons', {
-  templateUrl: 'main.html',
-  controller: 'PersonsCtrl'
-});
+        var listener = function(event, toState) {
+
+          $timeout(function() {
+            $rootScope.title = (toState.data && toState.data.pageTitle)
+            ? toState.data.pageTitle
+            : 'Default title';
+          });
+        };
+
+        $rootScope.$on('$stateChangeSuccess', listener);
+      }
+    };
+  }
+]);
+
+// app.factory('ProjectsAPI', function ProjectsAPI($scope, $http) {
+//   console.log('ProjectsAPI');
+// });
+//
+// app.component('persons', {
+//   templateUrl: 'main.html',
+//   controller: 'PersonsCtrl'
+// });
 
 // app.controller('TestCtrl', function TestCtrl($scope, $http, PersonAPI) {
 //

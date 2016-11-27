@@ -1,24 +1,36 @@
+--============================================================================--
+-- Component type (d_component_type)
+--============================================================================--
 CREATE TABLE components.d_component_type (
   id SERIAL,
-  component_type_en VARCHAR (1000) NOT NULL,
-  component_description_en VARCHAR (4000) NOT NULL,
+  a_component_type_name_en VARCHAR (1000) NOT NULL,
+  a_component_type_desc_en TEXT,
+  a_component_type_name_ru VARCHAR (1000) NOT NULL,
+  a_component_type_desc_ru TEXT,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
+        a_component_type_name_en
+      ),
+      UNIQUE (
         id
       ),
       UNIQUE (
-        component_type
+        a_component_type_name_ru
       )
 );
-
+--============================================================================--
 INSERT INTO
   components.d_component_type (
-    component_type_en
+    a_component_type_name_en,
+    a_component_type_name_ru
   )
 VALUES
 (
-  'Information system'
+  'Information system',
+  'Информационная система'
 ),
 (
-  'Subsystem'
+  'Subsystem',
+  'Подсистема'
 );
+--============================================================================--

@@ -1,6 +1,59 @@
 My Tasks:
 ☐ Open session    @timestamp(2016-11-24 01:32)
   generate uuid
+  add session cookie
 ☐ Close session   @timestamp(2016-11-24 01:32) @important
   remove session cookie
   update session status to 'C - Closed'
+User:
+  Backend:
+    Database:
+    ☐ Database structure @timestamp(2016-11-27 09:50)
+      Tables:
+        ✔ e_user @timestamp(2016-11-27 12:35) @done(2016-11-27 12:36) @test
+        ✔ d_user_operation @timestamp(2016-11-27 12:36) @done(2016-11-27 12:36)
+        ✔ d_user_state @timestamp(2016-11-27 12:37) @done(2016-11-27 12:37)
+        ✔ f_user_operation @timestamp(2016-11-27 12:37) @done(2016-11-27 12:37)
+    ☐ Database functions @timestamp(2016-11-27 09:50)
+      Users:
+        ☐ create_user @timestamp(2016-11-27 12:38)
+    Services:
+    ☐ Create user @timestamp(2016-11-27 09:48)
+
+      ☐
+    ☐ Change user password @timestamp(2016-11-27 09:48)
+    ☐ Block user @timestamp(2016-11-27 09:48)
+    ☐ Unblock user @timestamp(2016-11-27 09:48)
+    ☐ Delete user @timestamp(2016-11-27 09:49)
+    ☐ Restore user @timestamp(2016-11-27 09:49)
+    ☐ Get users @timestamp(2016-11-27 09:49)
+    ☐ Get user @timestamp(2016-11-27 09:49)
+  Frontend:
+    ☐ Create user @timestamp(2016-11-27 13:49)
+Customer:
+  Backend:
+  ☐ Create customer @timestamp(2016-11-25 20:21)
+  ☐ Update customer @timestamp(2016-11-25 20:21)
+  ☐ Delete customer @timestamp(2016-11-25 20:21)
+  ☐ Restore customer @timestamp(2016-11-25 20:21)
+  ☐ Get customers @timestamp(2016-11-25 20:21)
+  ☐ Get customer @timestamp(2016-11-25 20:21)
+  Frontend:
+  ☐ Create customer @timestamp(2016-11-25 20:22)
+  ☐ Update customer @timestamp(2016-11-25 20:22)
+  ☐ Delete customer @timestamp(2016-11-25 20:22)
+  ☐ Restore customer @timestamp(2016-11-25 20:22)
+  ☐ Get customers @timestamp(2016-11-25 20:22)
+  ☐ Get customer @timestamp(2016-11-25 20:22)
+Project:
+  ☐ Create project @timestamp(2016-11-25 20:24)
+  ☐ Update project @timestamp(2016-11-25 20:24)
+  ☐ Delete project @timestamp(2016-11-25 20:24)
+  ☐ Restore project @timestamp(2016-11-25 20:24)
+  ☐ Archieve project @timestamp(2016-11-25 20:24)
+  ☐ Close project @timestamp(2016-11-25 20:24)
+  ☐ Reject project @timestamp(2016-11-25 20:24)
+  ☐ Suspend project @timestamp(2016-11-25 20:25)
+  ☐ Renew project @timestamp(2016-11-25 20:25)
+  ☐ Get projects @timestamp(2016-11-25 20:25)
+  ☐ Get project @timestamp(2016-11-25 20:26)

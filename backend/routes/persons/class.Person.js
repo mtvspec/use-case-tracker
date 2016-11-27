@@ -1,4 +1,7 @@
 'use strict';
+
+const validator = require('./../../common/validator');
+
 module.exports = class Person {
   /**
    * @param person
@@ -16,115 +19,55 @@ module.exports = class Person {
       messages.message = `'person data' is required`;
       result.messages = messages;
       return this.result = result;
-    }
-    if (data.iin) {
-      if (isString(data.iin, 12, 12)) {
-        person.iin = String(data.iin);
-      } else {
-        return messages.iin = `incorrect 'iin': ${data.iin}`
-      }
     } else {
-      person.iin = null;
-    }
-    if (data.lastName) {
-      if (isString(data.lastName, 1, 400)) {
-        person.lastName = String(data.lastName);
+      if (data.aPersonIIN || data.aPersonIIN === undefined) {
+        let result = validator.isIIN(data.aPersonIIN, null);
+        result.result ?
+        person.aPersonIIN = result.data : messages.aPersonIIN = result.data;
+      }
+      if (data.aPersonLastName || data.aPersonLastName === undefined) {
+        let result = validator.isString(data.aPersonLastName, 2, 100, null);
+        result.result ?
+        person.aPersonLastName = result.data : messages.aPersonLastName = result.data;
+      }
+      if (data.aPersonFirstName || data.aPersonFirstName  === undefined) {
+        let result = validator.isString(data.aPersonFirstName, 2, 100, null);
+        result.result ?
+        person.aPersonFirstName = result.data : messages.aPersonFirstName = result.data;
+      }
+      if (data.aPersonMiddleName || data.aPersonMiddleName  === undefined) {
+        let result = validator.isString(data.aPersonMiddleName, 2, 100, null);
+        result.result ?
+        person.aPersonMiddleName = result.data : messages.aPersonMiddleName = result.data;
+      }
+      if (data.aPersonDOB || data.aPersonDOB === undefined) {
+        let result = validator.isValidDate(data.aPersonDOB, null);
+        result.result ?
+        person.aPersonDOB = result.data : messages.aPersonDOB = result.data;
+      }
+      if (data.aPersonGenderID || data.aPersonGenderID === undefined) {
+        let result = validator.isValidChar(data.aPersonGenderID, 'M', 'F', null);
+        result.result ?
+        person.aPersonGenderID = result.data : messages.aPersonGenderID = result.data;
+      }
+      console.log(person);
+      if (Object.keys(messages).length > 0) {
+        result.messages = messages;
+        return this.result = result;
       } else {
-        messages.lastName = `incorrect 'lastName': ${data.lastName}`;
-      }
-    } else {
-      person.lastName = null;
-    }
-    if (data.firstName) {
-      if (isString(data.firstName, 1, 300)) {
-        person.firstName = String(data.firstName);
-      } else {
-        result.firstName = `incorrect 'firstName': ${data.firstName}`;
-      }
-    } else {
-      person.firstName = null;
-    }
-    if (data.middleName) {
-      if (isString(data.middleName, 1, 500)) {
-        person.middleName = String(data.middleName);
-      } else {
-        messages.middleName = `incorrect 'middleName': ${data.middleName}`;
-      }
-    } else {
-      person.middleName = null;
-    }
-    if (data.dob) {
-      if (new Date(data.dob).getTime() > 0) {
-        person.dob = data.dob;
-      } else {
-        messages.dob = `incorrect 'dob': ${data.dob}`;
+        if (person.aPersonIIN === ''
+          && person.aPersonLastName === ''
+          && person.aPersonFirstName === ''
+          && person.aPersonMiddleName === ''
+          && person.aPersonDOB === null
+          && person.aPersonGenderID === 'N') {
+            messages.message = `'person data' is required`;
+            result.messages = messages;
+            return this.result = result;
+        }
+        result.person = person;
+        return this.result = result;
       }
     }
-    if (data.gender) {
-      if (typeof data.gender === 'string'
-      && data.gender.length === 1
-      && (data.gender === 'M' || data.gender === 'F')) {
-        person.gender = String(data.gender);
-      } else {
-        messages.gender = `incorrect 'gender': ${data.gender}`;
-      }
-    } else {
-      person.gender = null;
-    }
-    if (Object.keys(messages).length > 0) {
-      result.messages = messages;
-      return this.result = result;
-    } else {
-      if (person.iin === null
-        && person.lastName === null
-        && person.firstName === null
-        && person.middleName === null
-        && person.dob === null
-        && person.gender === null) {
-          result.message = `'person data' is required`;
-          return this.result = result;
-      }
-      result.person = person;
-      return this.result = result;
-    }
-  }
-}
-
-function isValidDate(dateString) {
-    // First check for the pattern
-    if(!/^\d{4}\-\d{1,2}\-\d{1,2}$/.test(dateString))
-        return false;
-
-    // Parse the date parts to integers
-    let parts = dateString.split('-');
-    let day = parseInt(parts[2], 10);
-    let month = parseInt(parts[1], 10);
-    let year = parseInt(parts[0], 10);
-
-    // Check the ranges of month and year
-    if(year < 1000 || year > 3000 || month == 0 || month > 12)
-        return false;
-
-    let monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
-
-    // Adjust for leap years
-    if(year % 400 == 0 || (year % 100 != 0 && year % 4 == 0))
-        monthLength[1] = 29;
-
-    // Check the range of the day
-    return day > 0 && day <= monthLength[month - 1];
-};
-
-function isString(string, minLength, maxLength) {
-  if (!string) {
-    return false;
-  } else if (
-    typeof string === 'string'
-    && string.length >= minLength
-    && string.length <= maxLength
-  ) {
-    return true;
-  } else {
-    return false;
   }
 }

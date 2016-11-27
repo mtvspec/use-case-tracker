@@ -5,6 +5,7 @@ CREATE TABLE projects.f_project_operation (
   id BIGSERIAL,
   d_project_operation_type_id INTEGER NOT NULL,
   a_operation_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  e_session_id BIGINT NOT NULL,
   e_user_id BIGINT NOT NULL,
   e_project_id BIGINT NOT NULL,
   d_project_kind_id INTEGER,
@@ -30,6 +31,9 @@ CREATE TABLE projects.f_project_operation (
     FOREIGN KEY (
       d_project_operation_type_id
     ) REFERENCES projects.d_project_operation (id),
+    FOREIGN KEY (
+      e_session_id
+    ) REFERENCES sessions.e_session (id),
     FOREIGN KEY (
       e_user_id
     ) REFERENCES users.e_user (id),
@@ -59,11 +63,12 @@ CREATE TABLE projects.f_project_operation (
 -- Create project (create_project)
 --============================================================================--
 CREATE FUNCTION projects.create_project (
-  IN v_d_project_kind_id INTEGER DEFAULT NULL,
-  IN v_e_customer_id BIGINT DEFAULT NULL,
-  IN v_a_project_name VARCHAR (1000) DEFAULT NULL,
-  IN v_a_project_desc TEXT DEFAULT NULL,
-  IN v_e_user_id BIGINT DEFAULT NULL,
+  IN v_d_project_kind_id INTEGER,
+  IN v_e_customer_id BIGINT,
+  IN v_a_project_name VARCHAR (1000),
+  IN v_a_project_desc TEXT,
+  IN v_e_session_id BIGINT,
+  IN v_e_user_id BIGINT,
   OUT e_project_id BIGINT
 )
 AS $$
@@ -89,26 +94,30 @@ WITH ins AS (
 INSERT INTO
   projects.f_project_operation (
     d_project_operation_type_id,
+    e_session_id,
     e_user_id,
     e_project_id,
     d_project_kind_id,
     e_customer_id,
     a_project_name,
     a_project_desc,
-    d_project_state_id
+    d_project_state_id,
+    is_deleted
   )
 VALUES (
   1,
+  v_e_session_id,
   v_e_user_id,
   (SELECT id FROM ins),
   (SELECT d_project_kind_id FROM ins),
   (SELECT e_customer_id FROM ins),
   (SELECT a_project_name FROM ins),
   (SELECT a_project_desc FROM ins),
-  (SELECT d_project_state_id FROM ins)
+  (SELECT d_project_state_id FROM ins),
+  (SELECT is_deleted FROM ins)
 )
 RETURNING
-  (SELECT id FROM ins) "e_project_id";
+  e_project_id;
 $$ LANGUAGE sql;
 --------------------------------------------------------------------------------
 SELECT
