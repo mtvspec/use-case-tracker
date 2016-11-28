@@ -11,6 +11,7 @@ module.exports = class Project {
   * @return projectID
   */
   constructor(data) {
+    console.log(data);
     let result = {};
     let project = {};
     let messages = {};
@@ -24,38 +25,26 @@ module.exports = class Project {
         result.messages = messages;
         return this.result = result;
       }
-      if (data.aProjectKindID) {
+      if (data.aProjectKindID || data.aProjectKindID === undefined) {
         let result = validator.isNumber(data.aProjectKindID, 'not null');
-        if (result.result) {
-          project.aProjectKindID = result.data;
-        } else {
-          messages = result.data;
-        }
+        result.result ?
+        project.aProjectKindID = result.data : messages = result.data; 
       }
-      if (data.aCustomerID) {
+      if (data.aCustomerID || data.aCustomerID === undefined) {
         let result = validator.isNumber(data.aCustomerID, 'not null');
-        if (result.result) {
-          project.aCustomerID = result.data;
-        } else {
-          messages = result.data;
-        }
+        result.result ?
+        project.aCustomerID = result.data : messages = result.data;
       }
-      if (data.aProjectName) {
+      if (data.aProjectName || data.aProjectName === undefined) {
         let result = validator.isString(data.aProjectName, 2, 1000, 'not null');
         console.log(result);
-        if (result.result) {
-          project.aProjectName = result.data;
-        } else {
-          messages = result.data;
-        }
+        result.result ?
+        project.aProjectName = result.data : messages = result.data;
       }
-      if (data.aProjectDesc) {
-        let result = validator.isString(data.aProjectDesc, 2, null, null);
-        if (result.result) {
-          project.aProjectDesc = result.data;
-        } else {
-          messages = result.data;
-        }
+      if (data.aProjectDesc || data.aProjectDesc === undefined) {
+        let result = validator.isString(data.aProjectDesc, 2, null, 'not null');
+        result.result ?
+        project.aProjectDesc = result.data : messages = result.data;
       }
       if (Object.keys(messages).length > 0) {
         result.messages = messages;

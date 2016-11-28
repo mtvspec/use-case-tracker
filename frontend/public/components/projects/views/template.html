@@ -17,18 +17,18 @@
         Description
       </th>
     </tr>
-    <tr ng-repeat="Project in vm.projects | filter: searchProject">
+    <tr ng-repeat="project in vm.projects | filter: searchProject">
       <td>
-        {{Project.aProjectKindID}}
+        {{project.aProjectKindID}}
       </td>
       <td>
-        {{Project.aCustomerID}}
+        {{project.aCustomerID}}
       </td>
       <td>
-        {{Project.aProjectName}}
+        {{project.aProjectName}}
       </td>
       <td>
-        {{Project.aProjectDesc}}
+        {{project.aProjectDesc}}
       </td>
     </tr>
   </table>

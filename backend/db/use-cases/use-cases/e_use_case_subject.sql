@@ -5,7 +5,7 @@ CREATE TABLE use_cases.e_use_case_subject (
   id BIGSERIAL,
   e_component_id INTEGER NOT NULL,
   a_use_case_subject_name VARCHAR (1000) NOT NULL,
-  a_use_case_subject_desc TEXT,
+  a_use_case_subject_desc TEXT NOT NULL,
   d_use_case_subject_state_id INTEGER NOT NULL,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (

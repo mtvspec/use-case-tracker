@@ -6,7 +6,7 @@ CREATE TABLE projects.e_project (
   d_project_kind_id INTEGER,
   e_customer_id BIGINT,
   a_project_name VARCHAR (1000) NOT NULL,
-  a_project_desc TEXT,
+  a_project_desc TEXT NOT NULL,
   e_contract_id BIGINT,
   e_project_manager_id BIGINT,
   e_project_plan_id BIGINT,

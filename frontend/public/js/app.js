@@ -60,6 +60,15 @@ app.config(function ($stateProvider, $urlRouterProvider) {
       pageTitle: 'Create system'
     }
   })
+  .state('use-case-subjects', {
+    url: '/use-case-subjects',
+    templateUrl: '/components/use-case-subjects/UseCaseSubjectList/views/template.html',
+    controller: 'UseCaseSubjectListCtrl',
+    controllerAs: 'vm',
+    data: {
+      pageTitle: 'Use-case subjects'
+    }
+  })
   .state('use-case-slices', {
     url: '/use-case-slices',
     templateUrl: '/templates/use-case-slices/template.html',

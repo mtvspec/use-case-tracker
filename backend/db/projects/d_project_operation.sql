@@ -3,26 +3,26 @@
 --============================================================================--
 CREATE TABLE projects.d_project_operation (
   id SERIAL NOT NULL,
-  project_operation_name_en VARCHAR (1000) NOT NULL,
-  project_operation_desc_en TEXT,
-  project_operation_name_ru VARCHAR (1000) NOT NULL,
-  project_operation_desc_ru TEXT,
+  a_project_operation_name_en VARCHAR (1000) NOT NULL,
+  a_project_operation_desc_en TEXT,
+  a_project_operation_name_ru VARCHAR (1000) NOT NULL,
+  a_project_operation_desc_ru TEXT,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
-        project_operation_name_en
+        a_project_operation_name_en
       ),
       UNIQUE (
         id
       ),
       UNIQUE (
-        project_operation_name_ru
+        a_project_operation_name_ru
       )
 );
 --============================================================================--
 INSERT INTO
   projects.d_project_operation (
-    project_operation_name_en,
-    project_operation_name_ru
+    a_project_operation_name_en,
+    a_project_operation_name_ru
   )
 VALUES
 (

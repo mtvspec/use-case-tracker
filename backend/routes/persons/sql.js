@@ -1,3 +1,5 @@
+'use strict';
+
 const Queries = {
   persons: {
     SELECT_ALL_PERSONS: function () {

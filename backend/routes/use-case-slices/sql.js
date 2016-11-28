@@ -3,22 +3,18 @@ const Queries = {
     SELECT_ALL_SLICES() {
       return `
       SELECT
-        ucs.id,
-        ct.a_component_name "aComponentName",
-        ucs.a_use_case_slice_name "aUseCaseSliceName",
-        ucs.a_use_case_slice_desc "aUseCaseSliceDesc",
-        ucs.a_use_case_slice_specs "aUseCaseSliceSpecs",
-        st.state_en "aUseCaseSliceState"
+        id,
+        e_use_case_id "eUseCaseID",
+        e_component_id "eComponentID",
+        a_use_case_slice_code "aUseCaseSliceCode",
+        a_use_case_slice_name "aUseCaseSliceName",
+        a_use_case_slice_desc "aUseCaseSliceDesc",
+        a_use_case_slice_specs "aUseCaseSliceSpecs",
+        d_use_case_slice_state_id "dUseCaseSliceStateID"
       FROM
-        components.e_component ct,
-        use_case_slices.e_use_case_slice ucs,
-        use_case_slices.d_use_case_slice_state st
-      WHERE
-        ucs.d_use_case_slice_state_id = st.id
-      AND
-        ucs.e_component_id = ct.id
+        use_case_slices.e_use_case_slice
       ORDER BY
-        ucs.id
+        id
       ASC;
       `;
     },

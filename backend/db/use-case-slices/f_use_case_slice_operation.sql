@@ -37,3 +37,5 @@ CREATE TABLE use_case_slices.f_use_case_slice_operation (
     ) REFERENCES use_case_slices.d_use_case_slice_state (id)
 );
 --============================================================================--
+-- Create use-case slice (create_use_case_slice)
+--============================================================================--

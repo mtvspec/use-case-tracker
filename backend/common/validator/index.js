@@ -60,6 +60,7 @@ module.exports = class validator {
     }
   }
   static isString(data, minLen, maxLen, mandatory) {
+    console.log(data);
     let messages = {};
     let string = {};
     let result = {};
@@ -99,7 +100,7 @@ module.exports = class validator {
         }
       }
     }
-    if (data === null && mandatory === 'not null') {
+    if (mandatory === 'not null') {
       if (typeof data === 'string') {
         if (mandatory === 'not null') {
           if (data === 0 || data === null || data === '' || data.length === 0) {
@@ -114,10 +115,14 @@ module.exports = class validator {
             } else if (data.length >= minLen) {
               string.minLen = true;
             }
-            if (data.length > maxLen) {
-              messages.maxLen = `maximal length for '${data}' is ${maxLen}`;
-            } else if (data.length <= maxLen) {
+            if (maxLen === null || maxLen === 'null') {
               string.maxLen = true;
+            } else {
+              if (data.length > maxLen) {
+                messages.maxLen = `maximal length for '${data}' is ${maxLen}`;
+              } else if (data.length <= maxLen) {
+                string.maxLen = true;
+              }
             }
             if (Object.keys(messages).length > 0) {
               return result = {
@@ -129,7 +134,7 @@ module.exports = class validator {
               return result = {
                 result: true,
                 data: data
-              };
+              }
             }
           }
         }

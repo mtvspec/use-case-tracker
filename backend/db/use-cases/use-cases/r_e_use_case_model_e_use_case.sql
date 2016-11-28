@@ -3,8 +3,8 @@
 --============================================================================--
 CREATE TABLE use_cases.r_e_use_case_model_e_use_case (
   r_e_use_case_model_e_use_case_id BIGSERIAL NOT NULL,
-  e_use_case_model_id INTEGER NOT NULL,
-  e_use_case_id INTEGER NOT NULL,
+  e_use_case_model_id BIGINT NOT NULL,
+  e_use_case_id BIGINT NOT NULL,
     PRIMARY KEY (
       e_use_case_model_id,
       e_use_case_id
@@ -14,9 +14,9 @@ CREATE TABLE use_cases.r_e_use_case_model_e_use_case (
     ),
     FOREIGN KEY (
       e_use_case_model_id
-    ) REFERENCES use_cases.e_use_case_model (e_use_case_model_id),
+    ) REFERENCES use_cases.e_use_case_model (id),
     FOREIGN KEY (
       e_use_case_id
-    ) REFERENCES use_cases.e_use_case (e_use_case_id)
+    ) REFERENCES use_cases.e_use_case (id)
 );
 --============================================================================--

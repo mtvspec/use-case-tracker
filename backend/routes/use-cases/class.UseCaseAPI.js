@@ -1,26 +1,25 @@
 'use strict';
 
-const ID = require('./../../common/classes/id');
-const Defect = require('./class.Defect.js');
-const db = require('./../../db.js');
 const sql = require('./sql.js');
+const db = require('./../../db.js');
 
-module.exports = class DefectAPI {
+module.exports = class UseCaseAPI {
   constructor() {
 
   }
-  static getDefects(req, res) {
+  static getUseCases(req, res) {
     db.selectAllRecords({
-      text: sql.defects.SELECT_ALL_DEFECTS()
+      text: sql.useCases.SELECT_ALL_USE_CASES()
     }, function (response) {
-      if (response.status === 200) {
+      if (response && response.status === 200) {
         return res
         .status(200)
         .json(response.data)
         .end();
       } else if (response.status === 204) {
         return res
-        .status(response.status)
+        .status(204)
+        .json([])
         .end();
       } else {
         return res

@@ -1,7 +1,9 @@
 (function () {
   'use strict';
 
-  app.controller('ProjectsCtrl', function ProjectsCtrl($scope, $http) {
+  app.controller('ProjectsCtrl', function ProjectsCtrl($scope, $http, ProjectsAPI) {
+
+    console.log(ProjectsAPI);
 
     var vm = this;
 

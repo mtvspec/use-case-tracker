@@ -10,7 +10,11 @@ var bodyParser = require('body-parser');
 const UserAPI = require('./routes/users/class.UserAPI.js');
 
 const routes = require('./routes/index');
+const subjects = require('./routes/use-case-subjects');
+const useCases = require('./routes/use-cases');
+const defects = require('./routes/defects');
 const users = require('./routes/users');
+const dict = require('./routes/dict');
 const slices = require('./routes/use-case-slices');
 const persons = require('./routes/persons');
 const organizations = require('./routes/organizations');
@@ -48,7 +52,11 @@ app.use(function (req, res, next) {
 });
 
 app.use('/api', routes);
+app.use('/api/dict', dict);
+app.use('/api/use-case-subjects', subjects);
+app.use('/api/use-cases', useCases);
 app.use('/api/use-case-slices', slices);
+app.use('/api/defects', defects);
 app.use('/api/users', users);
 app.use('/api/persons', persons);
 app.use('/api/organizations', organizations);

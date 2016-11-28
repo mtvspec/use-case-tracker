@@ -10,8 +10,8 @@ CREATE TABLE use_cases.f_actor_operation (
   e_actor_id BIGINT NOT NULL,
   d_actor_type_id INTEGER NOT NULL,
   a_actor_short_name VARCHAR (100) NOT NULL,
-  a_actor_long_name VARCHAR (1000),
-  a_actor_desc TEXT,
+  a_actor_long_name VARCHAR (1000) NOT NULL,
+  a_actor_desc TEXT NOT NULL,
   d_actor_state_id INTEGER NOT NULL,
   is_deleted BOOLEAN NOT NULL,
     PRIMARY KEY (

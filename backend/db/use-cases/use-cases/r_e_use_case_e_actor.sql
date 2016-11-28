@@ -3,8 +3,8 @@
 --============================================================================--
 CREATE TABLE use_cases.r_e_use_case_e_actor (
   id BIGSERIAL NOT NULL,
-  e_use_case_id INTEGER NOT NULL,
-  e_actor_id INTEGER NOT NULL,
+  e_use_case_id BIGINT NOT NULL,
+  e_actor_id BIGINT NOT NULL,
     PRIMARY KEY (
       e_use_case_id,
       e_actor_id

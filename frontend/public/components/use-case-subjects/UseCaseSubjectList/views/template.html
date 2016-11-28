@@ -1,0 +1,102 @@
+<h5>Use-case subjects</h5>
+<label for="">Subject</label>
+<select class="form-control" name="subject">
+  <option ng-repeat="subject in vm.subjects | filter : selectedUseCaseSubject" value="{{subject.id}}" ng-model="subject">{{subject.aUseCaseSubjectName}}</option>
+</select>
+<input class="form-control" type="text" name="name" ng-model="searchUseCaseSubject">
+<div class="form-group">
+  <div class="form-group" name="use-case-subjects" ng-repeat="subject in vm.subjects | filter: searchUseCaseSubject">
+    <div name="use-case-subject">
+      <label for="">Use-case subject name</label>
+      <p>
+        {{subject.aUseCaseSubjectName}}
+      </p>
+    </div>
+    <div class="form-group">
+      <label for="">Use-case subject description</label>
+      <textarea class='form-control' name="name" rows="1" cols="40">{{subject.aUseCaseSubjectDesc}}</textarea>
+    </div>
+    <div class="form-group" ng-repeat="useCase in vm.useCases | filter: vm.getUseCasesByUseCaseSubject(subject.id)">
+      <div name="use-case">
+        <label for="">Use case name</label>
+        <p>
+          {{useCase.aUseCaseName}}
+        </p>
+        <label for="">Use-case slices</label>
+        <div class="" name="use-case-slices">
+          <div name="use-case slice" ng-repeat="slice in vm.slices | filter: vm.getSlicesByUseCaseID(useCase.id)">
+            <div class="form-group" name="use-case slice header">
+              <table class="table table-striped table-hover">
+                <tr>
+                  <th>
+                    Code
+                  </th>
+                  <th>
+                    Name
+                  </th>
+                  <th>
+                    Description
+                  </th>
+                  <th>
+                    State
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    {{slice.aUseCaseSliceCode}}
+                  </td>
+                  <td>
+                    {{slice.aUseCaseSliceName}}
+                  </td>
+                  <td>
+                    {{slice.aUseCaseSliceDesc}}
+                  </td>
+                  <td>
+                    {{vm.getUseCaseSliceStateBySliceID(slice.id)}}
+                  </td>
+                </tr>
+              </table>
+              <div class="form-group" name="use-case-slice-specification">
+                <label for="">Specification</label>
+                <textarea class="form-control" name="name" rows="8" cols="40" ng-bind="slice.aUseCaseSliceSpecs"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="">Defects</label>
+                <table class="table table-striped table-hover">
+                  <tr>
+                    <th>
+                      Name
+                    </th>
+                    <th>
+                      Description
+                    </th>
+                    <th>
+                      Kind
+                    </th>
+                    <th>
+                      State
+                    </th>
+                  </tr>
+                  <tr ng-repeat="defect in vm.defects | filter: vm.getDefectsBySliceID(slice.id)">
+                    <td>
+                      {{defect.aDefectName}}
+                    </td>
+                    <td>
+                      {{defect.aDefectDesc}}
+                    </td>
+                    <td>
+                      {{defect.dDefectKindID}}
+                    </td>
+                    <td>
+                      {{vm.getDefectStateByDefectID(defect.id)}}
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -3,8 +3,10 @@
 --============================================================================--
 CREATE TABLE use_cases.d_actor_operation (
   id SERIAL NOT NULL,
-  a_operation_name_en VARCHAR (1000) NOT NULL,
-  a_operation_name_ru VARCHAR (1000),
+  a_actor_operation_name_en VARCHAR (1000) NOT NULL,
+  a_actor_operation_desc_en TEXT,
+  a_actor_operation_desc_ru VARCHAR (1000) NOT NULL,
+  a_actor_operation_name_ru TEXT,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
         a_operation_name_en
@@ -16,19 +18,24 @@ CREATE TABLE use_cases.d_actor_operation (
 --------------------------------------------------------------------------------
 INSERT INTO
   use_cases.d_actor_operation (
-    a_operation_name_en
+    a_actor_operation_name_en,
+    a_actor_operation_name_ru
   )
 VALUES
 (
-  'Create actor'
+  'Create actor',
+  'Создать актора'
 ),
 (
-  'Update actor'
+  'Update actor',
+  'Изменить данные актора'
 ),
 (
-  'Delete actor'
+  'Delete actor',
+  'Удалить актора'
 ),
 (
-  'Restore actor'
+  'Restore actor',
+  'Восстановить удаленного актора'
 );
 --============================================================================--

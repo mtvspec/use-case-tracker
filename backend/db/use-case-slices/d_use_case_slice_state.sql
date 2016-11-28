@@ -1,39 +1,27 @@
 CREATE TABLE use_case_slices.d_use_case_slice_state (
-  id SERIAL,
-  state_en VARCHAR (1000) NOT NULL,
-  description_en VARCHAR (4000),
-  state_ru VARCHAR (1000),
-  description_ru VARCHAR (4000),
+  id SERIAL NOT NULL,
+  a_use_case_slice_state_name_en VARCHAR (1000) NOT NULL,
+  a_use_case_slice_state_desc_en TEXT,
+  a_use_case_slice_state_name_ru VARCHAR (1000) NOT NULL,
+  a_use_case_slice_state_desc_ru VARCHAR (4000),
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
+        a_use_case_slice_state_name_en
+      ),
+      UNIQUE (
         id
       ),
       UNIQUE (
-        state_en
-      ),
-      UNIQUE (
-        state_ru
-      ),
-      UNIQUE (
-        description_en
-      ),
-      UNIQUE (
-        description_ru
-      ),
-      UNIQUE (
-        state_en,
-        description_en,
-        state_ru,
-        description_ru
+        a_use_case_slice_state_name_ru
       )
 );
 
 INSERT INTO
   use_case_slices.d_use_case_slice_state (
-    state_en,
-    description_en,
-    state_ru,
-    description_ru
+    a_use_case_slice_state_name_en,
+    a_use_case_slice_state_desc_en,
+    a_use_case_slice_state_name_ru,
+    a_use_case_slice_state_desc_ru
   )
 VALUES
 (
