@@ -19,10 +19,10 @@
     </tr>
     <tr ng-repeat="project in vm.projects | filter: searchProject">
       <td>
-        {{project.aProjectKindID}}
+        {{vm.getProjectKindName(project.dProjectKindID)}}
       </td>
       <td>
-        {{project.aCustomerID}}
+        {{vm.getProjectCustomerName(project.eCustomerID)}}
       </td>
       <td>
         {{project.aProjectName}}

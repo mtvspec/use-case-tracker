@@ -31,6 +31,22 @@ const Queries = {
         id
       ASC;
       `;
+    },
+    SELECT_ALL_PROJECT_KINDS() {
+      return `
+      SELECT
+        id,
+        a_project_kind_name_en "aProjectKindNameEN",
+        a_project_kind_desc_en "aProjectKindDescEN",
+        a_project_kind_name_ru "aProjectKindNameRU",
+        a_project_kind_desc_ru "aProjectKindDescRU",
+        is_deleted "isDeleted"
+      FROM
+        projects.d_project_kind
+      ORDER BY
+        id
+      ASC;
+      `;
     }
   }
 }

@@ -1,13 +1,11 @@
 'use strict';
 
 const router = require('express').Router();
+const CustomerAPI = require('./class.CustomerAPI');
 
 router
 .get('/', function (req, res) {
-  return res
-  .status(200)
-  .send('Customers')
-  .end();
+  CustomerAPI.getCustomers(req, res);
 })
 
 module.exports = router;

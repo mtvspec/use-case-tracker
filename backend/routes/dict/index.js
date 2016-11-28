@@ -11,5 +11,8 @@ router
   console.log(true);
   DictAPI.getDefectStates(req, res);
 })
+.get('/project-kinds', function (req, res) {
+  DictAPI.getProjectKinds(req, res);
+})
 
 module.exports = router;
