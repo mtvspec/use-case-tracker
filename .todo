@@ -1,10 +1,12 @@
 My Tasks:
-☐ Open session    @timestamp(2016-11-24 01:32)
-  generate uuid
-  add session cookie
-☐ Close session   @timestamp(2016-11-24 01:32) @important
-  remove session cookie
-  update session status to 'C - Closed'
+☐ Open session @timestamp(2016-11-24 01:32)
+  Backend:
+  ✔ generate uuid @done(2016-11-28 08:04)
+  ✔ add session cookie @done(2016-11-28 08:05)
+☐ Close session @timestamp(2016-11-24 01:32) @important
+  Backend:
+  ☐ remove session cookie
+  ☐ update session state
 User:
   Backend:
     Database:
