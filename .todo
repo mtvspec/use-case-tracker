@@ -49,6 +49,7 @@ Customer:
   ☐ Get customer @timestamp(2016-11-25 20:22)
 Project:
   ☐ Create project @timestamp(2016-11-25 20:24)
+  ☐ Start project
   ☐ Update project @timestamp(2016-11-25 20:24)
   ☐ Delete project @timestamp(2016-11-25 20:24)
   ☐ Restore project @timestamp(2016-11-25 20:24)
@@ -59,3 +60,22 @@ Project:
   ☐ Renew project @timestamp(2016-11-25 20:25)
   ☐ Get projects @timestamp(2016-11-25 20:25)
   ☐ Get project @timestamp(2016-11-25 20:26)
+Slice:
+  ☐ Create slice
+  ☐ Update slice
+  ☐ Scope slice
+  ☐ Prepare slice
+  ☐ Analize slice
+  ☐ Implement slice
+  ☐ Verify slice
+  ☐ Accept slice
+  ☐ Delete slice
+  ☐ Restore slice
+Test:
+  ☐ Create test
+  ☐ Perform test
+Project team:
+  ☐ Create team
+  ☐ Close team
+  ☐ Add team member
+  ☐ Remove team member

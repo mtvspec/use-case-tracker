@@ -6,14 +6,14 @@ const Queries = {
       return `
       SELECT
         id,
-        d_project_kind_id "aProjectKindID",
-        e_customer_id "aCustomerID",
+        d_project_kind_id "dProjectKindID",
+        e_customer_id "eCustomerID",
         a_project_name "aProjectName",
         a_project_desc "aProjectDesc",
-        e_contract_id "aContractID",
-        e_project_manager_id "aProjectManagerID",
-        e_project_plan_id "aProjectPlanID",
-        e_project_team_id "aProjectTeamID",
+        e_contract_id "eContractID",
+        e_project_manager_id "eProjectManagerID",
+        e_project_plan_id "eProjectPlanID",
+        e_project_team_id "eProjectTeamID",
         a_official_project_name "aOfficialProjectName",
         a_plan_start_date "aPlanStartDate",
         a_plan_end_date "aPlanEndDate",
@@ -21,7 +21,7 @@ const Queries = {
         a_fact_start_date "aFactStartDate",
         a_fact_end_date "aFactEndDate",
         a_fact_budget "aFactBudget",
-        d_project_state_id "aProjectStateID",
+        d_project_state_id "dProjectStateID",
         is_deleted "isDeleted"
       FROM
         projects.e_project

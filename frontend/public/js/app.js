@@ -60,6 +60,15 @@ app.config(function ($stateProvider, $urlRouterProvider) {
       pageTitle: 'Create system'
     }
   })
+  .state('customers', {
+    url: '/customers',
+    templateUrl: '/components/customers/customersList/views/template.html',
+    controller: 'CustomersCtrl',
+    controllerAs: 'vm',
+    data: {
+      pageTitle: 'Customers'
+    }
+  })
   .state('use-case-subjects', {
     url: '/use-case-subjects',
     templateUrl: '/components/use-case-subjects/UseCaseSubjectList/views/template.html',
@@ -92,7 +101,6 @@ app.config(function ($stateProvider, $urlRouterProvider) {
 
 app.directive('title', ['$rootScope', '$timeout',
   function($rootScope, $timeout) {
-    console.log($rootScope);
     return {
       link: function() {
 
@@ -111,10 +119,6 @@ app.directive('title', ['$rootScope', '$timeout',
   }
 ]);
 
-// app.factory('ProjectsAPI', function ProjectsAPI($scope, $http) {
-//   console.log('ProjectsAPI');
-// });
-//
 // app.component('persons', {
 //   templateUrl: 'main.html',
 //   controller: 'PersonsCtrl'

@@ -1,52 +1,48 @@
 (function () {
   'use strict';
 
-  app.controller('ProjectsCtrl', function ProjectsCtrl($scope, $http, ProjectsAPI) {
-
-    console.log(ProjectsAPI);
+  app.controller('ProjectsCtrl', function ProjectsCtrl($scope, $http, ProjectsAPI, CustomerAPI) {
 
     var vm = this;
 
-    vm.projects = [];
+    CustomerAPI.getCustomers(function (customers) {
+      vm.customers = customers;
+    })
 
     vm.project = {};
 
-    function getProjects() {
-      $http({
-        url: '/api/projects',
-        method: 'GET'
-      }).then(function success(response) {
-        if (response.status === 200) {
-          let len = response.data.length;
-          for (let i = 0; i < len; i++) {
-            vm.projects.push(response.data[i]);
+    ProjectsAPI.getProjects(function (projects) {
+      vm.projects = projects;
+    });
+
+    ProjectsAPI.getProjectKinds(function (projectKinds) {
+      vm.projectKinds = projectKinds;
+    });
+
+    vm.createProject = function (project) {
+      ProjectsAPI.createProject(project);
+      vm.project = null;
+    }
+
+    vm.getProjectKindName = function (id) {
+      if (vm.projectKinds && vm.projectKinds.length > 0) {
+        let len = vm.projectKinds.length;
+        for (let i = 0; i < len; i++) {
+          if (vm.projectKinds[i].id == id) {
+            return vm.projectKinds[i].aProjectKindNameRU;
           }
         }
-      }, function failure(response) {
-        console.error(response);
-      });
+      }
     }
 
-    vm.createProject = function(project) {
-      $http({
-        url: '/api/projects',
-        method: 'POST',
-        data: project
-      }).then(function (response) {
-        if (response.status === 201) {
-          project.id = response.data.id;
-          console.log(project);
-          vm.projects.push(project);
-          console.log(vm.projects);
+    vm.getProjectCustomerName = function (id) {
+      let len = vm.customers.length;
+      for (let i = 0; i < len; i++) {
+        if (vm.customers[i].id == id) {
+          return vm.customers[i].aCustomerName;
         }
-        console.log(response);
-      }, function (response) {
-        console.error(response);
-      });
+      }
     }
 
-    getProjects();
-
-    console.log('ProjectsCtrl');
   });
 })();

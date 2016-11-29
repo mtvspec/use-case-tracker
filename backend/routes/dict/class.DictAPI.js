@@ -41,4 +41,21 @@ module.exports = class DictAPI {
       }
     })
   }
+  static getProjectKinds(req, res) {
+    db.selectAllRecords({
+      text: sql.dict.SELECT_ALL_PROJECT_KINDS()
+    }, function (response) {
+      if (response && response.status === 200) {
+        return res
+        .status(200)
+        .json(response.data)
+        .end();
+      } else if (response.status === 204) {
+        return res
+        .status(204)
+        .json([])
+        .end();
+      }
+    })
+  }
 }
