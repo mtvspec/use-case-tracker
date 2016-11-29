@@ -5,8 +5,8 @@ My Tasks:
   ✔ add session cookie @done(2016-11-28 08:05)
 ☐ Close session @timestamp(2016-11-24 01:32) @important
   Backend:
-  ☐ remove session cookie
-  ☐ update session state
+  ☐ remove session cookie @timestamp(2016-11-28 20:35)
+  ✔ update session state @done(2016-11-28 20:35)
 User:
   Backend:
     Database:
