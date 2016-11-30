@@ -1,52 +1,54 @@
 'use strict';
 
+const validator = require('./../../common/validator');
+
 module.exports = class Organization {
   constructor(data) {
+    console.log(data);
     let messages = {};
     let organization = {};
-    if (data) {
-      if (data.bin) {
-        if (data.bin
-          && typeof data.bin === 'string'
-          && data.bin.length === 12) {
-          organization.bin = data.bin;
-        } else {
-          messages.bin = `incorrect 'bin': ${data.bin}`;
-        }
-      } else {
-        organization.bin = '';
-      }
-      if (data.shortName) {
-        if (data.shortName
-        && typeof data.shortName === 'string'
-        && data.shortName.length > 1
-        && data.shortName.length <= 1000) {
-          organization.shortName = data.shortName;
-        } else {
-          messages.shortName = `incorrect 'shortName': ${data.shortName}`;
-        }
-      } else {
-        messages.shortName = `'shortName' is required`;
-      }
-      if (data.officialName) {
-        if (data.officialName
-        && typeof data.officialName === 'string'
-        && data.officialName.length > 1
-        && data.officialName.length <= 4000) {
-          organization.officialName = data.officialName;
-        } else {
-          messages.officialName = `incorrect 'officialName': ${data.officialName}`;
-        }
-      } else {
-        organization.officialName = '';
-      }
+    let result = {};
+    if (!data || !typeof data === 'object') {
+      messages.message = `'organization' is required`;
+      result.messages = messages;
+      return this.result = result;
+    } else if (Object.getOwnPropertyNames(data).length === 0) {
+      messages.message = `'organization data' is required`;
+      result.messages = messages;
+      return this.result = result;
     } else {
-      messages.organization = `'organization' is required`;
-    }
-    if (Object.keys(messages).length > 0) {
-      return this.messages = messages;
-    } else {
-      return this.organization = organization;
+      if (data.aOrganizationBin || data.aOrganizationBin === undefined) {
+        let result = validator.isIIN(data.aOrganizationBin, null);
+        result.result ?
+        organization.aOrganizationBin = result.data : messages.aOrganizationBin = result.data;
+      }
+      if (data.aOrganizationShortName || data.aOrganizationShortName === undefined) {
+        let result = validator.isString(data.aOrganizationShortName, 2, 100, null);
+        result.result ?
+        organization.aOrganizationShortName = result.data : messages.aOrganizationShortName = result.data;
+      }
+      if (data.aOrganizationOfficialName || data.aOrganizationOfficialName  === undefined) {
+        let result = validator.isString(data.aOrganizationOfficialName, 2, 100, null);
+        result.result ?
+        organization.aOrganizationOfficialName = result.data : messages.aOrganizationOfficialName = result.data;
+      }
+      console.log(organization);
+      console.log(messages);
+      if (Object.keys(messages).length > 0) {
+        result.messages = messages;
+        return this.result = result;
+      } else {
+        if (organization.aOrganizationBin === ''
+          && organization.aOrganizationShortName === ''
+          && organization.aOrganizationOfficialName === ''
+          ) {
+            messages.message = `'organization data' is required`;
+            result.messages = messages;
+            return this.result = result;
+        }
+        result.organization = organization;
+        return this.result = result;
+      }
     }
   }
 }

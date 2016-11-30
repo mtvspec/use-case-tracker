@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  app.factory('ProjectsAPI', function ($http) {
+  app.factory('ProjectAPI', function ($http) {
     let projects = [];
     let projectKinds = [];
     return {
@@ -45,6 +45,7 @@
             url: '/api/dict/project-kinds',
             method: 'GET'
           }).then(function (response) {
+            console.log(projectKinds);
             if (response && response.status === 200 || response.status === 204) {
               let len = response.data.length;
               for (let i = 0; i < len; i++) {
@@ -59,6 +60,19 @@
           })
         } else {
           return cb(projectKinds);
+        }
+      },
+      getProjectKindName: function(id, cb) {
+        if (projectKinds && projectKinds.length > 0) {
+          console.log(projectKinds);
+          let len = projectKinds.length;
+          for (let i = 0; i < len; i++) {
+            if (projectKinds[i].id == id) {
+              return cb(projectKinds[i].aProjectKindNameRU);
+            }
+          }
+        } else {
+          getProjectKinds();
         }
       }
     }

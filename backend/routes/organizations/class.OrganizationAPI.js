@@ -1,24 +1,32 @@
 'use strict';
 
 const ID = require ('./../../common/classes/id');
+const UserAPI = require('./../users/class.UserAPI.js');
 const Organization = require('./class.Organization.js');
 const db = require('./../../db.js');
 const sql = require('./sql.js');
 
 class OrganizationAPI {
   constructor() {
-    
+
   }
   static getOrganizations(req, res) {
     db.selectAllRecords({
       text: sql.organizations.SELECT_ALL_ORGANIZATIONS(req.User)
     }, function (response) {
       if (response && response.status && response.status === 200) {
-        return res.status(response.status).json(response.data).end();
+        return res
+        .status(response.status)
+        .json(response.data)
+        .end();
       } else if (response && response.status && response.status === 204) {
-        return res.status(response.status).end();
+        return res
+        .status(response.status)
+        .end();
       } else {
-        return res.status(500).end();
+        return res
+        .status(500)
+        .end();
       }
     });
   }
@@ -32,44 +40,81 @@ class OrganizationAPI {
         )
       }, function (response) {
         if (response) {
-          return res.status(response.status).json(response.data).end();
+          return res
+          .status(response.status)
+          .json(response.data)
+          .end();
         } else {
-          return res.status(500).end();
+          return res
+          .status(500)
+          .end();
         }
       });
     } else {
-      return res.status(400).send(`'id' is required`);
+      return res
+      .status(400)
+      .send(`'id' is required`)
+      .end();
     }
   }
   static createOrganization(req, res) {
-    let org = new Organization(req.body);
-    if (org.shortName) {
-      if (org.bin) {
-        OrganizationAPI.getOrganizationByBIN(org.bin, res, function (response) {
+    let result = new Organization(req.body);
+    if (result.organization) {
+      let organization = result.organization;
+      if (organization.aOrganizationBin) {
+        OrganizationAPI.getOrganizationByBIN(organization.aOrganizationBin, res, function (response) {
           if (response && response.status === 200) {
-            return res.status(400).json(`duplicate 'bin': ${org.bin}`).end();
+            return res
+            .status(400)
+            .json(`duplicate 'bin': ${organization.aOrganizationBin}`)
+            .end();
           }
         });
       }
       if (res.headersSent) {
         return;
       }
-      db.insertRecord({
-        text: sql.organizations.INSERT_ORGANIZATION(
-          org,
-          req.User
-        )
-      }, function (response) {
-        if (response.status === 201) {
-          return res.status(response.status).json({
-            id: response.data.create_organization
-          }).end();
-        } else {
-          return res.status(response.status).json(response.data).end();
-        }
-      });
+      let token = req.cookies.session;
+      if (!token) {
+        return res
+        .status(401)
+        .end();
+      } else {
+        UserAPI.getUserID(token, function (response) {
+          if (response && response.status === 200) {
+            db.insertRecord({
+              text: sql.organizations.INSERT_ORGANIZATION(
+                organization,
+                {id: response.data.sessionID},
+                {id: response.data.userID}
+              )
+            }, function (response) {
+              if (response && response.status === 201) {
+                return res
+                .status(response.status)
+                .json({
+                  id: response.data.create_organization
+                })
+                .end()
+              } else {
+                return res
+                .status(response.status)
+                .json(response.data)
+                .end();
+              }
+            })
+          } else {
+            return res
+            .status(401)
+            .end();
+          }
+        })
+      }
     } else {
-      return res.status(400).json(org).end();
+      return res
+      .status(400)
+      .json(org)
+      .end();
     }
   }
   static updateOrganization(req, res) {
@@ -87,22 +132,36 @@ class OrganizationAPI {
               )
             }, function (response) {
               if (response && response.status === 200) {
-                return res.status(response.status).json({
+                return res
+                .status(response.status)
+                .json({
                   id: response.data.update_organization
-                }).end();
+                })
+                .end();
               } else if (response.status && response.data) {
-                return res.status(response.status).json(response.data).end();
+                return res
+                .status(response.status)
+                .json(response.data)
+                .end();
               } else {
-                return res.status(500).end();
+                return res
+                .status(500)
+                .end();
               }
             });
           } else {
-            return res.status(400).json(`duplicate 'bin': ${organization.bin}`);
+            return res
+            .status(400)
+            .json(`duplicate 'bin': ${organization.bin}`)
+            .end();
           }
         }
       });
     } else {
-      return res.status(400).json(organization).end();
+      return res
+      .status(400)
+      .json(organization)
+      .end();
     }
   }
   static deleteOrganization(req, res) {
@@ -115,11 +174,17 @@ class OrganizationAPI {
         )
       }, function (response) {
         if (response && response.status === 200) {
-          return res.status(response.status).json({
+          return res
+          .status(response.status)
+          .json({
             id: response.data.delete_organization
-          }).end();
+          })
+          .end();
         } else {
-          return res.status(response.status).json(response.data).end();
+          return res
+          .status(response.status)
+          .json(response.data)
+          .end();
         }
       });
     }
@@ -134,11 +199,17 @@ class OrganizationAPI {
         )
       }, function (response) {
         if (response && response.status === 200) {
-          return res.status(response.status).json({
+          return res
+          .status(response.status)
+          .json({
             id: response.data.restore_organization
-          }).end();
+          })
+          .end();
         } else {
-          return res.status(response.status).json(response.data).end();
+          return res
+          .status(response.status)
+          .json(response.data)
+          .end();
         }
       });
     }

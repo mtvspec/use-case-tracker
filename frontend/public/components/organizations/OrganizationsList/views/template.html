@@ -1,0 +1,50 @@
+<input class="form-control" type="text" name="name" ng-model="searchOrganization">
+<table class="table table-striped table-hover">
+  <tr>
+    <th>
+      BIN
+    </th>
+    <th>
+      Short name
+    </th>
+    <th>
+      Official name
+    </th>
+  </tr>
+  <tr ng-repeat="organization in vm.organizations | filter: searchOrganization">
+    <td>
+      {{organization.aOrganizationBin}}
+    </td>
+    <td>
+      {{organization.aOrganizationShortName}}
+    </td>
+    <td>
+      {{organization.aOrganizationOfficialName}}
+    </td>
+  </tr>
+</table>
+
+<form name="">
+  <div class="form-group">
+    <label for="aOrganizationBin">BIN</label>
+    <input class="form-control" type="text" name="aOrganizationBin" ng-model="vm.organization.aOrganizationBin">
+  </div>
+  <div class="form-group">
+    <h4>
+      Project
+    </h4>
+    <div class="form-group">
+      <label for="aOrganizationShortName">Short name</label>
+      <input class="form-control" type="text" name="aOrganizationShortName" ng-model="vm.organization.aOrganizationShortName">
+    </div>
+    <div class="form-group">
+      <label for="aOrganizationOfficialName">Official name</label>
+      <input class="form-control" type="text" name="aOrganizationOfficialName" ng-model="vm.organization.aOrganizationOfficialName">
+    </div>
+  </div>
+</form>
+<button class="btn btn-default" type="button" name="button" ng-click="vm.createOrganization(vm.organization)">Create organization</button>
+
+<pre class="well">
+  {{vm.organization | json}}
+</pre>

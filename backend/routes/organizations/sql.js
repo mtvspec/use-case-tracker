@@ -3,11 +3,16 @@ const Queries = {
     SELECT_ALL_ORGANIZATIONS() {
       return `
       SELECT
-        *
+        id,
+        a_organization_bin "aOrganizationBin",
+        a_organization_short_name "aOrganizationShortName",
+        a_organization_official_name "aOrganizationOfficialName",
+        is_deleted "isDeleted"
       FROM
         organizations.e_organization
       ORDER BY
-        id ASC;
+        id
+      ASC;
       `;
     },
     SELECT_ORGANIZATION_BY_ID(organization, user) {
@@ -31,17 +36,19 @@ const Queries = {
       FROM
         organizations.e_organization
       WHERE
-        bin = '${bin}';`;
+        a_organization_bin = '${bin}';`;
     },
-    INSERT_ORGANIZATION(organization, user) {
+    INSERT_ORGANIZATION(organization, session, user) {
       return `
       SELECT
         organizations.create_organization (
-          '${organization.bin}',
-          '${organization.shortName}',
-          '${organization.officialName}',
-          ${user.id}
-        );`;
+          v_a_organization_bin := '${organization.aOrganizationBin}',
+          v_a_organization_short_name := '${organization.aOrganizationShortName}',
+          v_a_organization_official_name := '${organization.aOrganizationOfficialName}',
+          v_e_session_id := ${session.id},
+          v_e_user_id := ${user.id}
+        );
+      `;
     },
     UPDATE_ORGANIZATION(organization, user) {
       return `

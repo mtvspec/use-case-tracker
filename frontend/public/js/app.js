@@ -1,8 +1,8 @@
 'use strict';
 
-var app = angular.module('app', ['ui.router']);
+var app = angular.module('app', ['ui.router', 'ngMaterial']);
 
-app.config(function ($stateProvider, $urlRouterProvider) {
+app.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) {
   $urlRouterProvider.otherwise('/');
   $stateProvider
   .state('login', {
@@ -51,6 +51,12 @@ app.config(function ($stateProvider, $urlRouterProvider) {
       pageTitle: 'Systems'
     }
   })
+  .state('createProject', {
+    url: '/createProject',
+    controller: 'CreateProjectCtrl',
+    controllerAs: 'vm',
+    templateUrl: '/components/projects/createProject/views/template.html',
+  })
   .state('createSystem', {
     url: '/createSystem',
     templateUrl: '/components/systems/views/createSystem.html',
@@ -84,6 +90,15 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     controller: 'UseCaseSliceCtrl',
     controllerAs: 'vm'
   })
+  .state('organizations', {
+    url: '/organizations',
+    templateUrl: '/components/organizations/OrganizationsList/views/template.html',
+    controller: 'OrganizationsCtrl',
+    controllerAs: 'vm',
+    data: {
+      pageTitle: 'Organizations'
+    }
+  })
   .state('persons', {
     url: '/persons',
     templateUrl: '/components/persons/PersonsList/views/template.html',
@@ -97,6 +112,8 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     url: '/contacts',
     templateUrl: 'contacts.html'
   });
+  $mdThemingProvider.theme('default')
+
 });
 
 app.directive('title', ['$rootScope', '$timeout',
