@@ -45,7 +45,6 @@
             url: '/api/dict/project-kinds',
             method: 'GET'
           }).then(function (response) {
-            console.log(projectKinds);
             if (response && response.status === 200 || response.status === 204) {
               let len = response.data.length;
               for (let i = 0; i < len; i++) {

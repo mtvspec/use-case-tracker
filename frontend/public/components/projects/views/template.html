@@ -1,8 +1,7 @@
 <div class="">
-  <md-input-container>
-    <label for="searchProject">Search project...</label>
-    <input type="text" ng-model="searchProject"id="searchProject">
-  </md-input-container>
+  <div class="form-group">
+    <input class="form-control" type="text" ng-model="searchProject" id="searchProject" placeholder="Search project...">
+  </div>
   <table class="table table-striped table-hover">
     <tr>
       <th>
@@ -20,7 +19,7 @@
     </tr>
     <tr ng-repeat="project in vm.projects | filter: searchProject">
       <td>
-        {{ProjectAPI.getProjectKindName(project.dProjectKindID)}}
+        {{vm.getProjectKindNameRU(project.dProjectKindID)}}
       </td>
       <td>
         {{vm.getProjectCustomerName(project.eCustomerID)}}
@@ -34,34 +33,3 @@
     </tr>
   </table>
 </div>
-
-<form name="">
-  <md-input-container>
-    <label for="aCustomerID">Customer</label>
-    <input type="text" name="aCustomerID" ng-model="vm.project.aCustomerID">
-  </md-input-container>
-  <div class="form-group">
-    <h4>
-      Project
-    </h4>
-    <md-input-container>
-      <label for="aProjectKindID">Kind</label>
-      <input type="text" name="aProjectKindID" ng-model="vm.project.aProjectKindID">
-    </md-input-container>
-    <md-input-container class="form-group">
-      <label for="aProjectName">Name</label>
-      <input type="text" name="aProjectName" ng-model="vm.project.aProjectName">
-    </md-input-container>
-    <md-input-container class="form-group">
-      <label for="aProjectDesc">Description</label>
-      <input type="text" name="aProjectDesc" ng-model="vm.project.aProjectDesc">
-    </md-input-container>
-  </div>
-</form>
-<md-button class="md-raised md-primary" type="button" name="createProject" ng-click="vm.createProject(vm.project)">Create project</md-button>
-
-<pre class="well">
-  {{vm.project | json}}
-</pre>
-
-<md-button class="md-raised" ng-click="vm.showDialog()">Create project</md-button>

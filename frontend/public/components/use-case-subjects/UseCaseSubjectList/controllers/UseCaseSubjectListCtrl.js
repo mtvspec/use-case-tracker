@@ -10,17 +10,11 @@
     DefectReportAPI) {
 
     var vm = this;
-
     vm.subjects = [];
-
     vm.useCases = [];
-
     vm.slices = [];
-
     vm.defectReports = [];
-
     vm.sliceStates = [];
-
     vm.defectStates = [];
 
     vm.createUseCaseSubject = function () {
@@ -37,27 +31,12 @@
     }
 
     UseCaseSliceAPI.getUseCaseSliceStates(function (useCaseSliceStates) {
-      vm.useCaseSliceStates = useCaseSliceStates;
+      return vm.useCaseSliceStates = useCaseSliceStates;
     })
 
-    vm.getDefectStates = function () {
-      $http({
-        url: '/api/dict/defect-states',
-        method: 'GET'
-      }).then(function (response) {
-        if (response && response.status === 200) {
-          let len = response.data.length;
-          for (let i = 0; i < len; i++) {
-            vm.defectStates.push(response.data[i]);
-          }
-          return vm.defectStates;
-        } else if (response.status === 204) {
-          return vm.defectStates;
-        }
-      }, function (response) {
-        console.error(response);
-      })
-    }
+    DefectReportAPI.getDefectStates(function (defectStates) {
+      return vm.defectStates = defectStates;
+    })
 
     vm.getUseCasesCount = function(id) {
       let len = vm.useCases.length;
@@ -81,7 +60,47 @@
       return count;
     }
 
-    vm.getDefectReportsCount = function (id) {
+    UseCaseSubjectAPI.getUseCaseSubjects(function (subjects) {
+      return vm.subjects = subjects;
+    })
+
+    UseCaseAPI.getUseCases(function (useCases) {
+      return vm.useCases = useCases;
+    })
+
+    UseCaseSliceAPI.getUseCaseSlices(function (slices) {
+      return vm.slices = slices;
+    })
+
+    vm.getUseCasesByUseCaseSubject = function(id) {
+      return function (useCase) {
+        return useCase.eUseCaseSubjectID == id;
+      }
+    }
+
+    vm.getDefectReportsByUseCaseSliceID = function (id) {
+      return function (defectReport) {
+        return defectReport.eUseCaseSliceID == id;
+      }
+    }
+
+    DefectReportAPI.getDefectReports(function (defectReports) {
+      return vm.defectReports = defectReports;
+    })
+
+    vm.getSlicesByUseCaseID = function (id) {
+      return function (slice) {
+        return slice.eUseCaseID == id;
+      }
+    }
+
+    vm.getDefectReportsByUseCaseSliceID = function(id) {
+      return function(defectReport) {
+        return defectReport.eUseCaseSliceID == id;
+      }
+    }
+
+    vm.getDefectReportsCount = function(id) {
       let len = vm.defectReports.length;
       let count = 0;
       for (let i = 0; i < len; i++) {
@@ -92,45 +111,15 @@
       return count;
     }
 
-    vm.getDefectStates();
-
-    UseCaseSubjectAPI.getUseCaseSubjects(function (subjects) {
-      vm.subjects = subjects;
-    });
-
-    UseCaseAPI.getUseCases(function (useCases) {
-      return vm.useCases = useCases;
-    });
-
-    vm.getSlices = function () {
-
-    }
-
-    UseCaseSliceAPI.getUseCaseSlices(function (slices) {
-      vm.slices = slices;
-    });
-
-    vm.getUseCasesByUseCaseSubject = function(id) {
-      return function (useCase) {
-        return useCase.eUseCaseSubjectID == id;
-      }
-    }
-
-    vm.getDefectsBySliceID = function (id) {
-      return function (defect) {
-        return defect.eUseCaseSliceID == id;
-      }
-    }
-
-    DefectReportAPI.getDefectReports(function (defectReports) {
-      vm.defectReports = defectReports;
-    });
-
-    vm.getSlicesByUseCaseID = function (id) {
-      return function (slice) {
-        return slice.eUseCaseID == id;
+    vm.getDefectReportStateNameRUByDefectReportID = function(id) {
+      let len = vm.defectStates.length;
+      for (let i = 0; i < len; i++) {
+        if (vm.defectStates[i].id == id) {
+          return vm.defectStates[i].aDefectStateNameRU;
+        }
       }
     }
 
   })
+
 })();

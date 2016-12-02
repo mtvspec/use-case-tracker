@@ -5,19 +5,21 @@
 <!--Import Google Icon Font-->
 <!-- <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
 <!-- <link type="text/css" rel="stylesheet" href="bower_components/materialize/dist/css/materialize.css"  media="screen,projection"/> -->
-<link rel="stylesheet" href="/bower_components/angular-material/angular-material.css">
+<link rel="stylesheet" href="./../bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="./../bower_components/bootstrap/dist/css/bootstrap.css">
+<!-- <link rel="stylesheet" href="/bower_components/angular-material/angular-material.css"> -->
 <script src="./bower_components/jquery/dist/jquery.js"></script>
 <!-- <script type="text/javascript" src="bower_components/materialize/dist/js/materialize.js"></script> -->
 <link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./templates/login/login.css">
 <link rel="stylesheet" href="/components/use-case-subjects/UseCaseSubjectList/views/template.css">
 <script src="./angular.js"></script>
-<script src="/bower_components/angular-aria/angular-aria.js" charset="utf-8"></script>
+<!-- <script src="/bower_components/angular-aria/angular-aria.js" charset="utf-8"></script>
 <script src="/bower_components/angular-animate/angular-animate.js" charset="utf-8"></script>
-<script src="/bower_components/angular-material/angular-material.js" charset="utf-8"></script>
+<script src="/bower_components/angular-material/angular-material.js" charset="utf-8"></script> -->
 <script src="./angular-ui-router.js"></script>
 <script src="./js/app.js"></script>
-<script src="components/app/MainCtrl.js" charset="utf-8"></script>
+<script src="templates/main/MainCtrl.js" charset="utf-8"></script>
 <script src="./templates/login/LoginCtrl.js"></script>
 <script src="components/organizations/OrganizationsList/controllers/OrganizationsCtrl.js"></script>
 <script src="components/organizations/OrganizationAPI.js"></script>
@@ -42,13 +44,11 @@
 <script src="./app/modules/persons/components/model/PersonsCtrl.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <!-- <script src="./../bower_components/jquery/dist/jquery.min.js"></script> -->
-<!-- <link rel="stylesheet" href="./../bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
-<link rel="stylesheet" href="./../bower_components/bootstrap/dist/css/bootstrap.css"> -->
-<!-- <script src="./../bower_components/bootstrap/dist/js/bootstrap.js"></script> -->
+<script src="./../bower_components/bootstrap/dist/js/bootstrap.js"></script>
 <!-- <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script> -->
 </head>
 <body>
-<div class="ng-scope layout-row" layout="row" layout-align="center center">
+<div class="container">
   <div ui-view></div>
 </div>
 </body>

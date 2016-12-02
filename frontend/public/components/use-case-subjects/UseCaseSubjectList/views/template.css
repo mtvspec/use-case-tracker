@@ -1,14 +1,24 @@
 .use-case-subject-list {
+  position: relative;
   display: block;
-  background-color: #7c7c7c;
-  width: 100%;
-  margin: 10px;
+  background-color: rgba(#7c7c7c, 0.53);
+  width: 100% auto;
   border-radius: 5px;
-  padding: 10px;
-  box-shadow: 1px 1px 10px #4b4b4b;
+  padding: 20px;
+  box-shadow: 1px 1px 10px #9c9c9c;
+  border: 1px solid #4f4f4f;
 }
 .use-case-subject-name {
   margin-left: 10px;
+}
+
+.use-case-subject {
+  background-color: #ffffff;
+  padding: 10px;
+  margin: 10px;
+  border: 2px #cfcfcf solid;
+  box-shadow: 1px 1px 1px #b1b1b1;
+  border-radius: 3px;
 }
 
 .use-case-list {
@@ -33,4 +43,8 @@
   padding: 10px;
   border-radius: 5px;
   box-shadow: 1px 1px 10px #616161;
+}
+
+.use-case-slice-specification {
+  font-family: 'Ubuntu Mono';
 }

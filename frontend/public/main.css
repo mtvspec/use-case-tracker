@@ -2,12 +2,14 @@
   font-family: 'Roboto Thin';
   src: url('fonts/roboto/Roboto-Thin.woff2');
 }
+@font-face {
+  font-family: 'Ubuntu Light';
+  src: url('fonts/ubuntu/Ubuntu-Light.ttf');
+}
 
 body {
-  right: 10px;
   margin: 15px;
-  position: static;
-  font-family: 'Roboto Thin';
+  font-family: 'Ubuntu Light';
   font-size: 14px;
   font-weight: normal;
   padding: 10px;

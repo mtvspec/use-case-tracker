@@ -35,7 +35,7 @@
           if (response && response.status === 201) {
             useCaseSubject.id = response.data.id;
             useCaseSubjects.push(useCaseSubjects);
-            $state.go('use-case-subjects');
+            $state.go('tracker');
           } else {
             console.error(response);
           }

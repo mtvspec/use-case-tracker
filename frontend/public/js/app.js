@@ -1,8 +1,8 @@
 'use strict';
 
-var app = angular.module('app', ['ui.router', 'ngMaterial']);
+var app = angular.module('app', ['ui.router']);
 
-app.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) {
+app.config(function ($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
   $stateProvider
   .state('login', {
@@ -13,8 +13,20 @@ app.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) {
       pageTitle: 'Authorization'
     }
   })
-  .state('auth', {
-    abstract: true
+  .state('main', {
+    url: '/main',
+    templateUrl: '/templates/main/main.html',
+    controller: 'MainCtrl',
+    controllerAs: 'vm',
+    data: {
+      pageTitle: 'Main'
+    },
+    children: {
+      name: 'projects',
+      templateUrl: '/components/projects/views/template.html',
+      controller: 'ProjectsCtrl',
+      controllerAs: 'vm'
+    }
   })
   .state('createPerson', {
     url: '/createPerson',
@@ -52,15 +64,15 @@ app.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) {
       pageTitle: 'Create use-case slice'
     }
   })
-  .state('projects', {
-    url: '/projects',
-    templateUrl: '/components/projects/views/template.html',
-    controller: 'ProjectsCtrl',
-    controllerAs: 'vm',
-    data: {
-      pageTitle: 'Projects'
-    }
-  })
+  // .state('projects', {
+  //   url: '/projects',
+  //   templateUrl: '/components/projects/views/template.html',
+  //   controller: 'ProjectsCtrl',
+  //   controllerAs: 'vm',
+  //   data: {
+  //     pageTitle: 'Projects'
+  //   }
+  // })
   .state('systems', {
     url: '/systems',
     templateUrl: '/components/systems/views/template.html',
@@ -94,8 +106,8 @@ app.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) {
       pageTitle: 'Customers'
     }
   })
-  .state('use-case-subjects', {
-    url: '/use-case-subjects',
+  .state('tracker', {
+    url: '/tracker',
     templateUrl: '/components/use-case-subjects/UseCaseSubjectList/views/template.html',
     controller: 'UseCaseSubjectListCtrl',
     controllerAs: 'vm',
@@ -131,8 +143,6 @@ app.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) {
     url: '/contacts',
     templateUrl: 'contacts.html'
   });
-  $mdThemingProvider.theme('default')
-
 });
 
 app.directive('title', ['$rootScope', '$timeout',
@@ -159,66 +169,3 @@ app.directive('title', ['$rootScope', '$timeout',
 //   templateUrl: 'main.html',
 //   controller: 'PersonsCtrl'
 // });
-
-// app.controller('TestCtrl', function TestCtrl($scope, $http, PersonAPI) {
-//
-//   $scope.persons = PersonAPI.getPersons();
-//
-//   // function getPersons() {
-//   //   $http({
-//   //     method: 'GET',
-//   //     url: '/api/persons',
-//   //     headers: {
-//   //       'user-id': 1
-//   //     }
-//   //   }).then(function (response) {
-//   //     if (response.status === 200 && response.data.length > 0) {
-//   //       for (let i = 0; i < response.data.length; i++) {
-//   //         $scope.persons.push(response.data[i]);
-//   //       }
-//   //       console.log($scope.persons);
-//   //       return $scope.persons;
-//   //     }
-//   //     $scope.persons = response.data;
-//   //   }, function (error) {
-//   //     console.error(error);
-//   //   });
-//   // }
-//
-//   $scope.isPerson = function (person) {
-//     if (person) {
-//       if (person.iin
-//       && typeof person.iin === 'string'
-//       && person.iin.length === 12) {
-//         console.log('iin true');
-//       } else {
-//         console.log('iin false');
-//       }
-//       console.debug(true);
-//       return true;
-//     } else {
-//       console.debug(false);
-//       return false;
-//     }
-//   }
-//
-//
-//   $scope.createPerson = function CreatePerson(person) {
-//     $http({
-//       method: 'POST',
-//       url: '/api/persons',
-//       headers: {
-//         'user-id': 1
-//       },
-//       data: person
-//     }).then(function (response) {
-//       if (response.status === 201 && typeof response.data.create_person === 'number') {
-//         person.id = response.data.create_person;
-//         $scope.persons.push(person);
-//       };
-//     }, function (error) {
-//       console.log(error);
-//     });
-//
-//   }
-// })

@@ -7,7 +7,7 @@ CREATE TABLE use_cases.f_use_case_subject_operation (
   a_operation_ts TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   e_session_id BIGINT NOT NULL,
   e_user_id BIGINT NOT NULL,
-  e_use_case_subject_id INTEGER NOT NULL,
+  e_use_case_subject_id BIGINT NOT NULL,
   e_component_id BIGINT NOT NULL,
   a_use_case_subject_name VARCHAR (1000) NOT NULL,
   a_use_case_subject_desc TEXT NOT NULL,
@@ -92,3 +92,4 @@ VALUES (
 RETURNING
   e_use_case_subject_id;
 $$ LANGUAGE SQL;
+--============================================================================--

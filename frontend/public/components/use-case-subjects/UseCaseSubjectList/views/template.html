@@ -1,77 +1,93 @@
 <h5>Use-case subjects</h5>
-<md-input-container>
-  <label for="searchUseCaseSubject">Search use case subject</label>
-  <input type="text" id="searchUseCaseSubject" ng-model="searchUseCaseSubject">
-</md-input-container>
-<md-button class="md-raised" ng-click="vm.createUseCaseSubject()">Create use-case subject</md-button>
-<div name="container">
-  <div class="use-case-subject-list" name="use-case-subject-list" ng-repeat="subject in vm.subjects | filter: searchUseCaseSubject">
+<div class="form-group">
+  <input class="form-control" type="text" id="searchUseCaseSubject" ng-model="searchUseCaseSubject" placeholder="Search use-case subject...">
+</div>
+<button class="btn btn-default" ng-click="vm.createUseCaseSubject()">Create use-case subject</button>
+<div class="use-case-subject-list" name="container">
+  <div class="use-case-subject" name="use-case-subject" ng-repeat="subject in vm.subjects | filter: searchUseCaseSubject">
     <div class="" name="use-case-subject">
       <div class="" name="use-case-subject-title">
         <div class="use-case-subject-name" name="use-case-subject-name">
-          <h2>{{subject.aUseCaseSubjectName}}</h2>
+          <h4>{{subject.aUseCaseSubjectName}}</h4>
         </div>
         <div class="" name="use-case-subject-desc">
-          <p>{{subject.aUseCaseSubjectDesc}}</p>
+          <pre>{{subject.aUseCaseSubjectDesc}}</pre>
         </div>
       </div>
-      <md-button ng-click="showUseCaseSubjectContent = !showUseCaseSubjectContent">Use cases</md-button><md-button ng-disabled="true" type="button" name="button">{{vm.getUseCasesCount(subject.id)}}</md-button>
+      <div class="btn-group">
+        <button class="btn btn-default" ng-click="showUseCaseSubjectContent = !showUseCaseSubjectContent">Use cases</button>
+        <button class="btn btn-default">{{vm.getUseCasesCount(subject.id)}}</button>
+      </div>
       <div class="" name="use-case-subject-content">
         <div class="" name="use-case-subject-contents" ng-show="showUseCaseSubjectContent">
-          <label for="">Use cases:</label>
-          <div class="use-case-list" name="use-case-list" ng-repeat="useCase in vm.useCases | filter: vm.getUseCasesByUseCaseSubject(subject.id)">
-            <div class="" name="use-case">
-              <div class="" name="use-case-title">
-                <div class="" name="use-case-name">
-                  <h3>{{useCase.aUseCaseName}}</h3>
+          <div class="form-group">
+            <label for="">Use cases:</label>
+            <div class="use-case-list" name="use-case-list" ng-repeat="useCase in vm.useCases | filter: vm.getUseCasesByUseCaseSubject(subject.id)">
+              <div class="form-group" name="use-case">
+                <div class="" name="use-case-title">
+                  <div class="form-group" name="use-case-name">
+                    <h4>{{useCase.aUseCaseName}}</h4>
+                  </div>
+                  <div class="form-group" name="use-case-desc">
+                    <pre class="from-control">{{useCase.aUseCaseDesc}}</pre>
+                  </div>
                 </div>
-                <div class="" name="use-case-desc">
-                  <p>{{useCase.aUseCaseDesc}}</p>
+                <div class="btn-group">
+                  <button class="btn btn-default" ng-click="useCaseContent = !useCaseContent">Use-case slices</button>
+                  <button class="btn btn-default">{{vm.getUseCaseSlicesCount(useCase.id)}}</button>
+                  <button class="btn btn-default">Create</button>
+                  <button class="btn btn-default">Edit</button>
+                  <button class="btn btn-default">Delete</button>
                 </div>
-              </div>
-              <button ng-click="useCaseContent = !useCaseContent">Use-case slices</button><button type="button" name="button">{{vm.getUseCaseSlicesCount(useCase.id)}}</button>
-              <div class="" name="btnUseCaseContent" >
-
-                <div class="" name="use-case-content" ng-show="useCaseContent">
-                  <label for="">Use-case slices</label>
-                  <div class="use-case-slice-list" name="use-case-slice-list" ng-repeat="slice in vm.slices | filter: vm.getSlicesByUseCaseID(useCase.id)">
-                    <div class="" name="use-case-slice">
-                      <div class="" name="use-case-slice-title">
-                        <div class="" name="use-case-slice-name">
-                          <h4>{{slice.aUseCaseSliceName}}</h4>
-                        </div>
-                        <div class="" name="use-case-slice-desc">
-                          <p>{{slice.aUseCaseSliceDesc}}</p>
-                        </div>
-                        <div class="" name="use-case-slice-specification">
-                          <p>{{slice.aUseCasesliceSpecs}}</p>
-                        </div>
-                        <div class="" name="use-case-slice-content">
-                          <button type="button" name="button" ng-click="showChangeRequests = !showChangeRequests">Change requests</button><button type="button" name="button"></button>
-                          <div class="" name="use-case-slice-change-request-list" ng-show="showChangeRequests">
-                            <div class="" name="change-request">
-                              <div class="" name="change-request-title">
-                                <div class="" name="change-request-name">
-                                  {{changeRequest.aChangeRequestName}}
-                                </div>
-                                <div class="" name="change-request-desc">
-                                  {{changeRequest.aChangeRequestDesc}}
+                <div class="" name="btnUseCaseContent">
+                  <div class="" name="use-case-content" ng-show="useCaseContent">
+                    <label for="">Use-case slices</label>
+                    <div class="use-case-slice-list" name="use-case-slice-list" ng-repeat="slice in vm.slices | filter: vm.getSlicesByUseCaseID(useCase.id)">
+                      <div class="" name="use-case-slice">
+                        <div class="" name="use-case-slice-title">
+                          <div class="" name="use-case-slice-name">
+                            <h5>{{slice.aUseCaseSliceName}}</h5>
+                          </div>
+                          <div class="" name="use-case-slice-desc">
+                            <pre>{{slice.aUseCaseSliceDesc}}</pre>
+                          </div>
+                          <div class="" name="use-case-slice-specification">
+                            <button class="btn btn-default" type="button" name="button" ng-click="useCaseSliceSpecification = !useCaseSliceSpecification">Specification</button>
+                            <pre class="use-case-slice-specification" id="aUseCaseSliceSpecs" ng-show="useCaseSliceSpecification">{{slice.aUseCaseSliceSpecs}}</pre>
+                          </div>
+                          <div class="" name="use-case-slice-content">
+                            <div class="btn-group">
+                              <button class="btn btn-default" ng-click="showChangeRequests = !showChangeRequests">Change requests</button>
+                              <button class="btn btn-default"></button>
+                            </div>
+                            <div class="" name="use-case-slice-change-request-list" ng-show="showChangeRequests">
+                              <div class="" name="change-request">
+                                <div class="" name="change-request-title">
+                                  <div class="" name="change-request-name">
+                                    {{changeRequest.aChangeRequestName}}
+                                  </div>
+                                  <div class="" name="change-request-desc">
+                                    {{changeRequest.aChangeRequestDesc}}
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          <button ng-click="showDefectReports = !showDefectReports">Defect reports</button><button type="button" name="button">{{vm.getDefectReportsCount(slice.id)}}</button>
-                          <div class="defect-report-list" name="use-case-slice-defect-report-list" ng-repeat="defectReport in vm.defectReports | filter: vm.getDefectReportsByUseCaseSliceID(slice.id)" ng-show="showDefectReports">
-                            <div class="" name="defect-report">
-                              <div class="" name="defect-report-title">
-                                <div class="" name="defect-name">
-                                  <h4>{{defectReport.aDefectName}}</h4>
-                                </div>
-                                <div class="" name="defect-desc">
-                                  <p>{{defectReport.aDefectDesc}}</p>
-                                </div>
-                                <div class="" name="defect-state-name">
-                                  <p>{{DefectReportAPI.getDefectReportStateNameRUByDefectReportID(defectReport.id)}}</p>
+                            <div class="btn-group">
+                              <button class="btn btn-default" ng-click="showDefectReports = !showDefectReports">Defect reports</button>
+                              <button class="btn btn-default">{{vm.getDefectReportsCount(slice.id)}}</button>
+                            </div>
+                            <div class="defect-report-list" name="use-case-slice-defect-report-list" ng-repeat="defectReport in vm.defectReports | filter: vm.getDefectReportsByUseCaseSliceID(slice.id)" ng-show="showDefectReports">
+                              <div class="" name="defect-report">
+                                <div class="" name="defect-report-title">
+                                  <div class="form-group" name="defect-name">
+                                    <h6>{{defectReport.aDefectName}}</h6>
+                                  </div>
+                                  <div class="form-group" name="defect-desc">
+                                    <pre>{{defectReport.aDefectDesc}}</pre>
+                                  </div>
+                                  <div class="form-group" name="defect-state-name">
+                                    <pre>{{vm.getDefectReportStateNameRUByDefectReportID(defectReport.id)}}</pre>
+                                  </div>
                                 </div>
                               </div>
                             </div>

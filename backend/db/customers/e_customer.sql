@@ -2,7 +2,7 @@
 -- Customer (e_customer)
 --============================================================================--
 CREATE TABLE customers.e_customer (
-  id BIGINT,
+  id BIGSERIAL,
   e_organization_id BIGINT NOT NULL,
   a_customer_name VARCHAR (1000) NOT NULL,
   a_customer_desc TEXT,

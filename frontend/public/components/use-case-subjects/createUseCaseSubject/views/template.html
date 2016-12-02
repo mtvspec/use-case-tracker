@@ -1,24 +1,20 @@
-<md-title>
-<h1>Create use-case slice</h1>
-</md-title>
-<md-content>
-<md-input-container>
-  <label for="eComponentID">Component</label>
-  <md-select type="number" ng-model="vm.useCaseSubject.eComponentID">
-    <md-option ng-repeat="component in vm.components" ng-value="component.id">{{component.aComponentName}}</md-option>
-  </md-select>
-</md-input-container>
-<md-input-container>
-  <label for="aUseCaseSliceName">Name</label>
-  <input type="text" ng-model="vm.useCaseSlice.aUseCaseSliceName">
-</md-input-container>
-<md-input-container>
-  <label for="aUseCaseSliceDesc">Description</label>
-  <input type="text" ng-model="vm.useCaseSlice.aUseCaseSliceDesc">
-</md-input-container>
-<md-input-container>
-  <label for="aUseCaseSliceSpecs">Specification</label>
-  <input type="text" ng-model="vm.useCaseSlice.aUseCaseSliceSpecs"></input>
-</md-input-container>
-<md-button class="md-raised md-primary" ng-click="vm.createUseCaseSlice(vm.useCaseSlice)">Create use-case slice</md-button>
-</md-content>
+<div>
+<h4>Create use-case subject</h4>
+</div>
+<form name="">
+  <div class="form-group">
+    <label for="eComponentID">Component</label>
+    <select class="form-control" type="number" ng-model="vm.useCaseSubject.eComponentID">
+      <option ng-repeat="component in vm.components" ng-value="component.id">{{component.aComponentName}}</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="aUseCaseSubjectName">Name</label>
+    <input class="form-control" type="text" ng-model="vm.useCaseSubject.aUseCaseSubjectName">
+  </div>
+  <div class="form-group">
+    <label for="aUseCaseSubjectDesc">Description</label>
+    <input class="form-control" type="text" ng-model="vm.useCaseSubject.aUseCaseSubjectDesc">
+  </div>
+</form>
+<button class="btn btn-primary" ng-click="vm.createUseCaseSubject(vm.useCaseSubject)">Create use-case subject</button>

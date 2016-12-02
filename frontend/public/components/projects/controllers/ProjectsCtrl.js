@@ -1,9 +1,13 @@
 (function () {
   'use strict';
 
-  app.controller('ProjectsCtrl', function ProjectsCtrl($scope, $http, ProjectAPI, CustomerAPI, $mdDialog) {
+  app.controller('ProjectsCtrl', function ProjectsCtrl($scope, $http, ProjectAPI, CustomerAPI) {
 
     var vm = this;
+
+    ProjectAPI.getProjectKinds(function (projectKinds) {
+      vm.projectKinds = projectKinds;
+    });
 
     CustomerAPI.getCustomers(function (customers) {
       vm.customers = customers;
@@ -11,29 +15,23 @@
 
     vm.project = {};
 
+
     ProjectAPI.getProjects(function (projects) {
       vm.projects = projects;
     });
 
-    ProjectAPI.getProjectKinds(function (projectKinds) {
-      vm.projectKinds = projectKinds;
-    });
+    vm.getProjectKindNameRU = function(id) {
+      let len = vm.projectKinds.length;
+      for (let i = 0; i < len; i++) {
+        if (vm.projectKinds[i].id == id) {
+          return vm.projectKinds.aProjectKindNameRU;
+        }
+      }
+    }
 
     vm.createProject = function (project) {
       ProjectAPI.createProject(project);
       vm.project = null;
-    }
-
-    vm.showDialog = function(ev) {
-      $mdDialog.show({
-        templateUrl: 'components/projects/createProject/views/template.html',
-        controller: 'CreateProjectCtrl',
-        targetEvent: ev
-      });
-    }
-
-    vm.closeDialog = function () {
-      $mdDialog.hide();
     }
 
     vm.getProjectCustomerName = function (id) {

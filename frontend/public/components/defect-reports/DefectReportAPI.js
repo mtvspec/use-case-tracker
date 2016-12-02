@@ -36,6 +36,28 @@
             return defectStates[i].aDefectStateNameRU;
           }
         }
+      },
+      getDefectStates: function(cb) {
+        if (defectStates.length === 0) {
+          $http({
+            url: '/api/dict/defect-states',
+            method: 'GET'
+          }).then(function (response) {
+            if (response && response.status === 200) {
+              let len = response.data.length;
+              for (let i = 0; i < len; i++) {
+                defectStates.push(response.data[i]);
+              }
+              return cb(defectStates);
+            } else if (response.status === 204) {
+              return cb(defectStates);
+            }
+          }, function (response) {
+            console.error(response);
+          })
+        } else {
+          return cb(defectStates);
+        }
       }
     }
   })
