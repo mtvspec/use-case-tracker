@@ -22,9 +22,6 @@ CREATE TABLE use_cases.f_actor_operation (
     ),
     FOREIGN KEY (
       d_actor_operation_type_id
-    ) REFERENCES actors.d_actor_operation_type (id),
-    FOREIGN KEY (
-      d_operation_type_id
     ) REFERENCES use_cases.d_actor_operation (id),
     FOREIGN KEY (
       e_session_id
@@ -37,10 +34,10 @@ CREATE TABLE use_cases.f_actor_operation (
     ) REFERENCES use_cases.e_actor (id),
     FOREIGN KEY (
       d_actor_type_id
-    ) REFERENCES actors.d_actor_type (id),
+    ) REFERENCES use_cases.d_actor_type (id),
     FOREIGN KEY (
       d_actor_state_id
-    ) REFERENCES actors.d_actor_state (id)
+    ) REFERENCES use_cases.d_actor_state (id)
 );
 --============================================================================--
 -- Create actor (create_actor)

@@ -3,31 +3,34 @@
 --============================================================================--
 CREATE TABLE use_cases.d_use_case_level (
   id SERIAL NOT NULL,
-  d_use_case_level_name_en VARCHAR (1000) NOT NULL,
-  d_use_case_level_desc_en TEXT,
-  d_use_case_level_name_ru VARCHAR (1000),
-  d_use_case_level_desc_ru TEXT,
+  a_use_case_level_name_en VARCHAR (1000) NOT NULL,
+  a_use_case_level_desc_en TEXT,
+  a_use_case_level_name_ru VARCHAR (1000) NOT NULL,
+  a_use_case_level_desc_ru TEXT,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (
-      d_use_case_level_name_en
+      a_use_case_level_name_en
     ),
     UNIQUE (
       id
     ),
     UNIQUE (
-      d_use_case_level_name_ru
+      a_use_case_level_name_ru
     )
 );
---------------------------------------------------------------------------------
+--============================================================================--
 INSERT INTO
   use_cases.d_use_case_level (
-    d_use_case_level_name_en
+    a_use_case_level_name_en,
+    a_use_case_level_name_ru
   )
 VALUES
 (
-  'Black box'
+  'Black box',
+  'Черный ящик'
 ),
 (
-  'White box'
+  'White box',
+  'Прозрачный ящик'
 );
 --============================================================================--

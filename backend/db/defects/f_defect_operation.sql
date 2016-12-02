@@ -3,7 +3,7 @@
 --============================================================================--
 CREATE TABLE defects.f_defect_operation (
   id BIGSERIAL,
-  d_defect_operation_id INTEGER NOT NULL,
+  d_defect_operation_type_id INTEGER NOT NULL,
   a_operation_timestamp TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   e_user_id BIGINT NOT NULL,
   e_defect_id BIGINT NOT NULL,
@@ -15,10 +15,10 @@ CREATE TABLE defects.f_defect_operation (
   d_defect_state_id INTEGER NOT NULL,
   is_deleted BOOLEAN NOT NULL,
     PRIMARY KEY (
-      f_defect_operation_id
+      id
     ),
     FOREIGN KEY (
-      d_defect_operation_id
+      d_defect_operation_type_id
     ) REFERENCES defects.d_defect_operation (id),
     FOREIGN KEY (
       e_user_id
@@ -30,7 +30,10 @@ CREATE TABLE defects.f_defect_operation (
       e_component_id
     ) REFERENCES components.e_component (id),
     FOREIGN KEY (
-      e_source_id
+      e_use_case_slice_id
+    ) REFERENCES use_case_slices.e_use_case_slice (id),
+    FOREIGN KEY (
+      e_defect_source_id
     ) REFERENCES emp.e_emp (id),
     FOREIGN KEY (
       d_defect_state_id

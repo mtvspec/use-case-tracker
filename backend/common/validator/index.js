@@ -50,11 +50,12 @@ module.exports = class validator {
             result: true,
             data: number
           };
-        }
-        messages.number = `'number' is required`;
-        return result = {
-          result: false,
-          data: messages
+        } else {
+          messages.number = `'number' is required`;
+          return result = {
+            result: false,
+            data: messages
+          }
         }
       }
     }

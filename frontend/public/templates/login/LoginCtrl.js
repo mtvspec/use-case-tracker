@@ -8,7 +8,7 @@
         data: data
       }).then(function (response) {
         if (response.status === 200) {
-          $state.go('auth.main');
+          $state.go('projects');
         }
       }, function (response) {
         console.error(response);

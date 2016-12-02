@@ -11,6 +11,7 @@ CREATE TABLE use_case_slices.f_use_case_slice_operation (
   e_use_case_id BIGINT NOT NULL,
   a_use_case_slice_name VARCHAR (1000) NOT NULL,
   a_use_case_slice_desc TEXT,
+  a_use_case_slice_specs TEXT,
   a_story_points INTEGER,
   d_use_case_slice_state_id INTEGER NOT NULL,
   is_deleted BOOLEAN NOT NULL,
@@ -33,7 +34,7 @@ CREATE TABLE use_case_slices.f_use_case_slice_operation (
       e_use_case_id
     ) REFERENCES use_cases.e_use_case (id),
     FOREIGN KEY (
-      d_use_case_slice_status_id
+      d_use_case_slice_state_id
     ) REFERENCES use_case_slices.d_use_case_slice_state (id)
 );
 --============================================================================--

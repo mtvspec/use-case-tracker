@@ -3,7 +3,8 @@
 
   app.factory('DefectReportAPI', function ($http) {
 
-    let defectReports = [];
+    let defectReports = [],
+    defectStates = [];
 
     return {
       getDefectReports: function(cb) {
@@ -26,6 +27,14 @@
           });
         } else {
           return cb(defectReports);
+        }
+      },
+      getDefectReportStateNameRUByDefectReportID: function (id) {
+        let len = defectStates.length;
+        for (let i = 0; i < len; i++) {
+          if (defectStates[i].id == id) {
+            return defectStates[i].aDefectStateNameRU;
+          }
         }
       }
     }

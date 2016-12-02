@@ -16,14 +16,6 @@ app.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) {
   .state('auth', {
     abstract: true
   })
-  .state('auth.main', {
-    url: '/main',
-    templateUrl: '/templates/main/main.html',
-    controller: 'MainCtrl',
-    data: {
-      pageTitle: 'Main'
-    }
-  })
   .state('createPerson', {
     url: '/createPerson',
     templateUrl: '/components/persons/CreatePerson/views/template.html',
@@ -31,6 +23,33 @@ app.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) {
     controllerAs: 'vm',
     data: {
       pageTitle: 'Create person'
+    }
+  })
+  .state('createDefectReport', {
+    url: '/createDefectReport',
+    templateUrl: '/components/defect-reports/createDefectReport/views/template.html',
+    controller: 'CreateDefectReportCtrl',
+    controllerAs: 'vm',
+    data: {
+      pageTitle: 'Create defect report'
+    }
+  })
+  .state('createUseCaseSubject', {
+    url: '/createUseCaseSubject',
+    templateUrl: '/components/use-case-subjects/createUseCaseSubject/views/template.html',
+    controller: 'CreateUseCaseSubjectCtrl',
+    controllerAs: 'vm',
+    data: {
+      pageTitle: 'Create use-case subject'
+    }
+  })
+  .state('createUseCaseSlice', {
+    url: '/createUseCaseSlice',
+    templateUrl: '/components/use-case-slices/createUseCaseSlice/views/template.html',
+    controller: 'CreateUseCaseSliceCtrl',
+    controllerAs: 'vm',
+    data: {
+      pageTitle: 'Create use-case slice'
     }
   })
   .state('projects', {

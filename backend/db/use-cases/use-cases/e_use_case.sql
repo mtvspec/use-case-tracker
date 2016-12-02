@@ -13,13 +13,13 @@ CREATE TABLE use_cases.e_use_case (
   d_use_case_state_id INTEGER NOT NULL DEFAULT 1,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
+        id
+      ),
+      UNIQUE (
         e_use_case_subject_id,
         e_component_id,
         e_primary_actor_id,
         a_use_case_name
-      ),
-      UNIQUE (
-        e_use_case_id
       ),
       FOREIGN KEY (
         e_use_case_subject_id

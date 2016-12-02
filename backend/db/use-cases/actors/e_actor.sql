@@ -17,6 +17,6 @@ CREATE TABLE use_cases.e_actor (
       ) REFERENCES use_cases.d_actor_type (id),
       FOREIGN KEY (
         d_actor_state_id
-      ) REFERENCES actors.d_actor_state (id)
+      ) REFERENCES use_cases.d_actor_state (id)
 );
 --============================================================================--

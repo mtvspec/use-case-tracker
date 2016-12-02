@@ -10,6 +10,7 @@ var bodyParser = require('body-parser');
 const UserAPI = require('./routes/users/class.UserAPI.js');
 
 const routes = require('./routes/index');
+const components = require('./routes/components');
 const subjects = require('./routes/use-case-subjects');
 const useCases = require('./routes/use-cases');
 const defects = require('./routes/defects');
@@ -53,6 +54,7 @@ app.use(function (req, res, next) {
 
 app.use('/api', routes);
 app.use('/api/dict', dict);
+app.use('/api/components', components);
 app.use('/api/use-case-subjects', subjects);
 app.use('/api/use-cases', useCases);
 app.use('/api/use-case-slices', slices);

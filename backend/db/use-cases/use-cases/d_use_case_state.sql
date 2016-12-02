@@ -9,7 +9,7 @@ CREATE TABLE use_cases.d_use_case_state (
   a_use_case_state_desc_ru TEXT,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
-        a_use_case_state_name_en,
+        a_use_case_state_name_en
       ),
       UNIQUE (
         id
@@ -22,7 +22,9 @@ CREATE TABLE use_cases.d_use_case_state (
 INSERT INTO
   use_cases.d_use_case_state (
     a_use_case_state_name_en,
-    a_use_case_state_desc_en
+    a_use_case_state_desc_en,
+    a_use_case_state_name_ru,
+    a_use_case_state_desc_ru
   )
 VALUES
 (

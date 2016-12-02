@@ -1,3 +1,6 @@
+--============================================================================--
+-- Use-slice state (d_use_case_slice_state)
+--============================================================================--
 CREATE TABLE use_case_slices.d_use_case_slice_state (
   id SERIAL NOT NULL,
   a_use_case_slice_state_name_en VARCHAR (1000) NOT NULL,
@@ -15,7 +18,7 @@ CREATE TABLE use_case_slices.d_use_case_slice_state (
         a_use_case_slice_state_name_ru
       )
 );
-
+--============================================================================--
 INSERT INTO
   use_case_slices.d_use_case_slice_state (
     a_use_case_slice_state_name_en,
@@ -24,6 +27,12 @@ INSERT INTO
     a_use_case_slice_state_desc_ru
   )
 VALUES
+(
+  'Created',
+  'When it has been created',
+  'Создан',
+  'Означает что слайс был создан'
+),
 (
   'Scoped',
   'When it has been scoped and the extent of the stories covered has been clarified',

@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  app.factory('UseCaseSubjectAPI', function ($http) {
+  app.factory('UseCaseSubjectAPI', function ($http, $state) {
 
     let useCaseSubjects = [];
 
@@ -25,6 +25,23 @@
         } else {
           return cb(useCaseSubjects)
         }
+      },
+      createUseCaseSubject: function (useCaseSubject) {
+        $http({
+          url: '/api/use-case-subjects',
+          method: 'POST',
+          data: useCaseSubject
+        }).then(function (response) {
+          if (response && response.status === 201) {
+            useCaseSubject.id = response.data.id;
+            useCaseSubjects.push(useCaseSubjects);
+            $state.go('use-case-subjects');
+          } else {
+            console.error(response);
+          }
+        }, function (response) {
+          console.error(response);
+        });
       }
     }
 

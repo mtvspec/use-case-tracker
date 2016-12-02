@@ -8,6 +8,7 @@ CREATE TABLE use_case_slices.e_use_case_slice (
   a_use_case_slice_code CHAR (3),
   a_use_case_slice_name VARCHAR (1000) NOT NULL,
   a_use_case_slice_desc TEXT,
+  a_use_case_slice_specs TEXT,
   a_story_points INTEGER,
   d_use_case_slice_state_id INTEGER NOT NULL DEFAULT 1,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,

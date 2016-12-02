@@ -7,5 +7,8 @@ router
 .get('/', function (req, res) {
   UseCaseSubjectAPI.getSubjects(req, res);
 })
+.post('/', function (req, res) {
+  UseCaseSubjectAPI.createUseCaseSubject(req, res);
+})
 
 module.exports = router;

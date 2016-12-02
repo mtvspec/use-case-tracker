@@ -2,6 +2,7 @@
   'use strict';
 
   app.controller('UseCaseSubjectListCtrl', function UseCaseSubjectListCtrl(
+    $state,
     $http,
     UseCaseSubjectAPI,
     UseCaseAPI,
@@ -22,6 +23,10 @@
 
     vm.defectStates = [];
 
+    vm.createUseCaseSubject = function () {
+      $state.go('createUseCaseSubject');
+    }
+
     vm.getUseCaseSliceStateBySliceID = function (id) {
       let len = vm.sliceStates.length;
       for (let i = 0; i < len; i++) {
@@ -31,35 +36,9 @@
       }
     }
 
-    vm.getDefectStateByDefectID = function (id) {
-      let len = vm.defectStates.length;
-      for (let i = 0; i < len; i++) {
-        if (vm.defectStates[i].id == id) {
-          return vm.defectStates[i].aDefectStateNameRU;
-        }
-      }
-    }
-
-    vm.getUseCaseSliceStates = function () {
-      $http({
-        url: '/api/dict/use-case-slice-states',
-        method: 'GET'
-      }).then(function (response) {
-        if (response && response.status === 200) {
-          let len = response.data.length;
-          for (let i = 0; i < len; i++) {
-            vm.sliceStates.push(response.data[i]);
-          }
-          return vm.sliceStates;
-        } else if (response.status === 204) {
-          return vm.sliceStates;
-        }
-      }, function (response) {
-        console.error(response);
-      })
-    }
-
-    vm.getUseCaseSliceStates();
+    UseCaseSliceAPI.getUseCaseSliceStates(function (useCaseSliceStates) {
+      vm.useCaseSliceStates = useCaseSliceStates;
+    })
 
     vm.getDefectStates = function () {
       $http({
@@ -71,7 +50,6 @@
           for (let i = 0; i < len; i++) {
             vm.defectStates.push(response.data[i]);
           }
-          console.log(vm.defectStates);
           return vm.defectStates;
         } else if (response.status === 204) {
           return vm.defectStates;
@@ -82,6 +60,8 @@
     }
 
     vm.getUseCasesCount = function(id) {
+      let len = vm.useCases.length;
+      let count = 0;
       for (let i = 0; i < len; i++) {
         if (vm.useCases[i].eUseCaseSubjectID == id) {
           count = count + 1;
@@ -118,9 +98,9 @@
       vm.subjects = subjects;
     });
 
-    UseCaseAPI.getUseCases() {
-
-    }
+    UseCaseAPI.getUseCases(function (useCases) {
+      return vm.useCases = useCases;
+    });
 
     vm.getSlices = function () {
 
