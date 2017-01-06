@@ -14,3 +14,8 @@ body {
   font-weight: normal;
   padding: 10px;
 }
+
+sv-btn {
+  background-color: #4dbed2;
+  border-radius: 3px;
+}

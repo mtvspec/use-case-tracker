@@ -2,6 +2,7 @@
   'use strict';
 
   app.factory('UseCaseSliceAPI', function ($http) {
+    
     let slices = [],
     useCaseSliceStates = [];
 

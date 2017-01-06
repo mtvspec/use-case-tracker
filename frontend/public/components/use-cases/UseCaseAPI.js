@@ -2,6 +2,7 @@
   'use strict';
 
   app.factory('UseCaseAPI', function ($http) {
+    
     let useCases = [];
 
     return {

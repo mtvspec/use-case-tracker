@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="app">
 <head>
-<title>{{title}}</title>
+<title ng-bind="title"></title>
 <!--Import Google Icon Font-->
 <!-- <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
 <!-- <link type="text/css" rel="stylesheet" href="bower_components/materialize/dist/css/materialize.css"  media="screen,projection"/> -->
@@ -27,7 +27,7 @@
 <script src="components/customers/CustomerAPI.js"></script>
 <script src="components/projects/services/ProjectAPI.js"></script>
 <script src="components/projects/controllers/ProjectsCtrl.js"></script>
-<script src="components/projects/createProject/controllers/CreateProjectCtrl.js" charset="utf-8"></script>
+<script src="components/projects/operations/createProject/controllers/CreateProjectCtrl.js" charset="utf-8"></script>
 <script src="components/components/ComponentAPI.js"></script>
 <script src="components/use-case-subjects/UseCaseSubjectAPI.js" charset="utf-8"></script>
 <script src="components/use-case-subjects/createUseCaseSubject/controllers/CreateUseCaseSubjectCtrl.js" charset="utf-8"></script>
