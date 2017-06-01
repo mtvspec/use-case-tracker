@@ -4,6 +4,7 @@
 CREATE TABLE persons.f_person_operation (
   id BIGSERIAL,
   d_person_operation_type_id INTEGER NOT NULL,
+  a_operation_ts TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   e_session_id BIGINT NOT NULL,
   e_user_id BIGINT NOT NULL,
   e_person_id BIGINT NOT NULL,
@@ -179,56 +180,59 @@ SELECT
 --============================================================================--
 -- Update person (update_person)
 --============================================================================--
-CREATE FUNCTION persons.update_person (
-  IN v_e_person_id INTEGER,
+CREATE OR REPLACE FUNCTION persons.update_person (
+  IN v_e_person_id BIGINT,
   IN v_iin CHAR (12),
   IN v_last_name VARCHAR (400),
   IN v_first_name VARCHAR (300),
   IN v_middle_name VARCHAR (500),
   IN v_dob DATE,
   IN v_gender_id CHAR (1),
-  IN v_user_id INTEGER,
-  OUT e_person_id INTEGER
+  IN v_e_session_id BIGINT,
+  IN v_user_id BIGINT,
+  OUT e_person_id BIGINT
 )
 AS $$
 WITH upd AS (
   UPDATE
     persons.e_person
   SET
-    iin = v_iin,
-    last_name = v_last_name,
-    first_name = v_first_name,
-    middle_name = v_middle_name,
-    dob = v_dob,
-    gender_id = v_gender_id
+    a_person_iin = v_iin,
+    a_person_last_name = v_last_name,
+    a_person_first_name = v_first_name,
+    a_person_middle_name = v_middle_name,
+    a_person_dob = v_dob,
+    d_person_gender_id = v_gender_id
   WHERE
     id = v_e_person_id
   RETURNING
     *
 )
 INSERT INTO
-  persons.e_person_log (
-    d_operation_type_id,
-    user_id,
+  persons.f_person_operation (
+    d_person_operation_type_id,
+    e_session_id,
+    e_user_id,
     e_person_id,
-    iin,
-    last_name,
-    first_name,
-    middle_name,
-    dob,
-    gender_id,
+    a_person_iin,
+    a_person_last_name,
+    a_person_first_name,
+    a_person_middle_name,
+    a_person_dob,
+    d_person_gender_id,
     is_deleted
   )
 VALUES (
   2,
+  v_e_session_id,
   v_user_id,
   (SELECT id FROM upd),
-  (SELECT iin FROM upd),
-  (SELECT last_name FROM upd),
-  (SELECT first_name FROM upd),
-  (SELECT middle_name FROM upd),
-  (SELECT dob FROM upd),
-  (SELECT gender_id FROM upd),
+  (SELECT a_person_iin FROM upd),
+  (SELECT a_person_last_name FROM upd),
+  (SELECT a_person_first_name FROM upd),
+  (SELECT a_person_middle_name FROM upd),
+  (SELECT a_person_dob FROM upd),
+  (SELECT d_person_gender_id FROM upd),
   (SELECT is_deleted FROM upd) -- TODO: test with func
 )
 RETURNING

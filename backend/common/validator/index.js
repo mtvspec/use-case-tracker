@@ -61,7 +61,6 @@ module.exports = class validator {
     }
   }
   static isString(data, minLen, maxLen, mandatory) {
-    console.log(data);
     let messages = {};
     let string = {};
     let result = {};
@@ -235,7 +234,6 @@ module.exports = class validator {
     }
   }
   static isIIN(data, mandatory) {
-    console.log(data);
     let result = {};
     if (mandatory === null || mandatory === 'null') {
       if (!data) {
@@ -245,10 +243,7 @@ module.exports = class validator {
         }
       } else {
         if (data && typeof data === 'string') {
-          console.log(data.length === 12);
-          console.log(Number.isInteger(Number(data)));
           if (data.length === 12 && Number.isInteger(Number(data))) {
-            console.log(true)
             return result = {
               result: true,
               data: data
@@ -262,11 +257,8 @@ module.exports = class validator {
         }
       }
     } else if (mandatory === 'not null') {
-      console.log(data.length === 12);
-      console.log(Number.isInteger(data));
       if (data && typeof data === 'string') {
         if (data.length === 12 && Number.isInteger(data)) {
-          console.log(true)
           return result = {
             result: true,
             data: data

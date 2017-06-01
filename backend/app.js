@@ -104,12 +104,10 @@ app.use(function(err, req, res, next) {
 function isAuthentificated(req, token, res) {
   UserAPI.getUserID(token, function (response) {
     if (response.status === 200) {
-      console.log(token);
       req.token = token;
     } else {
       return res
-      .status(401)
-      .end();
+      .status(401);
     }
   });
 }

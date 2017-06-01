@@ -64,7 +64,7 @@ class PersonAPI {
     if (result.person) {
       let person = result.person;
       if (person.aPersonIIN) {
-        PersonAPI.getPersonByIIN(person.aPersonIIN, res, function (response) {
+        PersonAPI.getPersonByIIN(person.aPersonIIN, function (response) {
           if (response) {
             if (response.status === 200) {
               return res
@@ -176,39 +176,47 @@ class PersonAPI {
   }
   static updatePerson(req, res) {
     let id = new ID(req.params.id);
-    let person = new Person(req.body);
-    if (id.id && person.firstName) {
+    let result = new Person(req.body);
+    if (result.person) {
+      let person = result.person;
       person.id = id.id;
-      PersonsAPI.getPersonByIIN(person.iin, res, function (response) {
+      PersonAPI.getPersonByIIN(person.aPersonIIN, function (response) {
         if (response && (response.status === 200 || response.status === 204)) {
-          if (response.id != person.id) {
-            db.updateRecord({
-              text: sql.persons.UPDATE_PERSON (
-                person,
-                req.User
-              )
-            }, function (response) {
-              if (response && response.status === 200) {
-                return res
-                .status(response.status)
-                .json({
-                  id: response.data.update_person
-                }).end();
-              } else if (response.status && response.data) {
-                return res
-                .status(response.status)
-                .json(response.data)
-                .end();
-              } else {
-                return res
-                .status(500)
-                .end();
+          let token = req.cookies.session;
+          if (response.id == person.id) {
+            UserAPI.getUserID(token, function (response) {
+              console.log(response);
+              if (response.status && response.status === 200) {
+                db.updateRecord({
+                  text: sql.persons.UPDATE_PERSON (
+                    person,
+                    {id: response.data.sessionID},
+                    {id: response.data.userID}
+                  )
+                }, function (response) {
+                  if (response && response.status === 200) {
+                    return res
+                    .status(response.status)
+                    .json({
+                      id: response.data.update_person
+                    }).end();
+                  } else if (response.status && response.data) {
+                    return res
+                    .status(response.status)
+                    .json(response.data)
+                    .end();
+                  } else {
+                    return res
+                    .status(500)
+                    .end();
+                  }
+                });
               }
-            });
+            })
           } else {
             return res
             .status(400)
-            .json(`duplicate 'iin': ${person.iin}`)
+            .json(`duplicate 'iin': ${person.aPersonIIN}`)
             .end();
           }
         }
@@ -265,7 +273,7 @@ class PersonAPI {
     }
   }
 }
-PersonAPI.getPersonByIIN = function (iin, res, cb) {
+PersonAPI.getPersonByIIN = function (iin, cb) {
   db.selectRecordById({
     text: sql.persons.SELECT_PERSON_BY_IIN(iin)
   }, function (response) {

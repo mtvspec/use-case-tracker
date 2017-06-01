@@ -48,7 +48,7 @@ const Queries = {
     SELECT_PERSON_BY_IIN(iin) {
       return `
       SELECT
-        a_person_iin
+        id
       FROM
         persons.e_person
       WHERE
@@ -108,17 +108,18 @@ const Queries = {
       // }
       // return query;
     },
-    UPDATE_PERSON(person, user) {
+    UPDATE_PERSON(person, session, user) {
       return `
       SELECT
         persons.update_person (
           ${person.id},
-          '${person.iin}',
-          '${person.lastName}',
-          '${person.firstName}',
-          '${person.middleName}',
-          ${person.dob},
-          '${person.gender}',
+          '${person.aPersonIIN}',
+          '${person.aPersonLastName}',
+          '${person.aPersonFirstName}',
+          '${person.aPersonMiddleName}',
+          ${convertDate(person.aPersonDOB)},
+          '${person.aPersonGenderID}',
+          ${session.id},
           ${user.id}
         );`;
     },
@@ -144,5 +145,5 @@ const Queries = {
 module.exports = Queries;
 
 function convertDate(date) {
-  return `${date ? '"' + date + '"' : 'null'}`;
+  return `${date ? "'" + date + "'" : 'null'}`;
 }
