@@ -2,7 +2,7 @@
   'use strict';
 
   app.factory('UseCaseSliceAPI', function ($http) {
-    
+
     let slices = [],
     useCaseSliceStates = [];
 
@@ -27,7 +27,7 @@
           return cb(slices);
         }
       },
-      getUseCaseSliceStates: function(cb) {
+      getUseCaseSliceStates: function (cb) {
         if (useCaseSliceStates.length === 0) {
           $http({
             url: '/api/dict/use-case-slice-states',

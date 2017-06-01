@@ -7,6 +7,7 @@ const User = require('./class.User.js');
 const SessionAPI = require('./sessions/class.SessionAPI.js');
 const db = require('./../../db.js');
 const sql = require('./sql.js');
+const sessionsSQL = require('./sessions/sql.js');
 
 module.exports = class UserAPI {
   constructor() {
@@ -98,19 +99,15 @@ module.exports = class UserAPI {
             user.id = response.data.id;
             SessionAPI.openSession(user.id, function (response) {
               if (response.status === 201) {
-                var session = {
+                let session = {
+                  id: response.data.open_session,
                   token: uuid.v4()
                 };
                 db.updateRecord({
-                  text: `
-                  UPDATE
-                    sessions.e_session
-                  SET
-                    token = '${session.token}'
-                  WHERE
-                    id = ${response.data.open_session}
-                  RETURNING
-                    id;`
+                  text: sessionsSQL.sessions.SET_SESSION_TOKEN(
+                    session.id,
+                    session.token
+                  )
                 }, function (response) {
                   if (response) {
                     if (response.status === 200) {
@@ -158,10 +155,16 @@ module.exports = class UserAPI {
   }
   static logOut(req, res) {
     SessionAPI.closeSession(req.cookies.session, function (response) {
-      return res
-      .status(response.status)
-      .json(response.data)
-      .end();
+      if (response && response.status === 200) {
+        return res
+        .clearCookie('session')
+        .end();
+      } else {
+        return res
+        .status(response.status)
+        .json(response.data)
+        .end();
+      }
     });
   }
 }

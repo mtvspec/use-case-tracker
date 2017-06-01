@@ -26,3 +26,15 @@ CREATE TABLE users.e_user (
       ) REFERENCES users.d_user_state (id)
 );
 --============================================================================--
+INSERT INTO users.e_user (
+  e_person_id,
+  u_username,
+  u_password,
+  a_user_email
+)
+values (
+  1,
+  'mtvspec',
+  'mtvspec'
+);
+--============================================================================--

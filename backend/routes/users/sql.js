@@ -30,9 +30,9 @@ const Queries = {
       FROM
         sessions.e_session s
       WHERE
-        s.token = '${token}'
+        s.a_token = '${token}'
       AND
-        s.status_id = 'O';
+        s.d_session_state_id = 'O';
       `;
     }
   }

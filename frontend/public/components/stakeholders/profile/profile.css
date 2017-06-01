@@ -1,0 +1,23 @@
+div#profile {
+  height: 400px;
+  width: 1000px;
+  display: block;
+}
+div#profile div{
+  float: left;
+}
+div#stakeholder-profile {
+  height: 300px;
+  width: 300px;
+  display: inline;
+  padding: 10px;
+  border: solid black 1px;
+}
+div#stakeholder-metadata {
+  height: 300px;
+  width: 300px;
+}
+div#stakeholder-data {
+  height: 300px;
+  width: 300px;
+}

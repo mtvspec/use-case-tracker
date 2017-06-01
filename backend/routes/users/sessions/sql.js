@@ -5,13 +5,27 @@ const Queries = {
     OPEN_SESSION(id) {
       return `
       SELECT
-        sessions.open_session(${id});
+        sessions.open_session(
+          ${id}
+        );
       `;
     },
-    CLOSE_SESSION(id) {
+    SET_SESSION_TOKEN(id, token) {
+      return `
+      UPDATE
+        sessions.e_session
+      SET
+        a_token = '${token}'
+      WHERE
+        id = ${id}
+      RETURNING
+        id;
+        `
+    },
+    CLOSE_SESSION(token) {
       return `
       SELECT
-        sessions.close_session(${id});
+        sessions.close_session('${token}');
       `;
     }
   }

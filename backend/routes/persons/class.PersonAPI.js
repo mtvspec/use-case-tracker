@@ -14,12 +14,15 @@ class PersonAPI {
     db.selectAllRecords({
       text: sql.persons.SELECT_ALL_PERSONS()
     }, function (response) {
-      if (response && response.status && response.status === 200) {
-        return res.status(response.status).json(response.data).end();
-      } else if (response && response.status && response.status === 204) {
-        return res.status(response.status).end();
+      if (response && response.status) {
+        return res
+        .status(response.status)
+        .json(response.data)
+        .end();
       } else {
-        return res.status(500).end();
+        return res
+        .status(500)
+        .end();
       }
     });
   }
@@ -33,16 +36,29 @@ class PersonAPI {
         )
       }, function (response) {
         if (response) {
-          return res.status(response.status).json(response.data).end();
+          return res
+          .status(response.status)
+          .json(response.data)
+          .end();
         } else {
-          return res.status(500).end();
+          return res
+          .status(500)
+          .end();
         }
       });
     } else {
-      return res.status(400).send(`'id' is required`);
+      return res
+      .status(400)
+      .send(`'id' is required`)
+      .end();
     }
   }
   static createPerson(req, res) {
+    if (!req.cookies.session) {
+      return res
+      .status(401)
+      .end();
+    }
     let result = new Person(req.body);
     let token = req.cookies.session;
     if (result.person) {
@@ -173,22 +189,35 @@ class PersonAPI {
               )
             }, function (response) {
               if (response && response.status === 200) {
-                return res.status(response.status).json({
+                return res
+                .status(response.status)
+                .json({
                   id: response.data.update_person
                 }).end();
               } else if (response.status && response.data) {
-                return res.status(response.status).json(response.data).end();
+                return res
+                .status(response.status)
+                .json(response.data)
+                .end();
               } else {
-                return res.status(500).end();
+                return res
+                .status(500)
+                .end();
               }
             });
           } else {
-            return res.status(400).json(`duplicate 'iin': ${person.iin}`);
+            return res
+            .status(400)
+            .json(`duplicate 'iin': ${person.iin}`)
+            .end();
           }
         }
       });
     } else {
-      return res.status(400).json(person).end();
+      return res
+      .status(400)
+      .json(person)
+      .end();
     }
   }
   static deletePerson (req, res) {
@@ -205,7 +234,10 @@ class PersonAPI {
             id: response.data.delete_person
           }).end();
         } else {
-          return res.status(response.status).json(response.data).end();
+          return res
+          .status(response.status)
+          .json(response.data)
+          .end();
         }
       });
     }
@@ -224,13 +256,15 @@ class PersonAPI {
             id: response.data.restore_person
           }).end();
         } else {
-          return res.status(response.status).json(response.data).end();
+          return res
+          .status(response.status)
+          .json(response.data)
+          .end();
         }
       });
     }
   }
 }
-
 PersonAPI.getPersonByIIN = function (iin, res, cb) {
   db.selectRecordById({
     text: sql.persons.SELECT_PERSON_BY_IIN(iin)

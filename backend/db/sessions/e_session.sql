@@ -12,28 +12,26 @@ CREATE TABLE sessions.e_session (
       id
     ),
     UNIQUE (
-      token
+      a_token
     ),
     FOREIGN KEY (
       e_user_id
     ) REFERENCES users.e_user (id),
     FOREIGN KEY (
-      e_session_state_id
+      d_session_state_id
     ) REFERENCES sessions.d_session_state (id)
 );
 --============================================================================--
 -- Open session (open_session)
 --============================================================================--
-CREATE FUNCTION sessions.open_session (
+CREATE OR REPLACE FUNCTION sessions.open_session (
   IN v_e_user_id BIGINT,
-  IN v_a_token VARCHAR (4000)
   OUT e_session_id BIGINT
 )
 AS $$
 INSERT INTO
   sessions.e_session (
-    e_user_id,
-    a_token
+    e_user_id
   )
 VALUES (
   v_e_user_id
@@ -44,18 +42,18 @@ $$ LANGUAGE sql;
 --============================================================================--
 -- Close session (close_session)
 --============================================================================--
-CREATE FUNCTION sessions.close_session (
-  IN v_e_session_id BIGINT,
+CREATE OR REPLACE FUNCTION sessions.close_session (
+  IN v_a_token VARCHAR,
   OUT e_session_id BIGINT
 )
 AS $$
 UPDATE
   sessions.e_session
 SET
-  close_timestamp = CURRENT_TIMESTAMP,
+  a_close_timestamp = CURRENT_TIMESTAMP,
   d_session_state_id = 'C'
 WHERE
-  id = v_e_session_id
+  a_token = v_a_token
 RETURNING
   id "e_session_id";
 $$ LANGUAGE sql;

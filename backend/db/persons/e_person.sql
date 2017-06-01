@@ -14,7 +14,7 @@ CREATE TABLE persons.e_person (
         id
       ),
       FOREIGN KEY (
-        a_person_gender_id
+        d_person_gender_id
       ) REFERENCES persons.d_person_gender (id)
 );
 --============================================================================--
@@ -47,13 +47,13 @@ CREATE TABLE persons.e_person (
   a_person_first_name VARCHAR (100),
   a_person_middle_name VARCHAR (100),
   a_person_dob DATE,
-  a_person_gender_id CHAR (1),
+  d_person_gender_id CHAR (1),
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
         id
       ),
       FOREIGN KEY (
-        a_person_gender_id
+        d_person_gender_id
       ) REFERENCES persons.d_person_gender (id)
 );
 --============================================================================--
@@ -65,7 +65,7 @@ INSERT INTO
     a_person_first_name,
     a_person_middle_name,
     a_person_dob,
-    a_person_gender_id
+    d_person_gender_id
   )
 VALUES (
   '871215301496',

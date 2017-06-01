@@ -165,7 +165,7 @@ VALUES (
 RETURNING
   e_person_id;
 $$ LANGUAGE sql;
-
+--============================================================================--
 SELECT
   create_person (
     '871215301496',
@@ -176,7 +176,9 @@ SELECT
     'M',
     1 -- user_id
   );
-
+--============================================================================--
+-- Update person (update_person)
+--============================================================================--
 CREATE FUNCTION persons.update_person (
   IN v_e_person_id INTEGER,
   IN v_iin CHAR (12),
@@ -232,7 +234,9 @@ VALUES (
 RETURNING
   (SELECT id FROM upd) "e_person_id";
 $$ LANGUAGE sql;
-
+--============================================================================--
+-- Delete person (delete_person)
+--============================================================================--
 CREATE FUNCTION persons.delete_person (
   IN v_e_person_id INTEGER,
   IN v_user_id INTEGER,
@@ -277,7 +281,9 @@ VALUES (
 RETURNING
   (SELECT id FROM upd) "e_person_id";
 $$ LANGUAGE sql;
-
+--============================================================================--
+-- Restore person (restore_person)
+--============================================================================--
 CREATE FUNCTION persons.restore_person (
   IN v_e_person_id INTEGER,
   IN v_user_id INTEGER,
@@ -322,7 +328,9 @@ VALUES (
 RETURNING
   (SELECT id FROM upd) "e_person_id";
 $$ LANGUAGE sql;
-
+--============================================================================--
+-- Select person (select_person)
+--============================================================================--
 CREATE FUNCTION persons.select_person (
   IN v_e_person_id INTEGER,
   IN v_user_id INTEGER
@@ -362,6 +370,7 @@ VALUES (
   (SELECT gender_id FROM sel),
   (SELECT is_deleted FROM sel)
 );
+--============================================================================--
 SELECT
   *
 FROM
@@ -369,7 +378,9 @@ FROM
 WHERE
   id = v_e_person_id;
 $$ LANGUAGE sql;
-
+--============================================================================--
+-- Select persons (select_persons)
+--============================================================================--
 CREATE FUNCTION persons.select_persons ()
 RETURNS SETOF persons.e_person
 AS $$
@@ -387,3 +398,4 @@ FROM
 ORDER BY
   id ASC;
 $$ LANGUAGE sql;
+--============================================================================--
