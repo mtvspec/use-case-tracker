@@ -227,7 +227,7 @@ class PersonAPI {
                     }
                   });
                 }
-              })
+              });
             } else {
               return res
               .status(400)

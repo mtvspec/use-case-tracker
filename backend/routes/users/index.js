@@ -4,10 +4,14 @@ var router = express.Router();
 const UserAPI = require('./class.UserAPI.js');
 
 router
-.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+.get('/', function (req, res) {
+  UserAPI.getUsers(req, res);
 })
 .get('/:id', function (req, res) {
+})
+.get('/profile', function (req, res) {
+  console.log('me');
+  UserAPI.getMe(req, res);
 })
 .post('/username', function (req, res) {
   UserAPI.checkUsername(req, res);
@@ -20,6 +24,6 @@ router
 })
 .post('/logout', function (req, res) {
   UserAPI.logOut(req, res);
-})
+});
 
 module.exports = router;

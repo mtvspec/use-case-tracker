@@ -13,35 +13,81 @@ module.exports = class UserAPI {
   constructor() {
 
   }
+  static getUsers(req, res) {
+    db.selectAllRecords({
+      text: sql.users.SELECT_ALL_USERS()
+    }, function (response) {
+      if (response && response.status) {
+        return res
+        .status(response.status)
+        .json(response.data)
+        .end();
+      } else {
+        return res
+        .status(500)
+        .end();
+      }
+    });
+  }
   static checkUsername (req, res) {
     db.selectRecordById({
-      text: `
-      SELECT
-        id
-      FROM
-        users.e_user
-      WHERE
-        u_username = '${req.body.username}';`
+      text: sql.users.SELECT_USER_ID_BY_USERNAME(req.body.username)
     }, function (response) {
-      if (response.status === 200) {
+      if (response && response.status === 200) {
         return res
         .status(400)
         .json({
           username: `'username': '${req.body.username}' is unavailable`
         })
         .end();
-      } else if (response.status === 204) {
+      } else if (response && response.status === 204) {
         return res
         .status(200)
-        .json({
-          username: `'username': '${req.body.username}' is available`
-        })
         .end();
       }
     });
   }
   /***
-  * @param user_id
+   * @function getMe
+   * @param token
+   * @return me
+   */
+  static getMe(req, res) {
+    if (req.cookies.session) {
+      let token = req.cookies.session;
+      SessionAPI.validateSessionByToken(token, function (response) {
+        if (response && response.status === 200) {
+          let session = {
+            sessionID: response.data.sessionID,
+            userID: response.data.userID
+          };
+          db.selectRecordById({
+            text: sql.users.SELECT_USER_DATA_BY_ID(session.userID)
+          }, function (response) {
+            if (response && response.status === 200) {
+              return res
+              .status(200)
+              .json(response.data)
+              .end();
+            } else {
+              return res
+              .json(response.data)
+              .end();
+            }
+          });
+        } else {
+          return res
+          .status(500)
+          .end();
+        }
+      });
+    } else {
+      return res
+      .status(401)
+      .end();
+    }
+  }
+  /***
   * @param user
   * @return user_id
   */
@@ -54,18 +100,7 @@ module.exports = class UserAPI {
           req.User
         )
       }, function(response) {
-        if (response.status === 201) {
-          return res
-          .status(response.status)
-          .json({
-            id: response.data.create_user
-          }).end();
-        } else {
-          return res
-          .status(response.status)
-          .json(response.data)
-          .end();
-        }
+        return cb(response)
       });
     } else {
       return res
@@ -78,7 +113,7 @@ module.exports = class UserAPI {
     db.selectRecordById({
       text: sql.users.SELECT_USER_AND_SESSION_ID_BY_SESSION_TOKEN(token)
     }, function(response) {
-      cb(response);
+      return cb(response);
     });
   }
   /***
