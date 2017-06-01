@@ -174,6 +174,17 @@ class PersonAPI {
       }
     }
   }
+  /***
+   * @function updatePerson
+   * @param token
+   * @param personID
+   * @param personData
+   * success:
+   * @return personID
+   * failure:
+   * @return 'duplicate iin'
+   * @return messages
+   */
   static updatePerson(req, res) {
     let idValidationResult = new ID(req.params.id);
     if (idValidationResult.id) {
@@ -187,11 +198,15 @@ class PersonAPI {
             if (response.id == person.id) {
               UserAPI.getUserID(token, function (response) {
                 if (response.status && response.status === 200) {
+                  let session = {
+                    sessionID: response.data.sessionID,
+                    userID: response.data.userID
+                  };
                   db.updateRecord({
-                    text: sql.persons.UPDATE_PERSON (
+                    text: sql.persons.UPDATE_PERSON(
                       person,
-                      {id: response.data.sessionID},
-                      {id: response.data.userID}
+                      session.sessionID,
+                      session.userID
                     )
                   }, function (response) {
                     if (response && response.status === 200) {

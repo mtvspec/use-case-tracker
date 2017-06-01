@@ -69,46 +69,8 @@ const Queries = {
           v_e_user_id := ${user.id}
         );
       `;
-      // console.log(person);
-      // let len = person.length;
-      // let query;
-      //
-      // for (var aPersonDOB in person) {
-      //   if (person.hasOwnProperty(aPersonDOB)) {
-      //     if (person.aPersonDOB === null) {
-      //       query = `
-      //       SELECT
-      //         persons.create_person (
-      //           v_a_person_iin := '${person.aPersonIIN}',
-      //           v_a_person_last_name := '${person.aPersonLastName}',
-      //           v_a_person_first_name := '${person.aPersonFirstName}',
-      //           v_a_person_middle_name := '${person.aPersonMiddleName}',
-      //           v_a_person_dob := convertDate(person.aPersonDOB),
-      //           v_d_person_gender_id := '${person.aPersonGenderID}',
-      //           v_e_session_id := ${session.id},
-      //           v_e_user_id := ${user.id}
-      //         );`
-      //       ;
-      //     } else {
-      //       query = `
-      //       SELECT
-      //         persons.create_person (
-      //           v_a_person_iin := '${person.aPersonIIN}',
-      //           v_a_person_last_name := '${person.aPersonLastName}',
-      //           v_a_person_first_name := '${person.aPersonFirstName}',
-      //           v_a_person_middle_name := '${person.aPersonMiddleName}',
-      //           v_a_person_dob := '${person.aPersonDOB}',
-      //           v_d_person_gender_id := '${person.aPersonGenderID}',
-      //           v_e_session_id := ${session.id},
-      //           v_e_user_id := ${user.id}
-      //         );
-      //       `;
-      //     }
-      //   }
-      // }
-      // return query;
     },
-    UPDATE_PERSON(person, session, user) {
+    UPDATE_PERSON(person, sessionID, userID) {
       return `
       SELECT
         persons.update_person (
@@ -119,9 +81,10 @@ const Queries = {
           '${person.aPersonMiddleName}',
           ${convertDate(person.aPersonDOB)},
           '${person.aPersonGenderID}',
-          ${session.id},
-          ${user.id}
-        );`;
+          ${sessionID},
+          ${userID}
+        );
+      `;
     },
     DELETE_PERSON(person, user) {
       return `
