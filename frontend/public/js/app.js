@@ -64,15 +64,6 @@ app.config(function ($stateProvider, $urlRouterProvider) {
       pageTitle: 'Create use-case slice'
     }
   })
-  // .state('projects', {
-  //   url: '/projects',
-  //   templateUrl: '/components/projects/views/template.html',
-  //   controller: 'ProjectsCtrl',
-  //   controllerAs: 'vm',
-  //   data: {
-  //     pageTitle: 'Projects'
-  //   }
-  // })
   .state('systems', {
     url: '/systems',
     templateUrl: '/components/systems/views/template.html',
@@ -164,8 +155,3 @@ app.directive('title', ['$rootScope', '$timeout',
     };
   }
 ]);
-
-// app.component('persons', {
-//   templateUrl: 'main.html',
-//   controller: 'PersonsCtrl'
-// });
