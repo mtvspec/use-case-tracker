@@ -64,7 +64,7 @@ const Queries = {
       WHERE
         u.e_person_id = p.id
       AND
-        u.id = ${id};
+        u.id = ${userID};
       `;
     }
   }
