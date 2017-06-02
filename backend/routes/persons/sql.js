@@ -86,12 +86,13 @@ const Queries = {
         );
       `;
     },
-    DELETE_PERSON(person, user) {
+    DELETE_PERSON(data) {
       return `
       SELECT
         persons.delete_person (
-          ${person.id},
-          ${user.id}
+          ${data.personID},
+          ${data.sessionID},
+          ${data.userID}
         );`;
     },
     RESTORE_PERSON(person, user) {
