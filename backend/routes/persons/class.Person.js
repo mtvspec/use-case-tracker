@@ -50,7 +50,6 @@ module.exports = class Person {
         result.result ?
         person.aPersonGenderID = result.data : messages.aPersonGenderID = result.data;
       }
-      console.log(result);
       if (Object.keys(messages).length > 0) {
         result.messages = messages;
         return this.result = result;
