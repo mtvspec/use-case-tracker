@@ -9,7 +9,7 @@ router
 })
 .get('/:id', function (req, res) {
 })
-.get('/profile', function (req, res) {
+.post('/profile', function (req, res) {
   console.log('me');
   UserAPI.getMe(req, res);
 })
