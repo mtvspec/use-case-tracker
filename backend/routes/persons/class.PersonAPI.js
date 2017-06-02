@@ -249,27 +249,19 @@ class PersonAPI {
       .end();
     }
   }
-  static deletePerson (req, res) {
-    let person = new ID(req.params.id);
-    if (person.id) {
-      db.updateRecord({
-        text: sql.persons.DELETE_PERSON (
-          person,
-          req.User
-        )
-      }, function (response) {
-        if (response && response.status === 200) {
-          return res.status(response.status).json({
-            id: response.data.delete_person
-          }).end();
-        } else {
-          return res
-          .status(response.status)
-          .json(response.data)
-          .end();
-        }
-      });
-    }
+  /***
+   * @function deletePerson
+   * @param personID
+   * @param sessionID
+   * @param userID
+   * @return cb
+   */
+  static deletePerson(data, cb) {
+    db.updateRecord({
+      text: sql.persons.DELETE_PERSON(data)
+    }, function (response) {
+      return cb(response);
+    });
   }
   static restorePerson (req, res) {
     let person = new ID(req.params.id);
