@@ -22,7 +22,7 @@ router
 .post('/login', function (req, res) {
   /***
    * @function authentificateUser
-   * @param User {username & password}
+   * @param UserCredentials {username & password}
    * if success
    * @return status(200) & set session cookie (token)
    * else
