@@ -2,11 +2,12 @@
 
 const Queries = {
   sessions: {
-    OPEN_SESSION(id) {
+    OPEN_SESSION(sessionData) {
       return `
       SELECT
         sessions.open_session(
-          ${id}
+          ${sessionData.userID},
+          '${sessionData.token}'
         );
       `;
     },
