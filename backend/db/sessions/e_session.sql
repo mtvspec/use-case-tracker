@@ -26,15 +26,18 @@ CREATE TABLE sessions.e_session (
 --============================================================================--
 CREATE OR REPLACE FUNCTION sessions.open_session (
   IN v_e_user_id BIGINT,
+  IN v_a_token VARCHAR (4000),
   OUT e_session_id BIGINT
 )
 AS $$
 INSERT INTO
   sessions.e_session (
-    e_user_id
+    e_user_id,
+    a_token
   )
 VALUES (
-  v_e_user_id
+  v_e_user_id,
+  v_a_token
 )
 RETURNING
   id "e_session_id";
