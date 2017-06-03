@@ -4,7 +4,7 @@
 CREATE TABLE sessions.e_session (
   id BIGSERIAL,
   e_user_id BIGINT NOT NULL,
-  a_token VARCHAR (4000),
+  a_token VARCHAR (4000) NOT NULL,
   a_open_timestamp TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   a_close_timestamp TIMESTAMPTZ,
   d_session_state_id CHAR (1) NOT NULL DEFAULT 'O',
