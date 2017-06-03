@@ -33,7 +33,7 @@ router
    * @return status(500) - error
    */
   UserAPI.authentificateUser(req.body, function (response) {
-    if (response && response.status === 200) {
+    if (response && response.status === 201) {
       return res
       .status(response.status)
       .cookie('session', response.data)
