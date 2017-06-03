@@ -7,7 +7,7 @@
         url: '/api/users/login',
         data: data
       }).then(function (response) {
-        if (response.status === 200) {
+        if (response.status === 201) {
           $state.go('main');
         }
       }, function (response) {
