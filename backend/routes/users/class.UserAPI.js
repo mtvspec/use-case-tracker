@@ -121,71 +121,54 @@ module.exports = class UserAPI {
   * @param password
   * @return user_id
   */
-  static authentificateUser(req, res) {
-    let user = new User(req.body);
-    if (user.username && user.password) {
-      console.log(bcrypt.hashSync(user.password));
+  static authentificateUser(userData, cb) {
+    let userDataValidationResult = new User(userData);
+    if (userDataValidationResult.User) {
+      let User = userDataValidationResult.User;
       db.selectRecordById({
-        text: sql.users.SELECT_USER(user)
+        text: sql.users.SELECT_USER_ID_AND_PASSWORD_BY_USERNAME(User.username)
       }, function(response) {
         if (response.status === 200) {
-          let password = bcrypt.hashSync(user.password);
-          if (bcrypt.compareSync(user.password, response.data.u_password)) {
-            user.id = response.data.id;
-            SessionAPI.openSession(user.id, function (response) {
-              if (response.status === 201) {
-                let session = {
-                  id: response.data.open_session,
-                  token: uuid.v4()
-                };
-                db.updateRecord({
-                  text: sessionsSQL.sessions.SET_SESSION_TOKEN(
-                    session.id,
-                    session.token
-                  )
-                }, function (response) {
-                  if (response) {
-                    if (response.status === 200) {
-                      return res
-                      .status(200)
-                      .cookie('session', session.token)
-                      .end();
-                    } else {
-                      return res
-                      .status(500)
-                      .end();
-                    }
-                  } else {
-                    return res
-                    .status(500)
-                    .end();
-                  }
+          let password = bcrypt.hashSync(User.password);
+          if (bcrypt.compareSync(User.password, response.data.u_password)) {
+            let session = {
+              userID: response.data.id,
+              token: uuid()
+            }
+            SessionAPI.openSession(session, function (response) {
+              if (response && response.status === 201) {
+                session.id = response.data.open_session;
+                session.state = 'O';
+                Sessions.push(session);
+                return cb({
+                  status: 200,
+                  data: session.token
                 });
               } else {
-                return res
-                .status(response.status)
-                .json(response.data)
-                .end();
+                return cb({
+                  status: response.status,
+                  data: response.data
+                });
               }
             });
           } else {
-            return res
-            .status(400)
-            .json('wrong password')
-            .end();
+            return cb({
+              status: 400,
+              data: 'invalid password'
+            });
           }
         } else {
-          return res
-          .status(response.status)
-          .json(response.data)
-          .end();
+          return cb({
+            status: response.status,
+            data: response.data
+          });
         }
       });
     } else {
-      return res
-      .status(400)
-      .json(user)
-      .end();
+      return cb({
+        status: 400,
+        data: userDataValidationResult.messages
+      });
     }
   }
   static logOut(req, res) {

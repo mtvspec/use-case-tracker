@@ -20,7 +20,18 @@ router
   UserAPI.createUser(req, res);
 })
 .post('/login', function (req, res) {
-  UserAPI.authentificateUser(req, res);
+  UserAPI.authentificateUser(req.body, function (response) {
+    if (response && response.status === 200) {
+      return res
+      .status(response.status)
+      .cookie('session', response.data)
+      .end();
+    } else {
+      return res
+      .status(500)
+      .end();
+    }
+  });
 })
 .post('/logout', function (req, res) {
   UserAPI.logOut(req, res);

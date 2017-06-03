@@ -8,7 +8,7 @@ const Queries = {
         users.e_user;
       `;
     },
-    SELECT_USER(user) {
+    SELECT_USER_ID_AND_PASSWORD_BY_USERNAME(username) {
       return `
       SELECT
         id,
@@ -16,7 +16,7 @@ const Queries = {
       FROM
         users.e_user u
       WHERE
-        u.u_username = '${user.username}';
+        u.u_username = '${username}';
       `;
     },
     SELECT_USER_BY_ID(id) {
