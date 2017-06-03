@@ -37,9 +37,11 @@ module.exports = class User {
         messages.password = `'password' is required`;
       }
       if (Object.keys(messages).length > 0) {
-        return this.result = messages;
+        result.messages = messages;
+        return this.result = result;
       } else {
-        return this.result = User;
+        result.User = User
+        return this.result = result;
       }
     }
   }
