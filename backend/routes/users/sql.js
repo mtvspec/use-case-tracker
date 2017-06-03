@@ -11,7 +11,7 @@ const Queries = {
     SELECT_USER_ID_AND_PASSWORD_BY_USERNAME(username) {
       return `
       SELECT
-        id,
+        u.id,
         u.u_password
       FROM
         users.e_user u
@@ -19,24 +19,24 @@ const Queries = {
         u.u_username = '${username}';
       `;
     },
-    SELECT_USER_BY_ID(id) {
+    SELECT_USER_BY_ID(userID) {
       return `
       SELECT
-        id
+        u.id
       FROM
         users.e_user u
       WHERE
-        u.id = id;
+        u.id = ${userID};
       `;
     },
     SELECT_USER_ID_BY_USERNAME(username) {
       return `
       SELECT
-        id
+        u.id
       FROM
-        users.e_user
+        users.e_user u
       WHERE
-        u_username = '${username}';
+        u.u_username = '${username}';
       `
     },
     SELECT_USER_AND_SESSION_ID_BY_SESSION_TOKEN(token) {
