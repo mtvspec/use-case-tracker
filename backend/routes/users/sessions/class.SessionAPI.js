@@ -38,11 +38,26 @@ module.exports = class SessionAPI {
       }
     });
   }
-  static closeSession(id, cb) {
+  /***
+   * @function closeSession
+   * @param token
+   * @return cb
+  */
+  static closeSession(token, cb) {
     db.updateRecord({
-      text: sql.sessions.CLOSE_SESSION(id)
+      text: sql.sessions.CLOSE_SESSION(token)
     }, function (response) {
-      return cb(response);
+      if (response.status === 200) {
+        for (let i = 0; i < Sessions.length; i++) {
+          if (Sessions[i].token === token) {
+            Sessions.splice(i, 1);
+            break;
+          }
+        }
+        return cb(response);
+      } else {
+        return cb(response);
+      }
     });
   }
 }
