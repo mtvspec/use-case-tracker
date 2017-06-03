@@ -55,7 +55,7 @@ module.exports = class UserAPI {
   static getMe(req, res) {
     if (req.cookies.session) {
       let token = req.cookies.session;
-      SessionAPI.validateSessionByToken(token, function (response) {
+      UserAPI.getUserID(token, function (response) {
         if (response && response.status === 200) {
           let session = {
             sessionID: response.data.sessionID,
