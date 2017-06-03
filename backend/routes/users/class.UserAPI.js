@@ -117,9 +117,14 @@ module.exports = class UserAPI {
     });
   }
   /***
-  * @param username
-  * @param password
-  * @return user_id
+   * @function authentificateUser
+   * @param userCredentials (username & password)
+   * if success
+   * @return status(200) & and session token
+   * else
+   * @return status(400) & message('invalid password')
+   * else
+   * @return status(400) & messages
   */
   static authentificateUser(userData, cb) {
     let userDataValidationResult = new User(userData);
