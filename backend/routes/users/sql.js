@@ -3,9 +3,17 @@ const Queries = {
     SELECT_ALL_USERS() {
       return `
       SELECT
-        *
+        u.id,
+        p.a_person_first_name||' '||a_person_last_name "aPerson",
+        u.u_username "aUsername",
+        u.a_user_email "aUserEmail",
+        u.d_user_state_id "dUserStateID",
+        u.is_deleted "isDeleted"
       FROM
-        users.e_user;
+        users.e_user u,
+        persons.e_person p
+      WHERE
+        u.e_person_id = p.id;
       `;
     },
     SELECT_USER_ID_AND_PASSWORD_BY_USERNAME(username) {
