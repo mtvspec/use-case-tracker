@@ -1,13 +1,11 @@
 'use strict';
 
 const bcrypt = require('bcrypt-nodejs');
-const uuid = require('uuid');
 const ID = require('./../../common/classes/id');
 const User = require('./class.User.js');
 const SessionAPI = require('./sessions/class.SessionAPI.js');
 const db = require('./../../db.js');
 const sql = require('./sql.js');
-const sessionsSQL = require('./sessions/sql.js');
 
 module.exports = class UserAPI {
   constructor() {
