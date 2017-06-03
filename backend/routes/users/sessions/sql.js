@@ -11,18 +11,6 @@ const Queries = {
         );
       `;
     },
-    SET_SESSION_TOKEN(id, token) {
-      return `
-      UPDATE
-        sessions.e_session
-      SET
-        a_token = '${token}'
-      WHERE
-        id = ${id}
-      RETURNING
-        id;
-        `
-    },
     CLOSE_SESSION(token) {
       return `
       SELECT
