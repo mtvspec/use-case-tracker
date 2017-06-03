@@ -7,9 +7,9 @@ module.exports = class SessionAPI {
   constructor() {
 
   }
-  static openSession(id, cb) {
+  static openSession(sessionData, cb) {
     db.insertRecord({
-      text: sql.sessions.OPEN_SESSION(id)
+      text: sql.sessions.OPEN_SESSION(sessionData)
     }, function (response) {
       return cb(response);
     });
