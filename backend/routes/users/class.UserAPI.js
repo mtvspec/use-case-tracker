@@ -174,18 +174,9 @@ module.exports = class UserAPI {
       });
     }
   }
-  static logOut(req, res) {
-    SessionAPI.closeSession(req.cookies.session, function (response) {
-      if (response && response.status === 200) {
-        return res
-        .clearCookie('session')
-        .end();
-      } else {
-        return res
-        .status(response.status)
-        .json(response.data)
-        .end();
-      }
+  static logOut(token, cb) {
+    SessionAPI.closeSession(token, function (response) {
+      return cb(response);
     });
   }
 }
