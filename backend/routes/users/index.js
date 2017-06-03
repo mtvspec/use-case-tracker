@@ -47,7 +47,12 @@ router
   });
 })
 .post('/logout', function (req, res) {
-  UserAPI.logOut(req, res);
+  UserAPI.logOut(req.cookies.session, function (response) {
+    return res
+    .status(response.status)
+    .json(response.data)
+    .end();
+  });
 });
 
 module.exports = router;
