@@ -2,6 +2,7 @@
 
 const db = require('./../../../db.js');
 const sql = require('./sql.js');
+let Sessions = require('./Sessions.js');
 
 module.exports = class SessionAPI {
   constructor() {
