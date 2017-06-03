@@ -20,6 +20,18 @@ router
   UserAPI.createUser(req, res);
 })
 .post('/login', function (req, res) {
+  /***
+   * @function authentificateUser
+   * @param User {username & password}
+   * if success
+   * @return status(200) & set session cookie (token)
+   * else
+   * @return status(400) - message(invalid password)
+   * else
+   * @return status(400) - messages
+   * else
+   * @return status(500) - error
+   */
   UserAPI.authentificateUser(req.body, function (response) {
     if (response && response.status === 200) {
       return res
@@ -28,7 +40,8 @@ router
       .end();
     } else {
       return res
-      .status(500)
+      .status(response.status)
+      .json(response.data)
       .end();
     }
   });
