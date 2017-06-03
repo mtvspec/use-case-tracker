@@ -131,28 +131,10 @@ module.exports = class UserAPI {
       db.selectRecordById({
         text: sql.users.SELECT_USER_ID_AND_PASSWORD_BY_USERNAME(User.username)
       }, function(response) {
-        if (response.status === 200) {
-          let password = bcrypt.hashSync(User.password);
+        if (response && response.status === 200) {
           if (bcrypt.compareSync(User.password, response.data.u_password)) {
-            let session = {
-              userID: response.data.id,
-              token: uuid()
-            }
-            SessionAPI.openSession(session, function (response) {
-              if (response && response.status === 201) {
-                session.id = response.data.open_session;
-                session.state = 'O';
-                Sessions.push(session);
-                return cb({
-                  status: 200,
-                  data: session.token
-                });
-              } else {
-                return cb({
-                  status: response.status,
-                  data: response.data
-                });
-              }
+            SessionAPI.openSession(response.data.id, function (response) {
+              return cb(response);
             });
           } else {
             return cb({
@@ -161,10 +143,7 @@ module.exports = class UserAPI {
             });
           }
         } else {
-          return cb({
-            status: response.status,
-            data: response.data
-          });
+          return cb(response);
         }
       });
     } else {
