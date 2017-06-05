@@ -292,9 +292,10 @@ $$ LANGUAGE sql;
 -- Restore person (restore_person)
 --============================================================================--
 CREATE FUNCTION persons.restore_person (
-  IN v_e_person_id INTEGER,
-  IN v_user_id INTEGER,
-  OUT e_person_id INTEGER
+  IN v_e_person_id BIGINT,
+  IN v_e_session_id BIGINT,
+  IN v_e_user_id BIGINT,
+  OUT e_person_id BIGINT
 )
 AS $$
 WITH upd AS (
@@ -308,28 +309,30 @@ WITH upd AS (
     *
 )
 INSERT INTO
-  persons.e_person_log (
-    d_operation_type_id,
-    user_id,
+  persons.f_person_operation (
+    d_person_operation_type_id,
+    e_session_id,
+    e_user_id,
     e_person_id,
-    iin,
-    last_name,
-    first_name,
-    middle_name,
-    dob,
-    gender_id,
+    a_person_iin,
+    a_person_last_name,
+    a_person_first_name,
+    a_person_middle_name,
+    a_person_dob,
+    d_person_gender_id,
     is_deleted
   )
 VALUES (
   4,
-  v_user_id,
+  v_e_session_id,
+  v_e_user_id,
   (SELECT id FROM upd),
-  (SELECT iin FROM upd),
-  (SELECT last_name FROM upd),
-  (SELECT first_name FROM upd),
-  (SELECT middle_name FROM upd),
-  (SELECT dob FROM upd),
-  (SELECT gender_id FROM upd),
+  (SELECT a_person_iin FROM upd),
+  (SELECT a_person_last_name FROM upd),
+  (SELECT a_person_first_name FROM upd),
+  (SELECT a_person_middle_name FROM upd),
+  (SELECT a_person_dob FROM upd),
+  (SELECT d_person_gender_id FROM upd),
   (SELECT is_deleted FROM upd)
 )
 RETURNING
