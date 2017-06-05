@@ -42,7 +42,28 @@ router
   });
 })
 .delete('/:id', function (req, res) {
-  PersonAPI.deletePerson(req, res);
+  PersonAPI.deletePerson({
+    personID: req.params.id,
+    sessionID: req.session.sessionID,
+    userID: req.session.userID
+  }, function (response) {
+    if (response && response.status === 200) {
+      return res
+      .status(200)
+      .json({
+        id: response.data.delete_person
+      })
+      .end();
+    } else if (response.status === 204) {
+      return res
+      .status(204)
+      .end();
+    } else {
+      return res
+      .status(500)
+      .end();
+    }
+  });
 })
 .options('/:id', function (req, res) {
   PersonAPI.restorePerson({
