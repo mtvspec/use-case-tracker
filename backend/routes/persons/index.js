@@ -14,7 +14,11 @@ router
   PersonAPI.createPerson(req, res);
 })
 .put('/:id', function (req, res) {
-  PersonAPI.updatePerson(req.session, req.params.id, req.body, function(response) {
+  let person = {
+    id: req.params.id,
+    data: req.body
+  }
+  PersonAPI.updatePerson(req.session, person, function(response) {
     return res
     .status(response.status)
     .json(response.data)

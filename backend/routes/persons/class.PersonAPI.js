@@ -185,10 +185,10 @@ class PersonAPI {
    * @return 'duplicate iin'
    * @return messages
    */
-  static updatePerson(session, personID, personData, cb) {
-    let idValidationResult = new ID(personID);
+  static updatePerson(session, person, cb) {
+    let idValidationResult = new ID(person.id);
     if (idValidationResult.id) {
-      let personValidationResult = new Person(personData);
+      let personValidationResult = new Person(person.data);
       if (personValidationResult.person) {
         let person = personValidationResult.person;
         person.id = idValidationResult.id;
