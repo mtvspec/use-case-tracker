@@ -45,7 +45,28 @@ router
   PersonAPI.deletePerson(req, res);
 })
 .options('/:id', function (req, res) {
-  PersonAPI.restorePerson(req, res);
+  PersonAPI.restorePerson({
+    personID: req.params.id,
+    sessionID: req.session.sessionID,
+    userID: req.session.userID
+  }, function(response) {
+    if (response && response.status === 200) {
+      return res
+      .status(200)
+      .json({
+        id: response.data.restore_person
+      })
+      .end();
+    } else if (response.status === 204) {
+      return res
+      .status(204)
+      .end();
+    } else {
+      return res
+      .status(500)
+      .end();
+    }
+  });
 });
 
 module.exports = router;

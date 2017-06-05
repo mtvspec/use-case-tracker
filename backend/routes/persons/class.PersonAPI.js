@@ -249,27 +249,12 @@ class PersonAPI {
       return cb(response);
     });
   }
-  static restorePerson (req, res) {
-    let person = new ID(req.params.id);
-    if (person.id) {
-      db.updateRecord({
-        text: sql.persons.RESTORE_PERSON (
-          person,
-          req.User
-        )
-      }, function (response) {
-        if (response && response.status === 200) {
-          return res.status(response.status).json({
-            id: response.data.restore_person
-          }).end();
-        } else {
-          return res
-          .status(response.status)
-          .json(response.data)
-          .end();
-        }
-      });
-    }
+  static restorePerson (data, cb) {
+    db.updateRecord({
+      text: sql.persons.RESTORE_PERSON(data)
+    }, function (response) {
+      return cb(response);
+    });
   }
 }
 PersonAPI.getPersonByIIN = function (iin, cb) {
