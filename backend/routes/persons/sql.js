@@ -95,13 +95,15 @@ const Queries = {
           ${data.userID}
         );`;
     },
-    RESTORE_PERSON(person, user) {
+    RESTORE_PERSON(data) {
       return `
       SELECT
         persons.restore_person (
-          ${person.id},
-          ${user.id}
-        );`;
+          ${data.personID},
+          ${data.sessionID},
+          ${data.userID}
+        );
+      `;
     }
   }
 }
