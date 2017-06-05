@@ -14,7 +14,12 @@ router
   PersonAPI.createPerson(req, res);
 })
 .put('/:id', function (req, res) {
-  PersonAPI.updatePerson(req, res);
+  PersonAPI.updatePerson(req.session, req.params.id, req.body, function(response) {
+    return res
+    .status(response.status)
+    .json(response.data)
+    .end();
+  });
 })
 .delete('/:id', function (req, res) {
   PersonAPI.deletePerson(req, res);

@@ -185,24 +185,17 @@ class PersonAPI {
    * @return 'duplicate iin'
    * @return messages
    */
-  static updatePerson(req, res) {
-    let idValidationResult = new ID(req.params.id);
+  static updatePerson(session, personID, personData, cb) {
+    let idValidationResult = new ID(personID);
     if (idValidationResult.id) {
-      let personValidationResult = new Person(req.body);
+      let personValidationResult = new Person(personData);
       if (personValidationResult.person) {
         let person = personValidationResult.person;
         person.id = idValidationResult.id;
         PersonAPI.getPersonByIIN(person.aPersonIIN, function (response) {
           if (response && (response.status === 200 || response.status === 204)) {
-            let token = req.cookies.session;
             if (response.id == person.id) {
-              UserAPI.getUserID(token, function (response) {
-                if (response.status && response.status === 200) {
-                  let session = {
-                    sessionID: response.data.sessionID,
-                    userID: response.data.userID
-                  };
-                  db.updateRecord({
+              db.updateRecord({
                     text: sql.persons.UPDATE_PERSON(
                       person,
                       session.sessionID,
@@ -210,43 +203,42 @@ class PersonAPI {
                     )
                   }, function (response) {
                     if (response && response.status === 200) {
-                      return res
-                      .status(response.status)
-                      .json({
-                        id: response.data.update_person
-                      }).end();
-                    } else if (response.status && response.data) {
-                      return res
-                      .status(response.status)
-                      .json(response.data)
-                      .end();
+                      return cb({
+                        status: response.status,
+                        data: {
+                          id: response.data.update_person
+                        }
+                      });
+                    } else if (response) {
+                      return cb({
+                        status: response.status,
+                        data: response.data
+                      });
                     } else {
-                      return res
-                      .status(500)
-                      .end();
+                      return cb({
+                        status: 500
+                      });
                     }
                   });
-                }
-              });
             } else {
-              return res
-              .status(400)
-              .json(`duplicate 'iin': ${person.aPersonIIN}`)
-              .end();
+              return cb({
+                status: 400,
+                data: `duplicate 'iin': ${person.aPersonIIN}`
+              });
             }
           }
         });
       } else {
-        return res
-        .status(400)
-        .json(personValidationResult.messages)
-        .end();
+        return cb({
+          status: 400,
+          data: personValidationResult.messages
+        });
       }
     } else {
-      return res
-      .status(400)
-      .json(idValidationResult.messages)
-      .end();
+      return cb({
+        status: 400,
+        data: idValidationResult.messages
+      });
     }
   }
   /***
