@@ -26,31 +26,25 @@ class PersonAPI {
       }
     });
   }
-  static getPersonByID(req, res) {
-    let person = new ID(req.params.id);
-    if (person.id) {
+  static getPersonByID(personID, cb) {
+    let IDValidationResult = new ID(personID);
+    if (IDValidationResult.id) {
       db.selectRecordById({
-        text: sql.persons.SELECT_PERSON_BY_ID(
-          person,
-          req.User
-        )
+        text: sql.persons.SELECT_PERSON_BY_ID(personID)
       }, function (response) {
         if (response) {
-          return res
-          .status(response.status)
-          .json(response.data)
-          .end();
+          return cb(response);
         } else {
-          return res
-          .status(500)
-          .end();
+          return cb({
+            status: 500
+          });
         }
       });
     } else {
-      return res
-      .status(400)
-      .send(`'id' is required`)
-      .end();
+      return cb({
+        status: 400,
+        data: `'id' is required`
+      });
     }
   }
   static createPerson(req, res) {

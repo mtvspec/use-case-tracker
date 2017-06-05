@@ -8,7 +8,23 @@ router
   PersonAPI.getPersons(req, res);
 })
 .get('/:id', function (req, res) {
-  PersonAPI.getPersonByID(req, res);
+  PersonAPI.getPersonByID(req.params.id, function(response) {
+    if (response && response.status === 200) {
+      return res
+      .status(200)
+      .json(response.data)
+      .end();
+    } else if (response.status === 204) {
+      return res
+      .status(204)
+      .end();
+    } else {
+      return res
+      .status(response.status)
+      .data(response.data)
+      .end();
+    }
+  });
 })
 .post('/', function (req, res) {
   PersonAPI.createPerson(req, res);
