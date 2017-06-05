@@ -19,22 +19,22 @@ const Queries = {
         id ASC;
       `;
     },
-    SELECT_PERSON_BY_ID(person, user) {
+    SELECT_PERSON_BY_ID(personID) {
       return `
       SELECT
         id,
-        iin,
-        last_name "lastName",
-        first_name "firstName",
-        middle_name "middleName",
-        to_char(dob, 'YYYY-MM-DD') "dob",
-        gender_id "gender",
+        a_person_iin "aPersonIIN",
+        a_person_last_name "aPersonLastName",
+        a_person_first_name "aPersonFirstName",
+        a_person_middle_name "aPersonMiddleName",
+        to_char(a_person_dob, 'YYYY-MM-DD') "aPersonDOB",
+        d_person_gender_id "dPersonGenderID",
         is_deleted "isDeleted"
       FROM
-        persons.select_person (
-          ${person.id},
-          ${user.id}
-        );`;
+        persons.e_person
+      WHERE
+        id = ${personID};
+      `;
     },
     SELECT_PERSON (id) {
       return `
