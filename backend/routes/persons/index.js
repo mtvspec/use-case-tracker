@@ -35,29 +35,38 @@ router
     .end();
   });
 })
+      return res
+/**
+ * @desc This function logically deletes person by it's id
+ * @method Delete person by personID
+ * @param {number} personID
+ * @return {number} delete_person
+ */
 .delete('/:id', function (req, res) {
-  PersonAPI.deletePerson({
-    personID: req.params.id,
-    sessionID: req.session.sessionID,
-    userID: req.session.userID
-  }, function (response) {
-    if (response && response.status === 200) {
-      return res
-      .status(200)
-      .json({
-        id: response.data.delete_person
-      })
-      .end();
-    } else if (response.status === 204) {
-      return res
-      .status(204)
-      .end();
+  if (validate.is.positive(req.params.id)) {
+    const id = req.params.id;
+    PersonAPI.deletePerson({
+      personID: id,
+      sessionID: req.session.sessionID,
+      userID: req.session.userID
+    }, function (response) {
+      if (response) {
+       return res
+        .status(response.status)
+        .json(response.data)
+        .end();
+      } else {
+        return res
+          .status(500)
+          .end();
+        }
+      });
     } else {
+      console.error(new Error(`id '${req.params.id}' is invalid`));
       return res
-      .status(500)
-      .end();
+        .status(400)
+        .end(`id '${req.params.id}' is invalid`);
     }
-  });
 })
 /**
  * @desc This function restores logically deleted person by it's id
