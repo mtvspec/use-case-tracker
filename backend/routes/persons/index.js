@@ -59,29 +59,37 @@ router
     }
   });
 })
+/**
+ * @desc This function restores logically deleted person by it's id
+ * @method Restore deleted person by personID
+ * @param {number} personID
+ * @return {number} restore_person
+ */
 .options('/:id', function (req, res) {
-  PersonAPI.restorePerson({
-    personID: req.params.id,
+  if (validate.is.positive(req.params.id)) {
+    const id = req.params.id;
+    PersonAPI.restorePerson({
+    personID: id,
     sessionID: req.session.sessionID,
     userID: req.session.userID
   }, function(response) {
-    if (response && response.status === 200) {
+    if (response) {
       return res
-      .status(200)
-      .json({
-        id: response.data.restore_person
-      })
-      .end();
-    } else if (response.status === 204) {
-      return res
-      .status(204)
-      .end();
+        .status(response.status)
+        .json(response.data)
+        .end();
     } else {
       return res
-      .status(500)
-      .end();
-    }
-  });
+        .status(500)
+        .end();
+      }
+    });
+  } else {
+    console.error(new Error(`id '${req.params.id}' is invalid`));
+    return res
+      .status(400)
+      .end(`id '${req.params.id}' is invalid`);
+  }
 });
 
 module.exports = router;
