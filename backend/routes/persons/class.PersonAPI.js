@@ -278,22 +278,21 @@ class PersonAPI {
       }
     });
   }
+  static getPersonByIIN(aPersonIIN, cb) {
+    db.selectRecordById({
+      text: sql.persons.SELECT_PERSON_BY_IIN(aPersonIIN)
+    }, function (response) {
+      if (response) {
+        return cb({
+          status: response.status,
+          data: response.data
+        });
+      } else {
+        return cb({
+          status: 500,
+          data: null
+        });
+      }
+    });
+  }
 }
-PersonAPI.getPersonByIIN = function (iin, cb) {
-  db.selectRecordById({
-    text: sql.persons.SELECT_PERSON_BY_IIN(iin)
-  }, function (response) {
-    if (response && response.status && response.status === 200) {
-      return cb({
-        status: 200,
-        id: response.data.id
-      });
-    } else if (response && response.status && response.status === 204) {
-      return cb({
-        status: 204
-      });
-    }
-  });
-}
-
-module.exports = PersonAPI;
