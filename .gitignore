@@ -3,3 +3,4 @@ backend/node_modules/
 /frontend/public/bower_components/**
 .vscode/
 *.DS_Store
+test.js
