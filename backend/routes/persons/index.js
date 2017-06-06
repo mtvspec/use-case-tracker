@@ -13,12 +13,20 @@ router
   });
 })
 .get('/:id', function (req, res) {
-  PersonAPI.getPersonByID(req.params.id, function(response) {
+  if (validate.is.positive(req.params.id)) {
+    const id = req.params.id;
+    PersonAPI.getPersonByID(id, function(response) {
+      return res
+        .status(response.status)
+        .json(response.data)
+        .end();
+    });
+  } else {
+    console.error(new Error(`id '${req.params.id}' is invalid`));
     return res
-      .status(response.status)
-      .json(response.data)
-      .end();
-  });
+      .status(400)
+      .end(`id '${req.params.id}' is invalid`);
+  }
 })
 .post('/', function (req, res) {
   PersonAPI.createPerson(req, res);
