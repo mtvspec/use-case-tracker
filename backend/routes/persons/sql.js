@@ -70,19 +70,19 @@ const Queries = {
         );
       `;
     },
-    UPDATE_PERSON(person, sessionID, userID) {
+    UPDATE_PERSON(data) {
       return `
       SELECT
         persons.update_person (
-          ${person.id},
-          '${person.aPersonIIN}',
-          '${person.aPersonLastName}',
-          '${person.aPersonFirstName}',
-          '${person.aPersonMiddleName}',
-          ${convertDate(person.aPersonDOB)},
-          '${person.aPersonGenderID}',
-          ${sessionID},
-          ${userID}
+          ${data.person.id},
+          '${data.person.aPersonIIN}',
+          '${data.person.aPersonLastName}',
+          '${data.person.aPersonFirstName}',
+          '${data.person.aPersonMiddleName}',
+          ${convertDate(data.person.aPersonDOB)},
+          '${data.person.aPersonGenderID}',
+          ${data.sessionID},
+          ${data.userID}
         );
       `;
     },

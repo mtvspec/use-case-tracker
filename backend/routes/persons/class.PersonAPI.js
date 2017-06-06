@@ -181,45 +181,43 @@ module.exports = class PersonAPI {
    * @return 'duplicate iin'
    * @return messages
    */
-  static updatePerson(session, person, cb) {
-    let idValidationResult = new ID(person.id);
-    if (idValidationResult.id) {
-      let personValidationResult = new Person(person.data);
+  static updatePerson(data, cb) {
+    const personValidationResult = new Person(data.person);
       if (personValidationResult.person) {
-        let person = personValidationResult.person;
-        person.id = idValidationResult.id;
-        PersonAPI.getPersonByIIN(person.aPersonIIN, function (response) {
-          if (response && (response.status === 200 || response.status === 204)) {
-            if (response.id == person.id) {
+        PersonAPI.getPersonByIIN(data.person.aPersonIIN, function (response) {
+          if (response && (response.status === 200)) {
+            if (Number(response.data.id) === Number(data.person.id)) {
               db.updateRecord({
-                    text: sql.persons.UPDATE_PERSON(
-                      person,
-                      session.sessionID,
-                      session.userID
-                    )
+                    text: sql.persons.UPDATE_PERSON(data)
                   }, function (response) {
-                    if (response && response.status === 200) {
-                      return cb({
-                        status: response.status,
-                        data: {
-                          id: response.data.update_person
-                        }
-                      });
-                    } else if (response) {
-                      return cb({
-                        status: response.status,
-                        data: response.data
-                      });
+                    if (response) {
+                      return cb(response);
                     } else {
+                      console.error(new Error());
                       return cb({
-                        status: 500
+                        status: 500,
+                        data: null
                       });
                     }
                   });
+            } else if (response.status === 204) {
+              db.updateRecord({
+                text: sql.persons.UPDATE_PERSON(data)
+              }, function (response) {
+                if (response) {
+                  return cb(response);
+                } else {
+                  console.error(new Error());
+                  return cb({
+                    status: 500,
+                    data: null
+                  });
+                }
+              });
             } else {
               return cb({
                 status: 400,
-                data: `duplicate 'iin': ${person.aPersonIIN}`
+                data: `duplicate 'iin': ${data.person.aPersonIIN}`
               });
             }
           }
@@ -230,12 +228,6 @@ module.exports = class PersonAPI {
           data: personValidationResult.messages
         });
       }
-    } else {
-      return cb({
-        status: 400,
-        data: idValidationResult.messages
-      });
-    }
   }
   /***
    * @function deletePerson
