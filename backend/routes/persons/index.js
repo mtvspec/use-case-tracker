@@ -5,7 +5,18 @@ const PersonAPI = require('./class.PersonAPI.js');
 
 router
 .get('/', function (req, res) {
-  PersonAPI.getPersons(req, res);
+  PersonAPI.getPersons(function (response) {
+    if (response) {
+      return res
+      .status(response.status)
+      .json(response.data)
+      .end();
+    } else {
+      return res
+      .status(500)
+      .end();
+    }
+  });
 })
 .get('/:id', function (req, res) {
   PersonAPI.getPersonByID(req.params.id, function(response) {
