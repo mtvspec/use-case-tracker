@@ -6,7 +6,7 @@ const UserAPI = require('./../users/class.UserAPI.js');
 const db = require('./../../db.js');
 const sql = require('./sql.js');
 
-class PersonAPI {
+module.exports = class PersonAPI {
   constructor() {
 
   }
