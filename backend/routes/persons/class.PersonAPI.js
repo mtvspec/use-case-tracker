@@ -37,7 +37,8 @@ class PersonAPI {
           return cb(response);
         } else {
           return cb({
-            status: 500
+            status: 500,
+            data: null
           });
         }
       });
