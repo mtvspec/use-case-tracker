@@ -20,19 +20,14 @@ router
 })
 .get('/:id', function (req, res) {
   PersonAPI.getPersonByID(req.params.id, function(response) {
-    if (response && response.status === 200) {
+    if (response) {
       return res
-      .status(200)
+      .status(response.status)
       .json(response.data)
-      .end();
-    } else if (response.status === 204) {
-      return res
-      .status(204)
       .end();
     } else {
       return res
-      .status(response.status)
-      .data(response.data)
+      .status(500)
       .end();
     }
   });
