@@ -248,7 +248,17 @@ class PersonAPI {
     db.updateRecord({
       text: sql.persons.DELETE_PERSON(data)
     }, function (response) {
-      return cb(response);
+      if (response) {
+        return cb({
+          status: response.status,
+          data: response.data
+        });
+      } else {
+        return cb({
+          status: 500,
+          data: null
+        });
+      }
     });
   }
   static restorePerson (data, cb) {
