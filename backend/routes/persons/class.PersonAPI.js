@@ -10,19 +10,20 @@ class PersonAPI {
   constructor() {
 
   }
-  static getPersons(req, res) {
+  static getPersons(cb) {
     db.selectAllRecords({
       text: sql.persons.SELECT_ALL_PERSONS()
     }, function (response) {
-      if (response && response.status) {
-        return res
-        .status(response.status)
-        .json(response.data)
-        .end();
+      if (response) {
+        return cb({
+          status: response.status,
+          data: response.data
+        });
       } else {
-        return res
-        .status(500)
-        .end();
+        return cb({
+          status: 500,
+          data: null
+        });
       }
     });
   }
