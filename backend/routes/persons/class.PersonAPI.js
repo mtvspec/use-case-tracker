@@ -1,273 +1,26 @@
 'use strict';
 
-const ID = require ('./../../common/classes/id');
-const Person = require('./class.Person.js');
-const UserAPI = require('./../users/class.UserAPI.js');
+const validator = require('indicative');
 const db = require('./../../db.js');
 const sql = require('./sql.js');
+const OperationAPI = require('./../operations/class.OperationAPI.js');
+const LogAPI = require('./../log');
 
 module.exports = class PersonAPI {
-  constructor() {
-
-  }
   static getPersons(cb) {
     db.selectAllRecords({
       text: sql.persons.SELECT_ALL_PERSONS()
-    }, function (response) {
-      if (response) {
-        return cb({
-          status: response.status,
-          data: response.data
-        });
-      } else {
-        return cb({
-          status: 500,
-          data: null
-        });
-      }
+    }, (response) => {
+      if (response) return cb({ status: response.status, data: response.data });
+      else return cb({ status: 500, data: null });
     });
   }
-  static getPersonByID(personID, cb) {
-    let IDValidationResult = new ID(personID);
-    if (IDValidationResult.id) {
-      db.selectRecordById({
-        text: sql.persons.SELECT_PERSON_BY_ID(personID)
-      }, function (response) {
-        if (response) {
-          return cb(response);
-        } else {
-          return cb({
-            status: 500,
-            data: null
-          });
-        }
-      });
-    } else {
-      return cb({
-        status: 400,
-        data: `'id' is required`
-      });
-    }
-  }
-  static createPerson(req, res) {
-    if (!req.cookies.session) {
-      return res
-      .status(401)
-      .end();
-    }
-    let result = new Person(req.body);
-    let token = req.cookies.session;
-    if (result.person) {
-      let person = result.person;
-      if (person.aPersonIIN) {
-        PersonAPI.getPersonByIIN(person.aPersonIIN, function (response) {
-          if (response) {
-            if (response.status === 200) {
-              return res
-              .status(400)
-              .json(`duplicate 'iin': ${person.aPersonIIN}`)
-              .end();
-            } else if (response.status === 204) {
-
-              if (!token) {
-                return res
-                .status(401)
-                .end();
-              } else {
-                UserAPI.getUserID(token, function (response) {
-                  console.log(sql.persons.INSERT_PERSON(
-                    person,
-                    {
-                      id: response.data.sessionID
-                    },
-                    {
-                      id: response.data.userID
-                    }
-                  ));
-                  if (response.status === 200) {
-                    db.insertRecord({
-                      text: sql.persons.INSERT_PERSON(
-                        person,
-                        {
-                          id: response.data.sessionID
-                        },
-                        {
-                          id: response.data.userID
-                        }
-                      )
-                    }, function (response) {
-                      if (response.status === 201) {
-                        return res
-                        .status(response.status)
-                        .json({
-                          id: response.data.create_person
-                        })
-                        .end();
-                      } else {
-                        return res
-                        .status(response.status)
-                        .json(response.data)
-                        .end();
-                      }
-                    });
-                  } else {
-                    return res
-                    .status(401)
-                    .json(result.messages)
-                    .end();
-                  }
-                });
-              }
-            }
-          } else {
-            return res
-            .status(500)
-            .end();
-          }
-        });
-      } else {
-        if (!token) {
-          return res
-          .status(401)
-          .end();
-        } else {
-          UserAPI.getUserID(token, function (response) {
-            if (response.status === 200) {
-              db.insertRecord({
-                text: sql.persons.INSERT_PERSON(
-                  person,
-                  {
-                    id: response.data.sessionID
-                  },
-                  {
-                    id: response.data.userID
-                  }
-                )
-              }, function (response) {
-                if (response.status === 201) {
-                  return res.status(response.status).json({
-                    id: response.data.create_person
-                  }).end();
-                } else {
-                  return res.status(response.status).json(response.data).end();
-                }
-              });
-            } else {
-              return res
-              .status(401)
-              .end();
-            }
-          });
-        }
-      }
-    } else {
-      let messages = result.messages;
-      if (Object.getOwnPropertyNames(messages).length > 0) {
-        return res
-        .status(400)
-        .json(messages)
-        .end();
-      }
-    }
-  }
-  /***
-   * @function updatePerson
-   * @param token
-   * @param personID
-   * @param personData
-   * success:
-   * @return personID
-   * failure:
-   * @return 'duplicate iin'
-   * @return messages
-   */
-  static updatePerson(data, cb) {
-    const personValidationResult = new Person(data.person);
-      if (personValidationResult.person) {
-        PersonAPI.getPersonByIIN(data.person.aPersonIIN, function (response) {
-          if (response && (response.status === 200)) {
-            if (Number(response.data.id) === Number(data.person.id)) {
-              db.updateRecord({
-                    text: sql.persons.UPDATE_PERSON(data)
-                  }, function (response) {
-                    if (response) {
-                      return cb(response);
-                    } else {
-                      console.error(new Error());
-                      return cb({
-                        status: 500,
-                        data: null
-                      });
-                    }
-                  });
-            } else if (response.status === 204) {
-              db.updateRecord({
-                text: sql.persons.UPDATE_PERSON(data)
-              }, function (response) {
-                if (response) {
-                  return cb(response);
-                } else {
-                  console.error(new Error());
-                  return cb({
-                    status: 500,
-                    data: null
-                  });
-                }
-              });
-            } else {
-              return cb({
-                status: 400,
-                data: `duplicate 'iin': ${data.person.aPersonIIN}`
-              });
-            }
-          }
-        });
-      } else {
-        return cb({
-          status: 400,
-          data: personValidationResult.messages
-        });
-      }
-  }
-  /***
-   * @function deletePerson
-   * @param personID
-   * @param sessionID
-   * @param userID
-   * @return cb
-   */
-  static deletePerson(data, cb) {
-    db.updateRecord({
-      text: sql.persons.DELETE_PERSON(data)
-    }, function (response) {
-      if (response) {
-        return cb({
-          status: response.status,
-          data: response.data
-        });
-      } else {
-        return cb({
-          status: 500,
-          data: null
-        });
-      }
-    });
-  }
-  static restorePerson (data, cb) {
-    db.updateRecord({
-      text: sql.persons.RESTORE_PERSON(data)
-    }, function (response) {
-      if (response) {
-        return cb({
-          status: response.status,
-          data: response.data
-        });
-      } else {
-        return cb({
-          status: 500,
-          data: null
-        });
-      }
+  static getPersonByID(person, cb) {
+    db.selectRecordById({
+      text: sql.persons.SELECT_PERSON_BY_ID(person)
+    }, (response) => {
+      if (response) return cb({ status: response.status, data: response.data });
+      else return cb({ status: 500, data: null });
     });
   }
   static getPersonByIIN(aPersonIIN, cb) {
@@ -287,4 +40,151 @@ module.exports = class PersonAPI {
       }
     });
   }
+  static createPerson(session, data, cb) {
+    const pattern = {
+      aPersonIIN: 'string|min:12|max:12',
+      aPersonLastName: 'string|min:2|max:100',
+      aPersonFirstName: 'required|string|min:2|max:100',
+      aPersonMiddleName: 'string|min:2|max:100',
+      aPersonDOB: 'date_format:YYYY-MM-DD'
+    }
+    validator.validateAll(data, pattern).then((person) => {
+      if (person.aPersonIIN && !iinCheck(person.aPersonIIN, 1, new Date(person.aPersonDOB), person.dPersonGenderID === 9 ? true : false, true)) throw `invalid iin ${person.aPersonIIN}`;
+      db.insertRecord({
+        text: sql.persons.INSERT_PERSON(person)
+      }, (response) => {
+        if (response.status === 201) {
+          person.id = Number(response.data.created_person_id);
+          OperationAPI.createOperation({
+            operationTypeID: 1, sessionID: session.sessionID
+          }, (response) => {
+            if (response.status === 201) LogAPI.logPerson(response.data.id, person);
+          });
+          return cb({ status: response.status, data: response.data });
+        } else if (response) return cb({ status: response.status, data: response.data });
+        else return cb({ status: 500, data: null });
+      });
+    }).catch((errors) => {
+      console.error(errors);
+      if (errors) return cb({ status: 400, data: errors });
+      else return cb({ status: 500, data: null });
+    });
+  }
+  static updatePerson(session, data, cb) {
+    console.log(data);
+    const pattern = {
+      aPersonIIN: 'string|min:12|max:12',
+      aPersonLastName: 'string|min:2|max:100',
+      aPersonFirstName: 'required|string|min:2|max:100',
+      aPersonMiddleName: 'string|min:2|max:100',
+      aPersonDOB: 'date',
+      isDeleted: 'boolean',
+      id: 'required'
+    }
+    validator.validateAll(data, pattern).then((person) => {
+      if (person.aPersonIIN && !iinCheck(person.aPersonIIN, 1, new Date(person.aPersonDOB), person.dPersonGenderID === 9 ? true : false, true)) throw `invalid iin ${person.aPersonIIN}`;
+      db.updateRecord({
+        text: sql.persons.UPDATE_PERSON(person)
+      }, (response) => {
+        if (response.status === 200) {
+          OperationAPI.createOperation({
+            operationTypeID: 11, sessionID: session.sessionID
+          }, (response) => {
+            if (response.status === 201) LogAPI.logPerson(response.data.id, person);
+          });
+          return cb({ status: response.status, data: response.data });
+        } else return cb({ status: 500, data: null });
+      });
+    }).catch((errors) => {
+      console.error(errors);
+      if (errors) return cb({ status: 400, data: errors });
+      else return cb({ status: 500, data: null });
+    });
+  }
+  static deletePerson(session, person, cb) {
+    db.updateRecord({
+      text: sql.persons.DELETE_PERSON(person)
+    }, (response) => {
+      if (response.status === 200) {
+        OperationAPI.createOperation({
+          operationTypeID: 12, sessionID: session.sessionID
+        }, (response) => {
+          if (response.status === 201) LogAPI.logPerson(response.data.id, person);
+        });
+        return cb({ status: response.status, data: response.data });
+      } else return cb({ status: 500, data: null });
+    });
+  }
+  static restorePerson(session, person, cb) {
+    db.updateRecord({
+      text: sql.persons.RESTORE_PERSON(person)
+    }, (response) => {
+      if (response.status === 200) {
+        OperationAPI.createOperation({
+          operationTypeID: 13, sessionID: session.sessionID
+        }, (response) => {
+          if (response.status === 201) LogAPI.logPerson(response.data.id, person);
+        });
+        return cb({ status: response.status, data: response.data });
+      } else return cb({ status: 500, data: null });
+    });
+  }
+}
+
+function iinCheck(iin, clientType, birthDate, sex, isResident) {
+  //clientType: 1 - Физ. лицо (ИИН), 2 - Юр. лицо (БИН)
+  //birthDate: дата рождения (в формате Javascript Date)
+  //sex: true - м, false - ж
+  //isResident: true - резидент, false: нерезидент (true: по умолчанию)
+  isResident = isResident || true;
+  if (!iin) return false;
+  if (iin.length != 12) return false;
+  if (!(/[0-9]{12}/.test(iin))) return false;
+  switch (clientType) {
+    case 1:
+      //Физ. лицо
+      //Проверяем первый фасет на совпадение с датой рождения ГГММДД
+      if (iin.substring(0, 6) != (
+        "" +
+        (birthDate.getYear()) +
+        ((birthDate.getMonth() + 1) < 10 ? "0" : "") +
+        (birthDate.getMonth() + 1) +
+        (birthDate.getDate() < 10 ? "0" : "") +
+        birthDate.getDate())) return false;
+      //Проверяем пол и век рождения
+      let s = parseInt(iin.substring(6, 7));
+      if (((s % 2) == 1) != sex) return false;
+      if (
+        birthDate.getFullYear() < (1800 + parseInt(s / 2) * 100)
+        || birthDate.getFullYear() > (1900 + parseInt(s / 2) * 100)) return false;
+      break;
+    case 2:
+      //Юр. лицо
+      //Проверяем корректность даты (насколько это возможно)
+      let m = parseInt(iin.substring(2, 4));
+      if (m > 12) return false;
+      //Проверяем признак резидентства
+      let r = parseInt(iin.substring(4, 5));
+      if (r < 4 || r > 6 || (r == 4 && !isResident) || (r == 5 && isResident)) return false;
+      break;
+  }
+  //Проверяем контрольный разряд
+  const b1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+  const b2 = [3, 4, 5, 6, 7, 8, 9, 10, 11, 1, 2];
+  let a = [];
+  let controll = 0;
+  for (let i = 0; i < 12; i++) {
+    a[i] = parseInt(iin.substring(i, i + 1));
+    if (i < 11) controll += a[i] * b1[i];
+  }
+  controll = controll % 11;
+  if (controll == 10) {
+    console.log("s");
+    controll = 0;
+    for (let i = 0; i < 11; i++)
+      controll += a[i] * b2[i];
+    controll = controll % 11;
+  }
+  if (controll != a[11]) return false;
+  return true;
 }

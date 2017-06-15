@@ -1,29 +1,36 @@
 (function () {
   'use strict';
 
-  app.controller('CreatePersonCtrl', function CreatePersonCtrl($modalInstance, $scope, $http) {
+  app.controller('UpdatePersonCtrl', function UpdatePersonCtrl($modalInstance, $http, person) {
 
-    var vm = this;
+    let vm = this;
 
-    vm.person = {};
+    vm.person = angular.copy(person);
 
-    vm.createPerson = function (person) {
+    vm.ok = function () {
       $http({
-        url: '/api/persons',
-        method: 'POST',
-        data: person
+        url: `/api/persons/${vm.person.id}`,
+        method: 'PUT',
+        data: vm.person
       }).then(function (response) {
-        if (response.status === 201) {
-          console.log(response.data);
+        if (response.status === 200) {
+          $modalInstance.close(vm.person);
+        } else {
+          console.error(response);
         }
       }, function (response) {
         console.error(response);
-      })
+      });
+    }
+
+    vm.cancel = function () {
+      console.log('cancel');
+      $modalInstance.dismiss();
     }
 
     vm.genders = [];
 
-    (function getPersonGender() {
+    vm.getPersonGender = function () {
       $http({
         url: 'api/dict/person-genders',
         method: 'GET'
@@ -33,6 +40,7 @@
           for (let i = 0; i < len; i++) {
             vm.genders.push(response.data[i]);
           }
+          console.log(vm.genders);
           return vm.genders;
         } else if (response.status === 204) {
           return vm.genders;
@@ -40,12 +48,9 @@
       }, function (response) {
         console.error(response);
       });
-    })();
+    } 
 
-    vm.cancel = function () {
-      $modalInstance.dismiss();
-    }
+    vm.getPersonGender();
 
   });
-
 })();

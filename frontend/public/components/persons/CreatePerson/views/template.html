@@ -1,7 +1,9 @@
-<h5>
-  Create person
-</h5>
-<form class="">
+<div class="modal-demo">
+  <div class="modal-header">
+    <h3 class="modal-title">Create person</h3>
+  </div>
+</div>
+<div class="modal-body">
   <div class="form-group">
     <label for="aPersonIIN">IIN</label>
     <input class="form-control" type="text" id="aPersonIIN" ng-model="vm.person.aPersonIIN">
@@ -20,11 +22,16 @@
   </div>
   <div class="form-group">
     <label for="aPersonDob">Date of birth</label>
-    <input class="form-control" type="text" id="aPersonDob" ng-model="vm.person.aPersonDob">
+    <input class="form-control" type="date" id="aPersonDob" ng-model="vm.person.aPersonDob">
   </div>
   <div class="form-group">
     <label for="aPersonGenderID">Gender</label>
-    <input class="form-control" type="text" id="aPersonGenderID" ng-model="vm.person.aPersonGenderID">
+    <select class="form-control" ng-model="vm.person.dPersonGenderID">
+      <option ng-value="gender.id" ng-bind="gender.aDictValueNameRU" ng-repeat="gender in vm.genders"></option>
+    </select>
   </div>
-</form>
-<button class="btn btn-default" type="button" name="button" ng-click="vm.createPerson(vm.person)">Create person</button>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" type="button" name="button" ng-click="vm.createPerson(vm.person)">Create</button>
+  <button class="btn btn-default" type="button" name="button" ng-click="vm.cancel()">Cancel</button>
+</div>

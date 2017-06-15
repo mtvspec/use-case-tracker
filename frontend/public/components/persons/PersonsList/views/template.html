@@ -20,6 +20,12 @@
       <th>
         Gender
       </th>
+      <th>
+        Status
+      </th>
+      <th>
+        Manage
+      </th>
     </tr>
     <tr ng-repeat="person in vm.persons | filter: searchPerson">
       <td>
@@ -38,20 +44,82 @@
         {{person.aPersonDOB}}
       </td>
       <td>
-        {{person.aPersonGenderID}}
+        {{vm.getPersonGenderByID(person.dPersonGenderID)}}
+      </td>
+      <td>
+        {{person.isDeleted}}
+      </td>
+      <td>
+        <button class="btn btn-default btn-xs" ng-click="vm.openUpdatePersonModal(person)">
+          <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+        </button>
+        <button class="btn btn-default btn-xs" id="deletePersonBTN" ng-click="vm.deletePerson(person.id)">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </button>
+        <button class="btn btn-default btn-xs" id="restorePersonBTN" ng-click="vm.restorePerson(person.id)">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </button>
       </td>
     </tr>
   </table>
 </div>
 
-<button class="btn btn-default" type="button" name="button" data-toggle="modal" data-target="#createPerson">Create person</button>
+<button class="btn btn-default" id="openCreatePersonModal" ng-click="vm.openCreatePersonModal()">Create person</button>
 
+
+<!-- Create person : Modal -->
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel" id="createPerson">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="gridSystemModalLabel">Create person</h4>
+      </div>
+      <div class="modal-body">
+        <form class="">
+          <div class="form-group">
+            <label for="aPersonIIN">IIN</label>
+            <input class="form-control" type="text" id="aPersonIIN" ng-model="vm.person.aPersonIIN">
+          </div>
+          <div class="form-group">
+            <label for="aPersonLastName">Last name</label>
+            <input class="form-control" type="text" id="aPersonLastName" ng-model="vm.person.aPersonLastName">
+          </div>
+          <div class="form-group">
+            <label for="aPersonFirstName">First name</label>
+            <input class="form-control" type="text" id="aPersonFirstName" ng-model="vm.person.aPersonFirstName" ng-required="">
+          </div>
+          <div class="form-group">
+            <label for="aPersonMiddleName">Middle name</label>
+            <input class="form-control" type="text" id="aPersonMiddleName" ng-model="vm.person.aPersonMiddleName">
+          </div>
+          <div class="form-group">
+            <label for="aPersonDob">Date of birth</label>
+            <input class="form-control" type="text" id="aPersonDob" ng-model="vm.person.aPersonDOB">
+          </div>
+          <div class="form-group">
+            <label for="aPersonGenderID">Gender</label>
+            <select class="form-control" ng-model="vm.person.dPersonGenderID">
+              <option ng-value="gender.id" ng-bind="gender.aDictValueNameRU" ng-repeat="gender in vm.genders"></option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" ng-click="vm.createPerson(vm.person)">Create person</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Update person : Modal -->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel" id="updatePerson">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel">Update person</h4>
       </div>
       <div class="modal-body">
         <form class="">
@@ -83,7 +151,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" ng-click="vm.createPerson(vm.person)">Create person</button>
+        <button type="button" class="btn btn-primary" ng-click="vm.updatePerson(vm.person)">Update person</button>
       </div>
     </div>
   </div>

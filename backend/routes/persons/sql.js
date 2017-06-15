@@ -2,7 +2,7 @@
 
 const Queries = {
   persons: {
-    SELECT_ALL_PERSONS: function () {
+    SELECT_ALL_PERSONS() {
       return `
       SELECT
         id,
@@ -10,8 +10,8 @@ const Queries = {
         a_person_last_name "aPersonLastName",
         a_person_first_name "aPersonFirstName",
         a_person_middle_name "aPersonMiddleName",
-        to_char(a_person_dob, 'YYYY-MM-DD') "aPersonDOB",
-        d_person_gender_id "aPersonGenderID",
+        to_char(a_person_dob, 'DD.MM.YYYY') "aPersonDOB",
+        d_person_gender_id "dPersonGenderID",
         is_deleted "isDeleted"
       FROM
         persons.e_person
@@ -19,7 +19,7 @@ const Queries = {
         id ASC;
       `;
     },
-    SELECT_PERSON_BY_ID(personID) {
+    SELECT_PERSON_BY_ID(person) {
       return `
       SELECT
         id,
@@ -27,82 +27,83 @@ const Queries = {
         a_person_last_name "aPersonLastName",
         a_person_first_name "aPersonFirstName",
         a_person_middle_name "aPersonMiddleName",
-        to_char(a_person_dob, 'YYYY-MM-DD') "aPersonDOB",
+        to_char(a_person_dob, 'DD.MM.YYYY') "aPersonDOB",
         d_person_gender_id "dPersonGenderID",
         is_deleted "isDeleted"
       FROM
         persons.e_person
-      WHERE
-        id = ${personID};
+      WHERE id = ${person.id};
       `;
     },
-    SELECT_PERSON (id) {
+    SELECT_PERSON(person) {
       return `
       SELECT
         id
       FROM
         persons.e_person
-      WHERE
-        id = ${id};`;
+      WHERE id = ${person.id};`;
     },
-    SELECT_PERSON_BY_IIN(iin) {
+    SELECT_PERSON_BY_IIN(person) {
       return `
       SELECT
         id
       FROM
         persons.e_person
-      WHERE
-        a_person_iin = '${iin}';
+      WHERE a_person_iin = '${person.aPersonIIN}';
       `;
     },
-    INSERT_PERSON(person, session, user) {
+    INSERT_PERSON(person) {
       return `
-      SELECT
-        persons.create_person (
-          v_a_person_iin := '${person.aPersonIIN}',
-          v_a_person_last_name := '${person.aPersonLastName}',
-          v_a_person_first_name := '${person.aPersonFirstName}',
-          v_a_person_middle_name := '${person.aPersonMiddleName}',
-          v_a_person_dob := ${convertDate(person.aPersonDOB)},
-          v_d_person_gender_id := '${person.aPersonGenderID}',
-          v_e_session_id := ${session.id},
-          v_e_user_id := ${user.id}
-        );
+      INSERT INTO persons.e_person (
+          a_person_iin,
+          a_person_last_name,
+          a_person_first_name,
+          a_person_middle_name,
+          a_person_dob,
+          d_person_gender_id
+        ) VALUES (
+        ${convertData(person.aPersonIIN)},
+        ${convertData(person.aPersonLastName)},
+        '${person.aPersonFirstName}',
+        ${convertData(person.aPersonMiddleName)},
+        ${convertData(person.aPersonDOB)},
+        ${convertData(person.dPersonGenderID)}
+      ) RETURNING id "created_person_id";
       `;
     },
-    UPDATE_PERSON(data) {
+    UPDATE_PERSON(person) {
       return `
-      SELECT
-        persons.update_person (
-          ${data.person.id},
-          '${data.person.aPersonIIN}',
-          '${data.person.aPersonLastName}',
-          '${data.person.aPersonFirstName}',
-          '${data.person.aPersonMiddleName}',
-          ${convertDate(data.person.aPersonDOB)},
-          '${data.person.aPersonGenderID}',
-          ${data.sessionID},
-          ${data.userID}
-        );
+      UPDATE
+        persons.e_person
+      SET
+        a_person_iin = ${convertData(person.aPersonIIN)},
+        a_person_last_name = ${convertData(person.aPersonLastName)},
+        a_person_first_name = ${convertData(person.aPersonFirstName)},
+        a_person_middle_name = ${convertData(person.aPersonMiddleName)},
+        a_person_dob = ${convertData(person.aPersonDOB)},
+        d_person_gender_id = ${convertData(person.dPersonGenderID)}
+      WHERE id = ${person.id}
+      RETURNING id "updated_person_id";
       `;
     },
-    DELETE_PERSON(data) {
+    DELETE_PERSON(person) {
       return `
-      SELECT
-        persons.delete_person (
-          ${data.personID},
-          ${data.sessionID},
-          ${data.userID}
-        );`;
+      UPDATE
+        persons.e_person
+      SET
+        is_deleted = true
+      WHERE id = ${person.id}
+      RETURNING id "deleted_person_id";
+      `;
     },
-    RESTORE_PERSON(data) {
+    RESTORE_PERSON(person) {
       return `
-      SELECT
-        persons.restore_person (
-          ${data.personID},
-          ${data.sessionID},
-          ${data.userID}
-        );
+      UPDATE
+        persons.e_person
+      SET
+        is_deleted = false
+      WHERE id = ${person.id}
+      RETURNING id "restored_person_id";
       `;
     }
   }
@@ -110,6 +111,7 @@ const Queries = {
 
 module.exports = Queries;
 
-function convertDate(date) {
-  return `${date ? "'" + date + "'" : 'null'}`;
+function convertData(data) {
+  if (data === undefined) return 'null';
+  return `${data ? "'" + data + "'" : 'null'}`;
 }
