@@ -7,7 +7,10 @@ let Sessions = require('./Sessions.js');
 
 module.exports = class SessionAPI {
   constructor() {
+    let instance = this;
 
+    if (instance) return instance;
+    else return this;
   }
   /***
    * @function openSession

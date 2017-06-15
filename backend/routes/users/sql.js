@@ -74,6 +74,24 @@ const Queries = {
       AND
         u.id = ${userID};
       `;
+    },
+    INSERT_USER(userData, session) {
+      return `
+      INSERT INTO
+        users.e_user (
+          e_person_id,
+          u_username,
+          u_password,
+          a_user_email
+        ) values (
+          ${userData.ePersonID},
+          '${userData.username}',
+          '${userData.password}',
+          '${userData.aUserEmail}'
+        )
+      RETURNING
+        id;
+      `;
     }
   }
 }

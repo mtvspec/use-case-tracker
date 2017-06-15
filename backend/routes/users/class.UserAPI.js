@@ -1,161 +1,90 @@
 'use strict';
 
 const bcrypt = require('bcrypt-nodejs');
-const ID = require('./../../common/classes/id');
-const User = require('./class.User.js');
 const SessionAPI = require('./sessions/class.SessionAPI.js');
 const db = require('./../../db.js');
 const sql = require('./sql.js');
 
 module.exports = class UserAPI {
-  constructor() {
-
-  }
-  static getUsers(req, res) {
+  static getUsers(cb) {
     db.selectAllRecords({
       text: sql.users.SELECT_ALL_USERS()
-    }, function (response) {
-      if (response && response.status) {
-        return res
-        .status(response.status)
-        .json(response.data)
-        .end();
-      } else {
-        return res
-        .status(500)
-        .end();
-      }
+    }, (response) => {
+      if (response) return cb({ status: response.status, data: response.data });
+      else return cb({ status: 500, data: null });;
     });
   }
-  static checkUsername (req, res) {
+  static checkUsername(username, cb) {
     db.selectRecordById({
-      text: sql.users.SELECT_USER_ID_BY_USERNAME(req.body.username)
-    }, function (response) {
-      if (response && response.status === 200) {
-        return res
-        .status(400)
-        .json({
-          username: `'username': '${req.body.username}' is unavailable`
-        })
-        .end();
-      } else if (response && response.status === 204) {
-        return res
-        .status(200)
-        .end();
-      }
+      text: sql.users.SELECT_USER_ID_BY_USERNAME(username)
+    }, (response) => {
+      if (response) return cb({ status: response.status, data: response.data });
+      else return cb({ status: 500, data: null });
     });
   }
-  /***
+  /**
    * @function getMe
-   * @param token
+   * @param {string} token
    * @return me
    */
-  static getMe(req, res) {
-    if (req.cookies.session) {
-      let token = req.cookies.session;
-      UserAPI.getUserID(token, function (response) {
-        if (response && response.status === 200) {
-          let session = {
-            sessionID: response.data.sessionID,
-            userID: response.data.userID
-          };
-          db.selectRecordById({
-            text: sql.users.SELECT_USER_DATA_BY_ID(session.userID)
-          }, function (response) {
-            if (response && response.status === 200) {
-              return res
-              .status(200)
-              .json(response.data)
-              .end();
-            } else {
-              return res
-              .json(response.data)
-              .end();
-            }
-          });
-        } else {
-          return res
-          .status(500)
-          .end();
-        }
-      });
-    } else {
-      return res
-      .status(401)
-      .end();
-    }
+  static getMe(userID, cb) {
+    db.selectRecordById({
+      text: sql.users.SELECT_USER_DATA_BY_ID(userID)
+    }, (response) => {
+      if (response) return cb({ status: response.status, data: response.data });
+      else return cb({ status: 500, data: null });
+    });
   }
-  /***
+	/**
   * @param user
   * @return user_id
   */
-  static createUser(req, res) {
-    let user = new User(req.body);
-    if (user.username && user.password) {
-      db.insertRecord({
-        text: sql.users.INSERT_USER (
-          user,
-          req.User
-        )
-      }, function(response) {
-        return cb(response)
-      });
-    } else {
-      return res
-      .status(400)
-      .json(user)
-      .end();
-    }
+  static createUser(userData, session, cb) {
+    userData.password = bcrypt.hashSync(userData.password);
+    db.insertRecord({
+      text: sql.users.INSERT_USER(userData, session.sessionID, session.userID)
+    }, (response) => {
+      if (response) return cb({ status: response.status, data: response.data });
+      else return cb({ status: 500, data: null });
+    });
   }
   static getUserID(token, cb) {
     db.selectRecordById({
       text: sql.users.SELECT_USER_AND_SESSION_ID_BY_SESSION_TOKEN(token)
-    }, function(response) {
-      return cb(response);
+    }, (response) => {
+      if (response) return cb({ status: response.status, data: response.data });
+      else return cb({ status: 500, data: null });
     });
   }
-  /***
-   * @function authentificateUser
-   * @param userCredentials (username & password)
+  /**
+   * @method authentificateUser
+   * @param {Object} userCredentials (username & password)
    * if success
-   * @return status(200) & and session token
+   * @return {Object} status(200) & and session token
    * else
-   * @return status(400) & message('invalid password')
+   * @return {Object} status(400) & message('invalid password')
    * else
-   * @return status(400) & messages
+   * @return {Object} status(400) & messages
   */
   static authentificateUser(userData, cb) {
-    let userDataValidationResult = new User(userData);
-    if (userDataValidationResult.User) {
-      let User = userDataValidationResult.User;
-      db.selectRecordById({
-        text: sql.users.SELECT_USER_ID_AND_PASSWORD_BY_USERNAME(User.username)
-      }, function(response) {
+    db.selectRecordById({
+      text: sql.users.SELECT_USER_ID_AND_PASSWORD_BY_USERNAME(userData.username)
+    }, (response) => {
+      if (response) {
         if (response && response.status === 200) {
-          if (bcrypt.compareSync(User.password, response.data.u_password)) {
-            SessionAPI.openSession(response.data.id, function (response) {
+          if (bcrypt.compareSync(userData.password, response.data.u_password)) {
+            SessionAPI.openSession(response.data.id, (response) => {
               return cb(response);
             });
-          } else {
-            return cb({
-              status: 400,
-              data: 'invalid password'
-            });
-          }
-        } else {
-          return cb(response);
-        }
-      });
-    } else {
-      return cb({
-        status: 400,
-        data: userDataValidationResult.messages
-      });
-    }
+          } else return cb({ status: 400, data: 'invalid password' });
+        } else return cb(response);
+      } else return cb({ status: 500, data: null });
+    });
   }
-  static logOut(token, cb) {
-    SessionAPI.closeSession(token, function (response) {
-      return cb(response);
+  static logOut(sessionID, cb) {
+    SessionAPI.closeSession(sessionID, (response) => {
+      if (response) return cb({ status: response.status, data: response.data });
+      else return cb({ status: 500, data: null });
     });
   }
 }
