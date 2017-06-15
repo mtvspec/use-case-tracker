@@ -26,6 +26,7 @@
     "babel-standalone": "^6.19.0",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
+    "indicative": "^2.2.1",
     "multer": "^1.2.0",
     "pg": "^6.1.0",
     "pg-pool": "^1.4.0",
