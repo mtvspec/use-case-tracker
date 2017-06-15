@@ -4,23 +4,36 @@ const router = require('express').Router();
 const OrganizationAPI = require('./class.OrganizationAPI.js');
 
 router
-.get('/', function (req, res) {
-  OrganizationAPI.getOrganizations(req, res);
+.get('/', (req, res) => {
+  OrganizationAPI.getOrganizations((response) => {
+    return res.status(response.status).json(response.data).end();
+  });
 })
-.get('/:id', function (req, res) {
-  OrganizationAPI.getOrganizationByID(req, res);
+.get('/:id', (req, res) => {
+  OrganizationAPI.getOrganizationByID({ id: req.params.id }, (response) => {
+    return res.status(response.status).json(response.data).end();
+  });
 })
-.post('/', function (req, res) {
-  OrganizationAPI.createOrganization(req, res);
+.post('/', (req, res) => {
+  OrganizationAPI.createOrganization(req.session, req.body, (response) => {
+    return res.status(response.status).json(response.data).end();
+  });
 })
-.put('/:id', function (req, res) {
-  OrganizationAPI.updateOrganization(req, res);
+.put('/:id', (req, res) => {
+  req.body.id = req.params.id;
+  OrganizationAPI.updateOrganization(req.session, req.body, (response) => {
+    return res.status(response.status).json(response.data).end();
+  });
 })
-.delete('/:id', function (req, res) {
-  OrganizationAPI.deleteOrganization(req, res);
+.delete('/:id', (req, res) => {
+  OrganizationAPI.deleteOrganization(req.session, { id: req.params.id }, (response) => {
+    return res.status(response.status).json(response.data).end();
+  });
 })
-.options('/:id', function (req, res) {
-  OrganizationAPI.restoreOrganization(req, res);
+.options('/:id', (req, res) => {
+  OrganizationAPI.restoreOrganization(req.session, { id: req.params.id }, (response) => {
+    return res.status(response.status).json(response.data).end();
+  });
 })
 
 module.exports = router;

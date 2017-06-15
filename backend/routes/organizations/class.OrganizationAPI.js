@@ -1,236 +1,149 @@
 'use strict';
 
-const ID = require ('./../../common/classes/id');
-const UserAPI = require('./../users/class.UserAPI.js');
-const Organization = require('./class.Organization.js');
+let organizations = [];
+const validator = require('indicative');
 const db = require('./../../db.js');
 const sql = require('./sql.js');
+const OperationAPI = require('./../operations/class.OperationAPI.js');
+const LogAPI = require('./../log');
 
-class OrganizationAPI {
-  constructor() {
-
+module.exports = class OrganizationAPI {
+  static getOrganizations(cb) {
+    return cb({ status: 200,data: organizations });
   }
-  static getOrganizations(req, res) {
-    db.selectAllRecords({
-      text: sql.organizations.SELECT_ALL_ORGANIZATIONS(req.User)
-    }, function (response) {
-      if (response && response.status && response.status === 200) {
-        return res
-        .status(response.status)
-        .json(response.data)
-        .end();
-      } else if (response && response.status && response.status === 204) {
-        return res
-        .status(response.status)
-        .end();
-      } else {
-        return res
-        .status(500)
-        .end();
+  static getOrganizationByID(organization, cb) {
+    console.log(organization.id);
+    let isFound = false;
+    for (let i = 0; i < organizations.length; i++) {
+      
+      console.log(organizations[i]);
+      if (organizations[i].id == organization.id) {
+        console.log('ok');
+        isFound = true;
+        return cb({ status: 200, data: organizations[i] });
       }
+    }
+    if (!isFound) return cb({ status: 204, data: [] });
+    // db.selectRecordById({
+//       text: sql.organizations.SELECT_ORGANIZATION_BY_ID(organization)
+//     }, (response) => {
+//       if (response) return cb(response);
+//       else return cb({ status: 500, data: null });
+//     });
+  }
+  static createOrganization(session, data, cb) {
+    const pattern = {
+      aOrganizarionBin: 'string|min:12|max:12',
+      aOrganizationShortName: 'required|string|min: 1, max: 1000',
+      aOrganizationOfficialName: 'string|min:1, max: 4000'
+    }
+    validator.validateAll(data, pattern).then((organization) => {
+      db.insertRecord({
+        text: sql.organizations.INSERT_ORGANIZATION(organization)
+      }, (response) => {
+        if (response.status === 201) {
+          organizations.push(response.data);
+          OperationAPI.createOperation({
+            operationTypeID: 49, sessionID: session.sessionID
+          }, (response) => {
+            if (response.status === 201) LogAPI.logOrganization(response.data.id, response.data);
+          });
+          return cb({ status: response.status, data: { created_organization_id: response.data.id } });
+        } else if (response) return cb({ status: response.status, data: response.data });
+        else return cb({ status: 500, data: null });
+      });
+    }).catch((errors) => {
+      console.error(errors);
+      if (errors) return cb({ status: 400, data: errors });
+      else return cb({ status: 500, data: null });
     });
   }
-  static getOrganizationByID(req, res) {
-    let organization = new ID(req.params.id);
-    if (organization.id) {
-      db.selectRecordById({
-        text: sql.organizations.SELECT_ORGANIZATION_BY_ID(
-          organization,
-          req.User
-        )
-      }, function (response) {
-        if (response) {
-          return res
-          .status(response.status)
-          .json(response.data)
-          .end();
-        } else {
-          return res
-          .status(500)
-          .end();
-        }
-      });
-    } else {
-      return res
-      .status(400)
-      .send(`'id' is required`)
-      .end();
+  static updateOrganization(session, data, cb) {
+    const pattern = {
+      aOrganizarionBin: 'string|min:12|max:12',
+      aOrganizationShortName: 'required|string|min: 1, max: 1000',
+      aOrganizationOfficialName: 'string|min:1, max: 4000'
     }
-  }
-  static createOrganization(req, res) {
-    let result = new Organization(req.body);
-    if (result.organization) {
-      let organization = result.organization;
-      if (organization.aOrganizationBin) {
-        OrganizationAPI.getOrganizationByBIN(organization.aOrganizationBin, res, function (response) {
-          if (response && response.status === 200) {
-            return res
-            .status(400)
-            .json(`duplicate 'bin': ${organization.aOrganizationBin}`)
-            .end();
+    validator.validateAll(data, pattern).then((organization) => {
+      db.updateRecord({
+        text: sql.organizations.UPDATE_ORGANIZATION(organization)
+      }, (response) => {
+        if (response.status === 200) {
+          let organization = response.data;
+          for (let i = 0; i < organizations.length; i++) {
+            if (organizations[i].id == organization.id) {
+              organizations[i] = organization;
+            }
           }
+          OperationAPI.createOperation({
+            operationTypeID: 49, sessionID: session.sessionID
+          }, (response) => {
+            if (response.status === 201) LogAPI.logOrganization(response.data.id, organization);
+          });
+          return cb({ status: response.status, data: { updated_organization_id: response.data.id } });
+        } else if (response) return cb({ status: response.status, data: response.data });
+        else return cb({ status: 500, data: null });
+      });
+    }).catch((errors) => {
+      console.error(errors);
+      if (errors) return cb({ status: 400, data: errors });
+      else return cb({ status: 500, data: null });
+    });
+  }
+  static deleteOrganization(session, oranization, cb) {
+    db.updateRecord({
+      text: sql.organizations.DELETE_ORGANIZATION(oranization)
+    }, (response) => {
+      if (response.status === 200) {
+        let organization = response.data;
+        for (let i = 0; i < organizations.length; i++) {
+          if (organizations[i].id == organization.id) {
+            organizations[i] = organization;
+          }
+        }
+        OperationAPI.createOperation({
+          operationTypeID: 49, sessionID: session.sessionID
+        }, (response) => {
+          if (response.status === 201) LogAPI.logOrganization(response.data.id, organization);
         });
-      }
-      if (res.headersSent) {
-        return;
-      }
-      let token = req.cookies.session;
-      if (!token) {
-        return res
-        .status(401)
-        .end();
-      } else {
-        UserAPI.getUserID(token, function (response) {
-          if (response && response.status === 200) {
-            db.insertRecord({
-              text: sql.organizations.INSERT_ORGANIZATION(
-                organization,
-                {id: response.data.sessionID},
-                {id: response.data.userID}
-              )
-            }, function (response) {
-              if (response && response.status === 201) {
-                return res
-                .status(response.status)
-                .json({
-                  id: response.data.create_organization
-                })
-                .end()
-              } else {
-                return res
-                .status(response.status)
-                .json(response.data)
-                .end();
-              }
-            })
-          } else {
-            return res
-            .status(401)
-            .end();
-          }
-        })
-      }
-    } else {
-      return res
-      .status(400)
-      .json(org)
-      .end();
-    }
+        return cb({ status: response.status, data: { deleted_organization_id: response.data.id } });
+      } else if (response) return cb({ status: response.status, data: response.data });
+      else return cb({ status: 500, data: null });
+    });
   }
-  static updateOrganization(req, res) {
-    let id = new ID(req.params.id);
-    let organization = new Organization(req.body);
-    if (id.id && organization) {
-      organization.id = id.id;
-      OrganizationAPI.getOrganizationByBIN(organization.bin, res, function (response) {
-        if (response && (response.status === 200 || response.status === 204)) {
-          if (response.id != req.body.id) {
-            db.updateRecord({
-              text: sql.organizations.UPDATE_ORGANIZATION(
-                organization,
-                req.User
-              )
-            }, function (response) {
-              if (response && response.status === 200) {
-                return res
-                .status(response.status)
-                .json({
-                  id: response.data.update_organization
-                })
-                .end();
-              } else if (response.status && response.data) {
-                return res
-                .status(response.status)
-                .json(response.data)
-                .end();
-              } else {
-                return res
-                .status(500)
-                .end();
-              }
-            });
-          } else {
-            return res
-            .status(400)
-            .json(`duplicate 'bin': ${organization.bin}`)
-            .end();
+  static restoreOrganization(session, oranization, cb) {
+    db.updateRecord({
+      text: sql.organizations.RESTORE_ORGANIZATION(oranization)
+    }, (response) => {
+      if (response.status === 200) {
+        let organization = response.data;
+        for (let i = 0; i < organizations.length; i++) {
+          if (organizations[i].id == organization.id) {
+            organizations[i] = organization;
           }
         }
-      });
-    } else {
-      return res
-      .status(400)
-      .json(organization)
-      .end();
-    }
-  }
-  static deleteOrganization(req, res) {
-    let organization = new ID(req.params.id);
-    if (organization.id) {
-      db.updateRecord({
-        text: sql.organizations.DELETE_ORGANIZATION(
-          organization,
-          req.User
-        )
-      }, function (response) {
-        if (response && response.status === 200) {
-          return res
-          .status(response.status)
-          .json({
-            id: response.data.delete_organization
-          })
-          .end();
-        } else {
-          return res
-          .status(response.status)
-          .json(response.data)
-          .end();
-        }
-      });
-    }
-  }
-  static restoreOrganization(req, res) {
-    let organization = new ID(req.params.id);
-    if (organization.id) {
-      db.updateRecord({
-        text: sql.organizations.RESTORE_ORGANIZATION(
-          organization,
-          req.User
-        )
-      }, function (response) {
-        if (response && response.status === 200) {
-          return res
-          .status(response.status)
-          .json({
-            id: response.data.restore_organization
-          })
-          .end();
-        } else {
-          return res
-          .status(response.status)
-          .json(response.data)
-          .end();
-        }
-      });
-    }
+        OperationAPI.createOperation({
+          operationTypeID: 49, sessionID: session.sessionID
+        }, (response) => {
+          if (response.status === 201) LogAPI.logOrganization(response.data.id, organization);
+        });
+        return cb({ status: response.status, data: { restored_organization_id: response.data.id } });
+      } else if (response) return cb({ status: response.status, data: response.data });
+      else return cb({ status: 500, data: null });
+    });
   }
 }
 
-OrganizationAPI.getOrganizationByBIN = function (bin, res, cb) {
-  db.selectRecordById({
-    text: sql.organizations.SELECT_ORGANIZATION_BY_BIN(bin)
-  }, function (response) {
-    if (response && response.status && response.status === 200) {
-      return cb({
-        status: 200,
-        id: response.data.id
-      });
-    } else if (response && response.status && response.status === 204) {
-      return cb({
-        status: 204
-      });
+function getOrganizations() {
+  db.selectAllRecords({
+    text: sql.organizations.SELECT_ALL_ORGANIZATIONS()
+  }, (response) => {
+    if (response.status === 200) {
+      for (let i = 0; i < response.data.length; i++) {
+        organizations.push(response.data[i]);
+      }
     }
   });
 }
 
-module.exports = OrganizationAPI;
+getOrganizations();
