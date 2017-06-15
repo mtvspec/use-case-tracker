@@ -6,10 +6,13 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+const validate = require('indicative');
 
+let Sessions = require('./routes/users/sessions/Sessions.js');
 const UserAPI = require('./routes/users/class.UserAPI.js');
 
 const routes = require('./routes/index');
+const operations = require('./routes/operations');
 const components = require('./routes/components');
 const subjects = require('./routes/use-case-subjects');
 const useCases = require('./routes/use-cases');
@@ -38,21 +41,30 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function (req, res, next) {
-  if (req.url === '/api/users/login' ||
-  req.url === '/api/users/username') {
-    next();
-  } else {
-    if (!req.cookies.session) {
+  console.log(Date());
+  if (req.params.id) {
+    if (validate.is.positive(req.params.id) === false) {
       return res
+      .status(400)
+      .end('id is invalid');
+    } else {
+      req.params.id = Number(req.params.id);
+    }
+  }
+
+  if (req.url === '/api/users/login' || req.url === '/api/users/username') {
+    next();
+  } else if (!validate.is.string(req.cookies.session)) {
+    return res
       .status(401)
       .end();
-    }
-    isAuthentificated(req, req.cookies.session, res);
-    next();
+  } else {
+    isAuthentificated(req, res, next);
   }
 });
 
 app.use('/api', routes);
+app.use('/api/operations', operations);
 app.use('/api/dict', dict);
 app.use('/api/components', components);
 app.use('/api/use-case-subjects', subjects);
@@ -67,7 +79,7 @@ app.use('/api/projects', projects);
 app.use('/api/systems', systems);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
@@ -78,38 +90,56 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    console.log({
-      err: err,
-      stack: err.stack
+  app.use(function (err, req, res, next) {
+    console.error({
+      err: err
+      // stack: err.stack
     });
     res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
+    // res.render('error', {
+    //   message: err.message,
+    //   error: err
+    // });
+    res.end();
   });
 }
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
     error: {}
   });
 });
-
-function isAuthentificated(req, token, res) {
-  UserAPI.getUserID(token, function (response) {
-    if (response.status === 200) {
-      req.token = token;
-    } else {
-      return res
-      .status(401);
+/**
+ * @desc This method validates 
+ * @method isAuthentificated
+ * @param {object} req
+ * @param {object} res
+ * @param {object} next
+ */
+function isAuthentificated(req, res, next) {
+  let _isAuthentificated = false;
+  for (let i = 0; i < Sessions.length; i++) {
+    if (Sessions[i].token === req.cookies.session) {
+      req.session = {
+        token: req.cookies.session,
+        userID: Sessions[i].userID,
+        sessionID: Sessions[i].id
+      }
+      _isAuthentificated = true;
+      next();
+      break;
     }
-  });
+  }
+  if (_isAuthentificated === false) {
+    console.error(new Error(`session ${req.cookies.session} is expired(or invalid)`));
+    return res
+      .status(401)
+      .end('session is expired (or invalid)');
+  }
 }
 
 module.exports = app;
