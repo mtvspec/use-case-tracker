@@ -2,52 +2,60 @@
 
 const Queries = {
   dict: {
-    SELECT_ALL_SLICE_STATES() {
+    SELECT_ALL_DICTS() {
       return `
       SELECT
-        id,
-        a_use_case_slice_state_name_en "aUseCaseSliceStateNameEN",
-        a_use_case_slice_state_desc_en "aUseCaseSliceStateDescEN",
-        a_use_case_slice_state_name_ru "aUseCaseSliceStateNameRU",
-        a_use_case_slice_state_desc_ru "aUseCaseSliceStateDescRU"
+        d.id,
+        d.a_dict_system_name,
+        d.a_dict_name_en,
+        d.a_dict_desc_en,
+        d.a_dict_name_ru,
+        d.a_dict_desc_ru
       FROM
-        use_case_slices.d_use_case_slice_state
+        dict.e_dict d
       ORDER BY
-        id
-      ASC;
-      `;
+        d.id;`
     },
-    SELECT_ALL_DEFECT_STATES() {
+    SELECT_DICT_VALUES_BY_DICT_NAME(dictName) {
       return `
       SELECT
-        id,
-        a_defect_state_name_en "aDefectStateNameEN",
-        a_defect_state_desc_en "aDefectStateDescEN",
-        a_defect_state_name_ru "aDefectStateNameRU",
-        a_defect_state_desc_ru "aDefectStateDescRU"
+        v.id,
+        v.a_dict_value_name_en "aDictValueNameEN",
+        v.a_dict_value_desc_en "aDictValueDescEN",
+        v.a_dict_value_name_ru "aDictValueNameRU",
+        v.a_dict_value_desc_ru "aDictValueDescRU",
+        v.is_deleted "isDeleted"
       FROM
-        defects.d_defect_state
+        dict.e_dict_value v,
+        dict.e_dict d
+      WHERE v.e_dict_id = d.id
+      AND d.a_dict_system_name = '${dictName}'
       ORDER BY
-        id
-      ASC;
-      `;
+        v.id ASC;
+      `
     },
-    SELECT_ALL_PROJECT_KINDS() {
+    INSERT_DICT_VALUE(dictValue) {
       return `
-      SELECT
-        id,
-        a_project_kind_name_en "aProjectKindNameEN",
-        a_project_kind_desc_en "aProjectKindDescEN",
-        a_project_kind_name_ru "aProjectKindNameRU",
-        a_project_kind_desc_ru "aProjectKindDescRU",
-        is_deleted "isDeleted"
-      FROM
-        projects.d_project_kind
-      ORDER BY
-        id
-      ASC;
-      `;
+      INSERT INTO dict.e_dict_value (
+        e_dict_id,
+        a_dict_value_name_en,
+        a_dict_value_desc_en,
+        a_dict_value_name_ru,
+        a_dict_value_desc_ru
+      ) VALUES (
+        ${dictValue.id},
+        '${dictValue.aDictValueNameEN}',
+        ${convertData(dictValue.aDictValueDescEN)},
+        '${dictValue.aDictValueNameRU}',
+        ${convertData(dictValue.aDictValueDescRU)}
+        ) RETURNING id "created_dict_value_id";
+      `
     }
   }
 }
+
 module.exports = Queries;
+
+function convertData(data) {
+  return `${data ? "'" + data + "'" : 'null'}`;
+}

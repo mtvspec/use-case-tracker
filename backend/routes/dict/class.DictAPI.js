@@ -4,58 +4,28 @@ const db = require('./../../db.js');
 const sql = require('./sql.js');
 
 module.exports = class DictAPI {
-  constructor() {
-
-  }
-  static getUseCaseSliceStates(req, res) {
+  static getAllDicts(cb) {
     db.selectAllRecords({
-      text: sql.dict.SELECT_ALL_SLICE_STATES()
-    }, function (response) {
-      if (response && response.status === 200) {
-        return res
-        .status(200)
-        .json(response.data)
-        .end();
-      } else if (response.status === 204) {
-        return res
-        .status(204)
-        .json([])
-        .end();
-      }
+      text: sql.dict.SELECT_ALL_DICTS()
+    }, (response) => {
+      if (response) return cb(response);
+      else return cb({ status: 500, data: null });
     })
   }
-  static getDefectStates(req, res) {
+  static getDictValues(dictName, cb) {
     db.selectAllRecords({
-      text: sql.dict.SELECT_ALL_DEFECT_STATES()
-    }, function (response) {
-      if (response && response.status === 200) {
-        return res
-        .status(200)
-        .json(response.data)
-        .end();
-      } else if (response.status === 204) {
-        return res
-        .status(204)
-        .json([])
-        .end();
-      }
+      text: sql.dict.SELECT_DICT_VALUES_BY_DICT_NAME(dictName)
+    }, (response) => {
+      if (response) return cb(response);
+      else return cb({ status: 500, data: null });
     })
   }
-  static getProjectKinds(req, res) {
-    db.selectAllRecords({
-      text: sql.dict.SELECT_ALL_PROJECT_KINDS()
-    }, function (response) {
-      if (response && response.status === 200) {
-        return res
-        .status(200)
-        .json(response.data)
-        .end();
-      } else if (response.status === 204) {
-        return res
-        .status(204)
-        .json([])
-        .end();
-      }
+  static createDictValue(dictValue, cb) {
+    db.insertRecord({
+      text: sql.dict.INSERT_DICT_VALUE(dictValue)
+    }, (response) => {
+      if (response) return cb(response);
+      else return cb({ status: 500, data: null });
     })
   }
 }
