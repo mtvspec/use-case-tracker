@@ -3,13 +3,20 @@
 const router = require('express').Router();
 const CustomerAPI = require('./class.CustomerAPI.js');
 
-router
-.get('/', function (req, res) {
-  CustomerAPI.getCustomers(req, res);
+module.exports = router
+.get('/', (req, res) => {
+  CustomerAPI.getCustomers((response) => {
+    return res.status(response.status).json(response.data).end();
+  });
 })
-.post('/', function (req, res) {
-  console.log(req.body);
-  CustomerAPI.createCustomer(req, res);
+.post('/', (req, res) => {
+  CustomerAPI.createCustomer(req.session, req.body, (response) => {
+    return res.status(response.status).json(response.data).end();
+  });
 })
-
-module.exports = router;
+.put('/:id', (req, res) => {
+  req.body.id = req.params.id;
+  CustomerAPI.updateCustomer(req.session, req.body, (response) => {
+    return res.status(response.status).json(response.data).end();
+  });
+})
