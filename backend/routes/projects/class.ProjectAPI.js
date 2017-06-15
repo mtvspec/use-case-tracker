@@ -1,121 +1,93 @@
 'use strict';
 
-const ID = require('./../../common/classes/id');
-const Project = require('./class.Project.js');
-const userSQL = require('./../users/sql.js');
-const UserAPI = require('./../users/class.UserAPI.js');
+const validator = require('indicative');
 const db = require('./../../db.js');
 const sql = require('./sql.js');
+const OperationAPI = require('./../operations/class.OperationAPI.js');
+const LogAPI = require('./../log');
 
-class ProjectAPI {
-  constructor() {
-
-  }
-  static getProjects(req, res) {
+module.exports = class ProjectAPI {
+  static getProjects(cb) {
     db.selectAllRecords({
-      text: sql.projects.SELECT_ALL_PROJECTS(req.User)
-    }, function (response) {
-      if (response) {
-        if (response.status) {
-          if (response.status === 200) {
-            return res.status(response.status).json(response.data).end();
-          } else {
-            return res.status(response.status).end();
-          }
-        } else {
-          return res.status(500).end();
-        }
-      } else {
-        return res.status(500).end();
-      }
+      text: sql.projects.SELECT_ALL_PROJECTS()
+    }, (response) => {
+      if (response) return cb(response);
+      else return cb({ status: 500, data: null });
     });
   }
-  static getProjectByID(req, res) {
-    let project = new ID(req.params.id);
-    if (project.id) {
-      db.selectRecordById({
-        text: sql.projects.SELECT_PROJECT_BY_ID(project.id)
-      }, function (response) {
-        if (response) {
-          if (response.status) {
-            if (response.status === 200) {
-              return res.status(response.status).json(response.data).end();
-            } else {
-              return res.status(response.status).end();
-            }
-          } else {
-            return res.status(500).end();
-          }
-        } else {
-          return res.status(500).end();
-        }
-      });
-    } else {
-      return res.status(400).json(project).end();
-    }
+  static getProjectByID(project, cb) {
+    db.selectRecordById({
+      text: sql.projects.SELECT_PROJECT_BY_ID(project)
+    }, (response) => {
+      if (response) return cb(response);
+      else return cb({ status: 500, data: null });
+    });
   }
-  static createProject(req, id, res) {
-    let result = new Project(req.body);
-    let session = {
-      token: req.cookies.session
+  static createProject(session, data, cb) { 
+    const pattern = {
+      aProjectName: 'required|string',
+      aProjectDesc: 'string',
+      aOfficialProjectName: 'string',
+      aPlanStartDate: 'date_format:YYYY-MM-DD',
+      aPlanEndDate: 'date_format:YYYY-MM-DD',
+      aFactStartDate: 'date_format:YYYY-MM-DD',
+      aFactEndDate: 'date_format:YYYY-MM-DD'
     }
-    let user = {
-      id: id
-    }
-    if (result.project) {
-      let project = result.project;
-      UserAPI.getUserID(session.token, function (response) {
-        if (response.status === 200) {
-          db.insertRecord({
-            text: sql.projects.INSERT_PROJECT(
-              project,
-              {id: response.data.sessionID},
-              {id: response.data.userID}
-            )
-          }, function (response) {
-            if (response.status === 201) {
-              return res
-              .status(response.status)
-              .json({
-                id: response.data.create_project
-              })
-              .end();
-            } else {
-              return res
-              .status(response.status)
-              .json(response.data)
-              .end();
-            }
+    validator.validate(data, pattern).then((project) => {
+      project.dProjectStateID = 36;
+      db.insertRecord({
+        text: sql.projects.INSERT_PROJECT(project)
+      }, (response) => {
+        if (response.status === 201) {
+          project.id = Number(response.data.created_project_id);
+          OperationAPI.createOperation({
+            operationTypeID: 47, sessionID: session.sessionID
+          }, (response) => {
+            if (response.status === 201) LogAPI.logProject(response.data.id, project, (response) => {
+              console.log(`Logged:\n ${project}`);
+            });
           });
-        } else {
-          return res
-          .status(401)
-          .end();
-        }
-      })
-    } else {
-      return res.status(400).json(result.messages).end();
+          return cb({ status: response.status, data: response.data });
+        } else if (response) return cb({ status: response.status, data: response.data });
+        else return cb({ status: 500, data: null });
+      });
+    }).catch((errors) => {
+      console.error(errors);
+      if (errors) return cb({ status: 400, data: errors });
+      else return cb({ status: 500, data: null });
+    });
+  }
+  static updateProject(session, data, cb) {
+    const pattern = {
+      aProjectName: 'required|string',
+      aProjectDesc: 'string',
+      aOfficialProjectName: 'string',
+      aPlanStartDate: 'date_format:YYYY-MM-DD',
+      aPlanEndDate: 'date_format:YYYY-MM-DD',
+      aFactStartDate: 'date_format:YYYY-MM-DD',
+      aFactEndDate: 'date_format:YYYY-MM-DD'
     }
+    validator.validate(data, pattern).then((project) => {
+      project.dProjectStateID = 45;
+      db.updateRecord({
+        text: sql.projects.UPDATE_PROJECT(project)
+      }, (response) => {
+        if (response.status === 200) {
+          OperationAPI.createOperation({
+            operationTypeID: 48, sessionID: session.sessionID
+          }, (response) => {
+            if (response.status === 201) LogAPI.logProject(response.data.id, project);
+          });
+          return cb({ status: response.status, data: response.data });
+        } else return cb({ status: 500, data: null });
+      });
+    }).catch((errors) => {
+      console.error(errors);
+      if (errors) return cb({ status: 400, data: errors });
+      else return cb({ status: 500, data: null });
+    })
   }
   static startProject(req, res) {
     let project = new Project(req.body);
   }
 }
-
-module.exports = ProjectAPI;
-
-function authentificateUser(id) {
-  db.selectRecordById({
-    text: sql.users.SELECT_USER_BY_ID(id)
-  }, function (response) {
-    if (response) {
-      if (response.status && response.status === 200) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  })
-};

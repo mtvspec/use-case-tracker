@@ -1,37 +1,31 @@
 'use strict';
 
 const router = require('express').Router();
-const UserAPI = require('./../users/class.UserAPI.js');
 const ProjectAPI = require('./class.ProjectAPI.js');
 
-router
+module.exports = router
 // GET projects
-.get('/', function (req, res) {
-  ProjectAPI.getProjects(req, res);
-})
-.get('/:id', function (req, res) {
-  ProjectAPI.getProjectByID(req, res);
-})
-.post('/', function (req, res) {
-  if (!req.cookies.session) {
-    return res
-    .status(401)
-    .end();
-  }
-  let session = req.cookies.session;
-  UserAPI.getUserID(session, function(response) {
-    if (response.status === 200) {
-      ProjectAPI.createProject(req, response.data.id, res);
-    } else {
-      return res
-      .status(401)
-      .end();
-    }
+.get('/', (req, res) => {
+  ProjectAPI.getProjects((response) => {
+    return res.status(response.status).json(response.data).end();
   });
-  
 })
-.post('/start_project/:id', function (req, res) {
+.get('/:id', (req, res) => {
+  ProjectAPI.getProjectByID({ id: req.params.id }, (response) => {
+    return res.status(response.status).json(response.data).end();
+  });
+})
+.post('/', (req, res) => {
+  ProjectAPI.createProject(req.session, req.body, (response) => {
+    return res.status(response.status).json(response.data).end();
+  });
+})
+.put('/:id', (req, res) => {
+  req.body.id = req.params.id;
+  ProjectAPI.updateProject(req.session, req.body, (response) => {
+    return res.status(response.status).json(response.data).end();
+  });
+})
+.post('/start_project/:id', (req, res) => {
   ProjectAPI.startProject(req, res);
 });
-
-module.exports = router;
