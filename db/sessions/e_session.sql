@@ -16,10 +16,7 @@ CREATE TABLE sessions.e_session (
     ),
     FOREIGN KEY (
       e_user_id
-    ) REFERENCES users.e_user (id),
-    FOREIGN KEY (
-      d_session_state_id
-    ) REFERENCES sessions.d_session_state (id)
+    ) REFERENCES users.e_user (id)
 );
 --============================================================================--
 -- Open session (open_session)
