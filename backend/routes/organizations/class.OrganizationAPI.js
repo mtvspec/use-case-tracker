@@ -9,7 +9,8 @@ const LogAPI = require('./../log');
 
 module.exports = class OrganizationAPI {
   static getOrganizations(cb) {
-    return cb({ status: 200,data: organizations });
+    if (organizations.length > 0) return cb({ status: 200, data: organizations });
+    else return cb({ status: 204, data: [] });
   }
   static getOrganizationByID(organization, cb) {
     let isFound = false;
