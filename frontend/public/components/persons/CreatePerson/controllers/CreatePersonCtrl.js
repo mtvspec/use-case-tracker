@@ -3,7 +3,7 @@
 
   app.controller('CreatePersonCtrl', function CreatePersonCtrl($modalInstance, $scope, $http) {
 
-    var vm = this;
+    let vm = this;
 
     vm.person = {};
 
