@@ -17,7 +17,7 @@
         Description
       </th>
     </tr>
-    <tr ng-repeat="project in vm.projects | filter: searchProject">
+    <tr ng-if="vm.projects && vm.projects[0] && vms.projects[0].dProjectKindID && vm.project" ng-repeat="project in vm.projects | filter: searchProject">
       <td>
         {{vm.getProjectKindNameRU(project.dProjectKindID)}}
       </td>

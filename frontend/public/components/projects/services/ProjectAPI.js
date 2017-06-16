@@ -46,19 +46,21 @@
             method: 'GET'
           }).then(function (response) {
             if (response && response.status === 200 || response.status === 204) {
+              console.log(response.data);
               let len = response.data.length;
               for (let i = 0; i < len; i++) {
+                
                 projectKinds.push(response.data[i]);
               }
-              return cb(projectKinds);
+              return projectKinds;
             } else {
-              return cb(projectKinds);
+              return projectKinds;
             }
           }, function (response) {
             console.error(response);
           })
         } else {
-          return cb(projectKinds);
+          return projectKinds;
         }
       },
       getProjectKindName: function(id, cb) {
