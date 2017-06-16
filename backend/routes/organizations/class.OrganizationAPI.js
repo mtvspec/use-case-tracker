@@ -13,7 +13,7 @@ module.exports = class OrganizationAPI {
   }
   static getOrganizationByID(organization, cb) {
     let isFound = false;
-    for (let i = 0; i < organizations.length; i++) {
+    for (let i in organizations) {
       if (organizations[i].id == organization.id) {
         isFound = true;
         return cb({ status: 200, data: organizations[i] });
