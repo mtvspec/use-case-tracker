@@ -12,24 +12,14 @@ module.exports = class OrganizationAPI {
     return cb({ status: 200,data: organizations });
   }
   static getOrganizationByID(organization, cb) {
-    console.log(organization.id);
     let isFound = false;
     for (let i = 0; i < organizations.length; i++) {
-      
-      console.log(organizations[i]);
       if (organizations[i].id == organization.id) {
-        console.log('ok');
         isFound = true;
         return cb({ status: 200, data: organizations[i] });
       }
     }
     if (!isFound) return cb({ status: 204, data: [] });
-    // db.selectRecordById({
-//       text: sql.organizations.SELECT_ORGANIZATION_BY_ID(organization)
-//     }, (response) => {
-//       if (response) return cb(response);
-//       else return cb({ status: 500, data: null });
-//     });
   }
   static createOrganization(session, data, cb) {
     const pattern = {
@@ -42,11 +32,12 @@ module.exports = class OrganizationAPI {
         text: sql.organizations.INSERT_ORGANIZATION(organization)
       }, (response) => {
         if (response.status === 201) {
-          organizations.push(response.data);
+          const organization = response.data;
+          organizations.push(organization);
           OperationAPI.createOperation({
             operationTypeID: 49, sessionID: session.sessionID
           }, (response) => {
-            if (response.status === 201) LogAPI.logOrganization(response.data.id, response.data);
+            if (response.status === 201) LogAPI.logOrganization(response.data.id, organization);
           });
           return cb({ status: response.status, data: { created_organization_id: response.data.id } });
         } else if (response) return cb({ status: response.status, data: response.data });
