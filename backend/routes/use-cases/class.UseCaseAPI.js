@@ -4,28 +4,12 @@ const sql = require('./sql.js');
 const db = require('./../../db.js');
 
 module.exports = class UseCaseAPI {
-  constructor() {
-
-  }
-  static getUseCases(req, res) {
+  static getUseCases(cb) {
     db.selectAllRecords({
       text: sql.useCases.SELECT_ALL_USE_CASES()
-    }, function (response) {
-      if (response && response.status === 200) {
-        return res
-        .status(200)
-        .json(response.data)
-        .end();
-      } else if (response.status === 204) {
-        return res
-        .status(204)
-        .json([])
-        .end();
-      } else {
-        return res
-        .status(500)
-        .end();
-      }
-    })
+    }, (response) => {
+      if (response) return cb({ status: response, data: response.data });
+      else return cb({ status: 500, data: null });
+    });
   }
 }

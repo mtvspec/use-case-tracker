@@ -1,14 +1,9 @@
 'use strict';
 
 const sql = require('./sql.js');
-const System = require('./class.System.js');
-const UserAPI = require('./../users/class.UserAPI.js');
 const db = require('./../../db.js');
 
 module.exports = class SystemAPI {
-  constructor() {
-
-  }
   static getSystems(req, res) {
     db.selectAllRecords({
       text: sql.systems.SELECT_ALL_SYSTEMS()

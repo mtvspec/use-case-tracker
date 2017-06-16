@@ -1,7 +1,6 @@
 'use strict';
 
 const router = require('express').Router();
-const System = require('./class.System.js');
 const SystemAPI = require('./class.SystemAPI.js');
 
 router
