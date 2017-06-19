@@ -1,5 +1,5 @@
 <div
-class="form-group">
+class="button-group">
   <!-- create person button -->
   <button
   class="btn btn-default"
@@ -9,7 +9,8 @@ class="form-group">
   <input
   class="form-control"
   type="text"
-  ng-model="searchPerson">
+  ng-model="searchPerson"
+  placeholder="Search person...">
 </div>
 <div
 class="personsList">
@@ -25,7 +26,7 @@ class="personsList">
       <th>Status</th>
       <th>Manage</th>
     </tr>
-    <tr ng-repeat="person in vm.persons | filter: searchPerson">
+    <tr ng-repeat="person in vm.persons | filter: searchPerson | filter: person.isDeleted = false">
       <td ng-bind="person.aPersonIIN"></td>
       <td ng-bind="person.aPersonLastName"></td>
       <td ng-bind="person.aPersonFirstName"></td>

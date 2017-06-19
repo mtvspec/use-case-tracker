@@ -35,6 +35,7 @@ module.exports = router
    */
   .post('/', (req, res) => {
     PersonAPI.createPerson(req.session, req.body, (response) => {
+      if (response.status === 201) res.io.emit('createdPersonID', response.data.id);
       return res.status(response.status).json(response.data).end();
     })
   })
@@ -48,6 +49,7 @@ module.exports = router
   .put('/:id', (req, res) => {
     req.body.id = req.params.id;
     PersonAPI.updatePerson(req.session, req.body, (response) => {
+      if (response.status === 200) res.io.emit('updatedPersonID', response.data.id);
       return res.status(response.status).json(response.data).end();
     });
   })
@@ -59,6 +61,7 @@ module.exports = router
    */
   .delete('/:id', (req, res) => {
     PersonAPI.deletePerson(req.session, { id: req.params.id }, (response) => {
+      if (response.status === 200) res.io.emit('deletedPersonID', response.data.id);
       return res.status(response.status).json(response.data).end();
     });
   })
@@ -70,6 +73,7 @@ module.exports = router
    */
   .options('/:id', (req, res) => {
     PersonAPI.restorePerson(req.session, { id: req.params.id }, (response) => {
+      if (response.status === 200) res.io.emit('restoredPersonID', response.data.id);
       return res.status(response.status).json(response.data).end();
     });
   });

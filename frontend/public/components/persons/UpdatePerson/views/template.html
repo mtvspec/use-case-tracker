@@ -1,0 +1,72 @@
+<div
+class="modal-demo noselect">
+  <div
+  class="modal-header">
+    <h3
+    class="modal-title"
+    id="modal-title">Update person</h3>
+  </div>
+  <div
+  class="modal-body"
+  id="modal-body">
+    <form
+    name="updatePersonForm">
+      <div class="form-group">
+        <label
+        for="aPersonIIN">IIN</label>
+        <input
+        class="form-control"
+        type="text"
+        id="aPersonIIN"
+        ng-model="vm.person.aPersonIIN">
+      </div>
+      <div class="form-group">
+        <label
+        for="aPersonLastName">Last name</label>
+        <input
+        class="form-control"
+        type="text"
+        id="aPersonLastName"
+        ng-model="vm.person.aPersonLastName">
+      </div>
+      <div class="form-group">
+        <label
+        for="aPersonFirstName">First name</label>
+        <input
+        class="form-control"
+        type="text"
+        id="aPersonFirstName"
+        ng-model="vm.person.aPersonFirstName"
+        required>
+      </div>
+      <div class="form-group">
+        <label for="aPersonMiddleName">Middle name</label>
+        <input class="form-control" type="text" id="aPersonMiddleName" ng-model="vm.person.aPersonMiddleName">
+      </div>
+      <div class="form-group">
+        <label for="aPersonDob">Date of birth</label>
+        <input class="form-control" type="date" id="aPersonDob" ng-model="vm.person.aPersonDOB">
+      </div>
+      <div class="form-group">
+        <label for="dPersonGenderID">Gender</label>
+        <select class="form-control" name="" ng-model="vm.person.dPersonGenderID">
+          <option
+          ng-selected="vm.person.dPersonGenderID"
+          ng-value="gender.id"
+          ng-bind="gender.aDictValueNameRU"
+          ng-repeat="gender in vm.genders"></option>
+        </select>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+    class="btn btn-primary"
+    type="button"
+    ng-click="vm.save()">Save & Close</button>
+    <button
+    class="btn btn-default"
+    type="button"
+    ng-click="vm.cancel()">Cancel</button>
+  </div>
+</div>

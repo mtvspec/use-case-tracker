@@ -1,5 +1,6 @@
 'use strict';
 
+let persons = [];
 const validator = require('indicative');
 const db = require('./../../db.js');
 const sql = require('./sql.js');
@@ -8,20 +9,18 @@ const LogAPI = require('./../log');
 
 module.exports = class PersonAPI {
   static getPersons(cb) {
-    db.selectAllRecords({
-      text: sql.persons.SELECT_ALL_PERSONS()
-    }, (response) => {
-      if (response) return cb({ status: response.status, data: response.data });
-      else return cb({ status: 500, data: null });
-    });
+    if (persons.length > 0) return cb({ status: 200, data: persons });
+    else return cb({ status: 204, data: [] });
   }
   static getPersonByID(person, cb) {
-    db.selectRecordById({
-      text: sql.persons.SELECT_PERSON_BY_ID(person)
-    }, (response) => {
-      if (response) return cb({ status: response.status, data: response.data });
-      else return cb({ status: 500, data: null });
-    });
+    let isFound = false;
+    for (let i in persons) {
+      if (persons[i].id == person.id) {
+        isFound = true;
+        return cb({ status: 200, data: persons[i] });
+      }
+    }
+    if (isFound === false) return cb({ status: 204, data: [] });
   }
   static getPersonByIIN(aPersonIIN, cb) {
     db.selectRecordById({
@@ -54,7 +53,8 @@ module.exports = class PersonAPI {
         text: sql.persons.INSERT_PERSON(person)
       }, (response) => {
         if (response.status === 201) {
-          person.id = Number(response.data.created_person_id);
+          const person = response.data;
+          persons.push(person);
           OperationAPI.createOperation({
             operationTypeID: 1, sessionID: session.sessionID
           }, (response) => {
@@ -71,7 +71,6 @@ module.exports = class PersonAPI {
     });
   }
   static updatePerson(session, data, cb) {
-    console.log(data);
     const pattern = {
       aPersonIIN: 'string|min:12|max:12',
       aPersonLastName: 'string|min:2|max:100',
@@ -87,6 +86,13 @@ module.exports = class PersonAPI {
         text: sql.persons.UPDATE_PERSON(person)
       }, (response) => {
         if (response.status === 200) {
+          const person = response.data;
+          for (let i in persons) {
+            if (persons[i].id == person.id) {
+              persons[i] = person;
+              break;
+            }
+          }
           OperationAPI.createOperation({
             operationTypeID: 11, sessionID: session.sessionID
           }, (response) => {
@@ -106,6 +112,13 @@ module.exports = class PersonAPI {
       text: sql.persons.DELETE_PERSON(person)
     }, (response) => {
       if (response.status === 200) {
+        const person = response.data;
+        for (let i in persons) {
+          if (persons[i].id == person.id) {
+            persons[i] = person;
+            break;
+          }
+        }
         OperationAPI.createOperation({
           operationTypeID: 12, sessionID: session.sessionID
         }, (response) => {
@@ -120,6 +133,13 @@ module.exports = class PersonAPI {
       text: sql.persons.RESTORE_PERSON(person)
     }, (response) => {
       if (response.status === 200) {
+        const person = response.data;
+        for (let i in persons) {
+          if (persons[i].id == person.id) {
+            persons[i] = person;
+            break;
+          }
+        }
         OperationAPI.createOperation({
           operationTypeID: 13, sessionID: session.sessionID
         }, (response) => {
@@ -188,3 +208,18 @@ function iinCheck(iin, clientType, birthDate, sex, isResident) {
   if (controll != a[11]) return false;
   return true;
 }
+
+function _getPersons () {
+  db.selectAllRecords({
+    text: sql.persons.SELECT_ALL_PERSONS()
+  }, (response) => {
+    if (response.status === 200) {
+      for (let i in response.data) {
+        persons.push(response.data[i]);
+      }
+      return persons;
+    } else return persons;
+  });
+};
+
+_getPersons();

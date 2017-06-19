@@ -1,4 +1,4 @@
-<div class="modal-demo">
+<div class="modal-demo noselect">
   <div class="modal-header">
     <h3 class="modal-title">New person</h3>
   </div>
@@ -46,7 +46,7 @@
     ng-model="vm.person.aPersonDob">
   </div>
   <div class="form-group">
-    <label for="aPersonGenderID">Gender</label>
+    <label for="dPersonGenderID">Gender</label>
     <select
     class="form-control"
     ng-model="vm.person.dPersonGenderID">
@@ -61,12 +61,10 @@
   <button
   class="btn btn-primary"
   type="button"
-  name="button"
   ng-click="vm.createPerson(vm.person)"
-  ng-disabled="createCustomerForm.$invalid">Add & Close</button>
+  ng-disabled="createPersonForm.$invalid">Add & Close</button>
   <button
   class="btn btn-default"
   type="button"
-  name="button"
   ng-click="vm.cancel()">Cancel</button>
 </div>

@@ -1,46 +1,20 @@
 (function () {
   'use strict';
 
-  app.controller('CreatePersonCtrl', function CreatePersonCtrl($modalInstance, $scope, $http) {
+  app.controller('CreatePersonCtrl', function CreatePersonCtrl($modalInstance, PersonAPI) {
 
     let vm = this;
 
     vm.person = {};
 
+    vm.genders = PersonAPI.genders;
+    
     vm.createPerson = function (person) {
-      $http({
-        url: '/api/persons',
-        method: 'POST',
-        data: person
-      }).then(function (response) {
-        if (response.status === 201) {
-          console.log(response.data);
-        }
-      }, function (response) {
-        console.error(response);
-      })
+      if (typeof person.aPersonFirstName === 'string' && person.aPersonFirstName.length >= 2 && person.aPersonFirstName.length <= 100) {
+        PersonAPI.createPerson(person);
+        $modalInstance.close();
+      }
     }
-
-    vm.genders = [];
-
-    (function getPersonGender() {
-      $http({
-        url: 'api/dict/person-genders',
-        method: 'GET'
-      }).then(function (response) {
-        if (response.status === 200) {
-          let len = response.data.length;
-          for (let i = 0; i < len; i++) {
-            vm.genders.push(response.data[i]);
-          }
-          return vm.genders;
-        } else if (response.status === 204) {
-          return vm.genders;
-        }
-      }, function (response) {
-        console.error(response);
-      });
-    })();
 
     vm.cancel = function () {
       $modalInstance.dismiss();
