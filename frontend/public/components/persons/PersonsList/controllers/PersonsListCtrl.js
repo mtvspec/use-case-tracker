@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  app.controller('PersonsListCtrl', function PersonsListCtrl($http, $modal, socket, PersonAPI) {
+  app.controller('PersonsListCtrl', function PersonsListCtrl($modal, PersonAPI) {
 
     let vm = this;
 
@@ -10,10 +10,9 @@
 
     vm.person = {};    
 
-    vm.getPersonGenderByID = function (genderID) {
-      let len = vm.genders.length;
-      for (let i = 0; i < len; i++) {
-        if (vm.genders[i].id == genderID) {
+    vm.getPersonGenderByID = function (id) {
+      for (let i in vm.genders) {
+        if (vm.genders[i].id == id) {
           return vm.genders[i].aDictValueNameRU;
         };
       }
@@ -43,12 +42,12 @@
       });
     }
 
-    vm.deletePerson = function(personID) {
-      PersonAPI.deletePerson(personID);
+    vm.deletePerson =  function(id) {
+      PersonAPI.deletePerson(id); 
     }
     
-    vm.restorePerson = function (personID) {
-      PersonAPI.restorePerson(personID);
+    vm.restorePerson = function(id) {
+      PersonAPI.restorePerson(id);
     }
 
   });

@@ -3,190 +3,160 @@
   
   app.factory('PersonAPI', function ($http, socket) {
     
-    let persons = [];
+    let _persons = [];
     
-    let genders = [];
+    let _genders = [];
     
-    socket.on('createdPersonID', (personID) => {
-      _getPersonByID(personID);
+////////////////////////////////////////////////////////////////////////////////    
+    
+    socket.on('createdPersonID', (id) => {
+      _getPersonByID(id);
     });
     
-    socket.on('updatedPersonID', (personID) => {
-      $http({
-        url: `api/persons/${personID}`,
-        method: 'GET'
-      }).then((response) => {
-        let updated = false;
-        if (response.status === 200) {
-          for (let i in persons) {
-            if (persons[i].id === personID) {
-              updated = true;
-              persons[i] = response.data;
+    socket.on('updatedPersonID', (id) => {
+      $http.get(`api/persons/${id}`).then((res) => {
+        let isFound = false;
+        if (res.status === 200) {
+          for (let i in _persons) {
+            if (_persons[i].id === id) {
+              isFound = true;
+              _persons[i] = res.data;
             }
           }
-          if (updated === false) persons.push(response.data);
+          if (isFound === false) _persons.push(res.data);
         }
-      }, (response) => {
-        console.error(response);
+      }, (err) => {
+        console.error(err);
       });
     });
 
-    socket.on('deletedPersonID', (personID) => {
-      let updated = false;
-      for (let i in persons) {
-        if (persons[i].id === personID) {
-          updated = true;
-          persons[i].isDeleted = true;
+    socket.on('deletedPersonID', (id) => {
+      let isFound = false;
+      for (let i in _persons) {
+        if (_persons[i].id === id) {
+          isFound = true;
+          _persons[i].isDeleted = true;
           break;
         }
       }
-      if (updated === false) {
-        _getPersonByID(personID);
-      }
+      if (isFound === false) _getPersonByID(id);
     });
     
-    socket.on('restoredPersonID', (personID) => {
-      let updated = false;
-      for (let i in persons) {
-        if (persons[i].id === personID) {
-          updated = true;
-          persons[i].isDeleted = false;
+    socket.on('restoredPersonID', (id) => {
+      let isFound = false;
+      for (let i in _persons) {
+        if (_persons[i].id === id) {
+          isFound = true;
+          _persons[i].isDeleted = false;
           break;
         }
       }
-      if (updated === false) {
-        _getPersonByID(personID);
-      }
+      if (isFound === false) _getPersonByID(id);
     });
-    
+
+////////////////////////////////////////////////////////////////////////////////
+
     (function _getPersons() {
-      $http({
-        url: `api/persons/`,
-        method: 'GET'
-      }).then((response) => {
-        if (response.status === 200) {
-          for (let i in response.data) {
-            persons.push(response.data[i]);
-          }
+      $http.get(`api/persons/`).then((res) => {
+        if (res.status === 200) {
+          Object.assign(_persons, res.data);
         }
-      }, (response) => {
-        console.error(response);
-      })
-    })();
-    
-    function _getPersonByID(personID) {
-      $http({
-        url: `api/persons/${personID}`,
-        method: 'GET'
-      }).then((response) => {
-        if (response.status === 200) persons.push(response.data);
-      }, (response) => {
-        console.error(response);
-      })
-    }
-    
-    (function _getPersonGenders() {
-      $http({
-        url: 'api/dict/person-genders',
-        method: 'GET'
-      }).then(function (response) {
-        if (response.status === 200) {
-          for (let i in response.data)
-          genders.push(response.data[i]);
-          return genders;
-        }
-      }, function (response) {
-        console.error(response);
+      }, (err) => {
+        console.error(err);
       });
     })();
     
+    (function _getPersonGenders() {
+      $http.get('api/dict/person-genders').then((res) => {
+        if (res.status === 200) {
+          for (let i in res.data)
+          _genders.push(res.data[i]);
+          return _genders;
+        }
+      }, (err) => {
+        console.error(err);
+      });
+    })();
+
+////////////////////////////////////////////////////////////////////////////////
+    
     return {
-      persons: persons,
-      genders: genders,
-      getPersonByID(personID) {
-        for (let i in persons) {
-          if (persons[i].id === personID) {
-            return persons[i];
+      persons: _persons,
+      genders: _genders,
+      getPersonByID(id) {
+        for (let i in _persons) {
+          if (_persons[i].id === id) {
+            return _persons[i];
           }
         }
       },
-      getPersons: function (cb) {
-        return cb(persons);
-      },
-      getPersonGenders: function (cb) {
-        return cb(genders);
-      },
-      createPerson: function (person) {
-        $http({
-          url: '/api/persons',
-          method: 'POST',
-          data: person
-        }).then(function (response) {
-          if (response.status === 201) {
-            person.id = response.data.id;
-            persons.push(person);
+      createPerson: (person) => {
+        $http.post('/api/persons', person).then((res) => {
+          if (res.status === 201) {
+            person.id = res.data.id;
+            _persons.push(person);
           }
-        }, function (response) {
-          console.error(response);
-        })
+        }, (err) => {
+          console.error(err);
+        });
       },
-      updatePerson: function (person, cb) {
-        $http({
-          url: `/api/persons/${person.id}`,
-          method: 'PUT',
-          data: person
-        }).then(function (response) {
-          if (response.status === 200) {
-            for (let i in persons) {
-              if (persons[i].id === response.data.id) {
-                persons[i] = response.data;
+      updatePerson: (person, cb) => {
+        $http.put(`/api/persons/${person.id}`, person).then((res) => {
+          if (res.status === 200) {
+            for (let i in _persons) {
+              if (_persons[i].id === res.data.id) {
+                _persons[i] = res.data;
               }
             }
           }
-          return cb(response);
-        }, function (response) {
-          console.error(response);
-          return cb(response);
+          return cb(res);
+        }, (err) => {
+          console.error(err);
+          return cb(err);
         });
       },
-      deletePerson: function (personID) {
-        $http({
-          url: `/api/persons/${personID}`,
-          method: 'DELETE'
-        }).then(function (response) {
-          if (response.status === 200) {
-            for (let i in persons) {
-              if (persons[i].id === response.data.id) {
-                persons[i] = response.data;
+      deletePerson: (id) => {
+        $http.delete(`/api/persons/${id}`).then((res) => {
+          if (res.status === 200) {
+            for (let i in _persons) {
+              if (_persons[i].id === res.data.id) {
+                _persons[i] = res.data;
                 break;
               }
             }
           } else {
-            console.error(response);
+            console.error(res);
           }
-        }, function (response) {
-          console.error(response);
+        }, (err) => {
+          console.error(err);
         });
       },
-      restorePerson: function (personID) {
-        $http({
-          url: `/api/persons/${personID}`,
-          method: 'OPTIONS'
-        }).then(function (response) {
-          if (response.status === 200) {
-            for (let i in persons) {
-              if (persons[i].id === response.data.id) {
-                persons[i] = response.data;
+      restorePerson: (id) => {
+        $http.options(`/api/persons/${id}`).then((res) => {
+          if (res.status === 200) {
+            for (let i in _persons) {
+              if (_persons[i].id === res.data.id) {
+                _persons[i] = res.data;
                 break;
               }
             }
           } else {
-            console.error(response);
+            console.error(res);
           }
-        }, function (response) {
-          console.error(response);
+        }, (err) => {
+          console.error(err);
         });
       }
+    }
+    
+////////////////////////////////////////////////////////////////////////////////
+    
+    function _getPersonByID(id) {
+      $http.get(`api/persons/${id}`).then((res) => {
+        if (res.status === 200) _persons.push(res.data);
+      }, (err) => {
+        console.error(err);
+      });
     }
     
   });

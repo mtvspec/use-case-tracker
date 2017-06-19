@@ -1,184 +1,145 @@
 (function () {
   'use strict';
 
-  app.factory('OrganizationAPI', function ($http, socket) {
+  app.factory('OrganizationAPI', ($http, socket) => {
   
-    let organizations = [];
+    let _organizations = [];
+
+////////////////////////////////////////////////////////////////////////////////
   
-    socket.on('createdOrganizationID', (organizationID) => {
-      _getOrganizationByID(organizationID);
+    socket.on('createdOrganizationID', (id) => {
+      _getOrganizationByID(id);
     });
     
-    socket.on('updatedOrganizationID', (organizationID) => {
-      console.log(organizationID);
-      $http({
-        url: `api/organizations/${organizationID}`,
-        method: 'GET'
-      }).then((response) => {
-        let updated = false;
-        if (response.status === 200) {
-          for (let i in organizations) {
-            if (organizations[i].id === organizationID) {
-              console.log(organizations[i]);
-              updated = true;
-              organizations[i] = response.data;
+    socket.on('updatedOrganizationID', (id) => {
+      $http.get(`api/organizations/${id}`).then((res) => {
+        let isFound = false;
+        if (res.status === 200) {
+          for (let i in _organizations) {
+            if (_organizations[i].id === id) {
+              isFound = true;
+              _organizations[i] = res.data;
             }
           }
-          if (updated === false) organizations.push(response.data);
+          if (isFound === false) _organizations.push(res.data);
         }
-      }, (response) => {
-        console.error(response);
+      }, (err) => {
+        console.error(err);
       });
     });
 
-    socket.on('deletedOrganizationID', (organizationID) => {
-      let updated = false;
-      for (let i in organizations) {
-        if (organizations[i].id === organizationID) {
-          updated = true;
-          organizations[i].isDeleted = true;
+    socket.on('deletedOrganizationID', (id) => {
+      let isFound = false;
+      for (let i in _organizations) {
+        if (_organizations[i].id === id) {
+          isFound = true;
+          _organizations[i].isDeleted = true;
           break;
         }
       }
-      if (updated === false) _getOrganizationByID(organizationID);
+      if (isFound === false) _getOrganizationByID(id);
     });
     
-    socket.on('restoredPersonID', (organizationID) => {
-      let updated = false;
-      for (let i in organizations) {
-        if (organizations[i].id === organizationID) {
-          updated = true;
-          organizations[i].isDeleted = false;
+    socket.on('restoredPersonID', (id) => {
+      let isFound = false;
+      for (let i in _organizations) {
+        if (_organizations[i].id === id) {
+          isFound = true;
+          _organizations[i].isDeleted = false;
           break;
         }
       }
-      if (updated === false) _getOrganizationByID(organizationID);
+      if (isFound === false) _getOrganizationByID(id);
     });
+
+////////////////////////////////////////////////////////////////////////////////
     
     (function _getOrganizations() {
-      $http({
-        url: `api/organizations/`,
-        method: 'GET'
-      }).then((response) => {
-        if (response.status === 200) {
-          for (let i in response.data) {
-            organizations.push(response.data[i]);
+      $http.get(`api/organizations/`).then((res) => {
+        if (res.status === 200) {
+          for (let i in res.data) {
+            _organizations.push(res.data[i]);
           }
         }
-      }, (response) => {
-        console.error(response);
+      }, (err) => {
+        console.error(err);
       })
     })();
-    
-    function _getOrganizationByID(organizationID) {
-      $http({
-        url: `api/organizations/${organizationID}`,
-        method: 'GET'
-      }).then((response) => {
-        if (response.status === 200) organizations.push(response.data);
-      }, (response) => {
-        console.error(response);
-      })
-    }
+
+////////////////////////////////////////////////////////////////////////////////
 
     return {
-      organizations: organizations,
-      getOrganizations: function (cb) {
-        if (organizations.length === 0) {
-          $http({
-            url: '/api/organizations/',
-            method: 'GET'
-          }).then(function (response) {
-            if (response && response.status === 200) {
-              let len = response.data.length;
-              for (let i = 0; i < len; i++) {
-                organizations.push(response.data[i]);
-              }
-              return cb(organizations);
-            } else {
-              return cb(organizations);
-            }
-          })
-        } else {
-          return cb(organizations);
-        }
-      },
-      createOrganization: function (organization) {
-        $http({
-          url: '/api/organizations',
-          method: 'POST',
-          data: organization
-        }).then(function (response) {
-          if (response && response.status === 201) {
-            console.log(response.data);
-            organization.id = response.data.id;
-            organizations.push(organization);
-            return organizations;
+      organizations: _organizations,
+      createOrganization: (organization) => {
+        $http.post('/api/organizations', organization).then((res) => {
+          if (res.status === 201) {
+            organization.id = res.data.id;
+            _organizations.push(organization);
+            return _organizations;
           } else {
-            console.error(response);
+            console.error(res);
           }
-        }, function (response) {
-          console.error(response);
+        }, (err) => {
+          console.error(err);
         });
       },
-      updateOrganization: function (organization, cb) {
-        $http({
-          url: `/api/organizations/${organization.id}`,
-          method: 'PUT',
-          data: organization
-        }).then(function (response) {
-          if (response.status === 200) {
+      updateOrganization: (organization, cb) => {
+        $http.put(`/api/organizations/${organization.id}`, organization).then((res) => {
+          if (res.status === 200) {
             for (let i in organizations) {
-              if (organizations[i].id === response.data.id) {
-                organizations[i] = response.data;
+              if (_organizations[i].id === res.data.id) {
+                _organizations[i] = res.data;
                 break;
               }
             }
           }
-          return cb(response);
-        }, function (response) {
-          console.error(response);
-          return cb(response);
+          return cb(res);
+        }, (err) => {
+          console.error(err);
         });
       },
-      deleteOrganization: function (organizationID) {
-        $http({
-          url: `/api/organizations/${organizationID}`,
-          method: 'DELETE'
-        }).then(function (response) {
-          if (response.status === 200) {
-            for (let i in organizations) {
-              if (organizations[i].id === response.data.id) {
-                organizations[i] = response.data;
+      deleteOrganization: (id) => {
+        $http.delete(`/api/organizations/${id}`).then((res) => {
+          if (res.status === 200) {
+            for (let i in _organizations) {
+              if (_organizations[i].id === res.data.id) {
+                _organizations[i] = res.data;
                 break;
               }
             }
           } else {
-            console.error(response);
+            console.error(res);
           }
-        }, function (response) {
-          console.error(response);
+        }, (err) => {
+          console.error(err);
         });
       },
-      restoreOrganization: function (organizationID) {
-        $http({
-          url: `/api/organizations/${organizationID}`,
-          method: 'OPTIONS'
-        }).then(function (response) {
-          if (response.status === 200) {
+      restoreOrganization: (id) => {
+        $http.options(`/api/organizations/${id}`).then((res) => {
+          if (res.status === 200) {
             for (let i in organizations) {
-              if (organizations[i].id === response.data.id) {
-                organizations[i] = response.data;
+              if (_organizations[i].id === res.data.id) {
+                _organizations[i] = res.data;
                 break;
               }
             }
           } else {
-            console.error(response);
+            console.error(res);
           }
-        }, function (response) {
-          console.error(response);
+        }, (err) => {
+          console.error(err);
         });
       }
+    }
+
+////////////////////////////////////////////////////////////////////////////////
+
+    function _getOrganizationByID(id) {
+      $http.get(`api/organizations/${id}`).then((res) => {
+        if (res.status === 200) _organizations.push(res.data);
+      }, (err) => {
+        console.error(err);
+      });
     }
 
   });
