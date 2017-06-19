@@ -3,29 +3,18 @@ const Queries = {
     SELECT_ALL_ORGANIZATIONS() {
       return `
       SELECT
-        id,
-        a_organization_bin "aOrganizationBin",
-        a_organization_short_name "aOrganizationShortName",
-        a_organization_official_name "aOrganizationOfficialName",
-        is_deleted "isDeleted"
+        t.*
       FROM
-        organizations.e_organization
-      ORDER BY
-        id
-      ASC;
+        organizations.e_organization_view t;
       `;
     },
     SELECT_ORGANIZATION_BY_ID(organization) {
       return `
       SELECT
-        id,
-        a_organization_bin "aOrganizationBin",
-        a_organization_short_name "aOrganizationShortName",
-        a_organization_official_name "aOrganizationOfficialName",
-        is_deleted "isDeleted"
+        t.*
       FROM
-        organizations.e_organization
-      WHERE id = ${organization.id};
+        organizations.e_organization_view t
+      WHERE t.id = ${organization.id};
       `;
     },
     SELECT_ORGANIZATION_BY_BIN(organization) {
@@ -48,11 +37,11 @@ const Queries = {
         '${organization.aOrganizationShortName}',
         ${convertData(organization.aOrganizationOfficialName)}
       ) RETURNING
-        id,
-        a_organization_bin "aOrganizationBin",
-        a_organization_short_name "aOrganizationShortName",
-        a_organization_official_name "aOrganizationOfficialName",
-        is_deleted "isDeleted";
+          id,
+          a_organization_bin "aOrganizationBin",
+          a_organization_short_name "aOrganizationShortName",
+          a_organization_official_name "aOrganizationOfficialName",
+          is_deleted "isDeleted";
       `;
     },
     UPDATE_ORGANIZATION(organization) {

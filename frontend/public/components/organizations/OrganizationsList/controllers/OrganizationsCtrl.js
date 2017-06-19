@@ -1,19 +1,44 @@
 (function () {
   'use strict';
 
-  app.controller('OrganizationsCtrl', function OrganizationsCtrl(OrganizationAPI) {
+  app.controller('OrganizationsCtrl', function OrganizationsCtrl(OrganizationAPI, $modal) {
+    
     let vm = this;
 
-    vm.organization = {};
+    vm.organizations = OrganizationAPI.organizations;
 
-    vm.createOrganization = function (organization) {
-      OrganizationAPI.createOrganization(organization);
+    vm.openCreateOrganizationModal = function () {
+      let modal = $modal.open({
+        templateUrl: 'components/organizations/CreateOrganization/views/template.html',
+        controller: 'CreateOrganizationCtrl as vm'
+      });
     }
 
-    OrganizationAPI.getOrganizations(function (organizations) {
-      console.log(organizations);
-      vm.organizations = organizations;
-    });
+    vm.openUpdateOrganizationModal = function (organization) {
+      let modal = $modal.open({
+        templateUrl: 'components/organizations/UpdateOrganization/views/template.html',
+        controller: 'UpdateOrganizationCtrl as vm',
+        resolve: {
+          organization: function () {
+            return organization
+          }
+        }
+      });
+      modal.result.then(function (res) {
+        if (res && res.id) {
+          Object.assign(organization, res);
+        }
+      });
+    }
+    
+    vm.deleteOrganization = function(organizationID) {
+      OrganizationAPI.deleteOrganization(organizationID);
+    }
+    
+    vm.restoreOrganization = function (organizationID) {
+      OrganizationAPI.restoreOrganization(organizationID);
+    }
+    
 
   });
 

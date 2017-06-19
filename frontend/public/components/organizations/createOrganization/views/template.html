@@ -1,0 +1,54 @@
+<div
+class="modal-demo noselect">
+  <div
+  class="modal-header">
+    <h3
+    class="modal-title"
+    id="modal-title">New organization</h3>
+  </div>
+  <div
+  class="modal-body"
+  id="modal-body">
+    <form
+    name="createOrganizationForm">
+      <div class="form-group">
+        <label
+        for="aOrganizationBin">Bin</label>
+        <input
+        class="form-control"
+        type="text"
+        id="aOrganizationBin"
+        ng-model="vm.organization.aOrganizationBin">
+      </div>
+      <div class="form-group">
+        <label
+        for="aOrganizationShortName">Short name</label>
+        <input
+        class="form-control"
+        type="text"
+        id="aOrganizationShortName"
+        ng-model="vm.organization.aOrganizationShortName"
+        required>
+      </div>
+      <div class="form-group">
+        <label
+        for="aOrganizationOfficialName">Official name</label>
+        <input
+        class="form-control"
+        type="text"
+        id="aOrganizationOfficialName"
+        ng-model="vm.organization.aOrganizationOfficialName">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+    class="btn btn-primary"
+    type="button"
+    ng-click="vm.add(vm.organization)">Add & Close</button>
+    <button
+    class="btn btn-default"
+    type="button"
+    ng-click="vm.cancel()">Cancel</button>
+  </div>
+</div>

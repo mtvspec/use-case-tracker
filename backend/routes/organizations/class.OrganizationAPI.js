@@ -1,6 +1,7 @@
 'use strict';
 
 let organizations = [];
+const app = require('./../../app.js');
 const validator = require('indicative');
 const db = require('./../../db.js');
 const sql = require('./sql.js');
@@ -20,7 +21,7 @@ module.exports = class OrganizationAPI {
         return cb({ status: 200, data: organizations[i] });
       }
     }
-    if (!isFound) return cb({ status: 204, data: [] });
+    if (isFound === false) return cb({ status: 204, data: [] });
   }
   static createOrganization(session, data, cb) {
     const pattern = {
@@ -40,7 +41,7 @@ module.exports = class OrganizationAPI {
           }, (response) => {
             if (response.status === 201) LogAPI.logOrganization(response.data.id, organization);
           });
-          return cb({ status: response.status, data: { created_organization_id: response.data.id } });
+          return cb({ status: response.status, data: response.data });
         } else if (response) return cb({ status: response.status, data: response.data });
         else return cb({ status: 500, data: null });
       });
@@ -60,11 +61,12 @@ module.exports = class OrganizationAPI {
       db.updateRecord({
         text: sql.organizations.UPDATE_ORGANIZATION(organization)
       }, (response) => {
+        const organization = response.data;
         if (response.status === 200) {
-          let organization = response.data;
-          for (let i = 0; i < organizations.length; i++) {
+          for (let i in organizations) {
             if (organizations[i].id == organization.id) {
               organizations[i] = organization;
+              break;
             }
           }
           OperationAPI.createOperation({
@@ -72,7 +74,7 @@ module.exports = class OrganizationAPI {
           }, (response) => {
             if (response.status === 201) LogAPI.logOrganization(response.data.id, organization);
           });
-          return cb({ status: response.status, data: { updated_organization_id: response.data.id } });
+          return cb({ status: response.status, data: response.data });
         } else if (response) return cb({ status: response.status, data: response.data });
         else return cb({ status: 500, data: null });
       });
@@ -82,15 +84,16 @@ module.exports = class OrganizationAPI {
       else return cb({ status: 500, data: null });
     });
   }
-  static deleteOrganization(session, oranization, cb) {
+  static deleteOrganization(session, organization, cb) {
     db.updateRecord({
-      text: sql.organizations.DELETE_ORGANIZATION(oranization)
+      text: sql.organizations.DELETE_ORGANIZATION(organization)
     }, (response) => {
       if (response.status === 200) {
-        let organization = response.data;
-        for (let i = 0; i < organizations.length; i++) {
+        const organization = response.data;
+        for (let i in organizations) {
           if (organizations[i].id == organization.id) {
             organizations[i] = organization;
+            break;
           }
         }
         OperationAPI.createOperation({
@@ -98,20 +101,21 @@ module.exports = class OrganizationAPI {
         }, (response) => {
           if (response.status === 201) LogAPI.logOrganization(response.data.id, organization);
         });
-        return cb({ status: response.status, data: { deleted_organization_id: response.data.id } });
+        return cb({ status: response.status, data: response.data });
       } else if (response) return cb({ status: response.status, data: response.data });
       else return cb({ status: 500, data: null });
     });
   }
-  static restoreOrganization(session, oranization, cb) {
+  static restoreOrganization(session, organization, cb) {
     db.updateRecord({
-      text: sql.organizations.RESTORE_ORGANIZATION(oranization)
+      text: sql.organizations.RESTORE_ORGANIZATION(organization)
     }, (response) => {
       if (response.status === 200) {
-        let organization = response.data;
-        for (let i = 0; i < organizations.length; i++) {
+        const organization = response.data;
+        for (let i in organizations) {
           if (organizations[i].id == organization.id) {
             organizations[i] = organization;
+            break;
           }
         }
         OperationAPI.createOperation({
@@ -119,7 +123,7 @@ module.exports = class OrganizationAPI {
         }, (response) => {
           if (response.status === 201) LogAPI.logOrganization(response.data.id, organization);
         });
-        return cb({ status: response.status, data: { restored_organization_id: response.data.id } });
+        return cb({ status: response.status, data: response.data });
       } else if (response) return cb({ status: response.status, data: response.data });
       else return cb({ status: 500, data: null });
     });
@@ -131,7 +135,7 @@ function getOrganizations() {
     text: sql.organizations.SELECT_ALL_ORGANIZATIONS()
   }, (response) => {
     if (response.status === 200) {
-      for (let i = 0; i < response.data.length; i++) {
+      for (let i in response.data) {
         organizations.push(response.data[i]);
       }
     }
