@@ -41,13 +41,13 @@ module.exports = class Database {
     pool.connect((err, client, release) => {
       if (err) {
         release();
-        console.error(err);
+        console.error(`selectAllRecords:\n ${config.text}\n ${err}`);
         return cb({ status: 500, data: err.message });
       } else {
         client.query(config.text, (err, result) => {
           if (err) {
             release();
-            console.error(err);
+            console.error(`selectAllRecords:\n ${config.text}\n ${err}`);
             return cb({ status: 500, data: err.message });
           } else {
             release();
@@ -67,13 +67,13 @@ module.exports = class Database {
     pool.connect((err, client, release) => {
       if (err) {
         release();
-        console.error(err);
+        console.error(`selectRecordByID:\n ${config.text}\n ${err}`);
         return cb({ status: 500, data: err.message });
       } else {
         client.query(config.text, (err, result) => {
           if (err) {
             release();
-            console.error(err);
+            console.error(`selectRecordByID:\n ${config.text}\n ${err}`);
             return cb({ status: 500, data: err.message });
           } else {
             release();
@@ -91,13 +91,13 @@ module.exports = class Database {
     pool.connect(function (err, client, release) {
       if (err) {
         release();
-        console.error(err);
+        console.error(`insertRecord:\n ${config.text}\n ${err}`);
         return cb({ status: 500, data: err.message });
       } else {
         client.query(config.text, function (err, result) {
           if (err) {
             release();
-            console.error(`insertRecord: ${err}`);
+            console.error(`insertRecord:\n ${config.text}\n ${err}`);
             if (err.code === '23502' || err.code === '23503' || err.code === '23505' || err.code === '23514' || err.code === '42501') return cb({ status: 400, data: err.detail });
             else return cb({ status: 400, data: err.detail });
           } else {
@@ -115,13 +115,13 @@ module.exports = class Database {
     pool.connect((err, client, release) => {
       if (err) {
         release();
-        console.error(err);
+        console.error(`updateRecord:\n ${config.text}\n ${err}`);
         return cb({ status: 500, data: err.message });
       } else {
         client.query(config.text, (err, result) => {
           if (err) {
             release();
-            console.error(err);
+            console.error(`updateRecord:\n ${config.text}\n ${err}`);
             if (err.code === '23502' || err.code === '23503' || err.code === '23505' || err.code === '23514' || err.code === '42501') return cb({ status: 400, data: err.detail });
             else return cb({ status: 400, data: err.detail });
           } else {
