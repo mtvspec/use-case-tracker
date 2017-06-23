@@ -2,7 +2,7 @@
 
 const bcrypt = require('bcrypt-nodejs');
 const SessionAPI = require('./sessions/class.SessionAPI.js');
-const db = require('./../../db.js');
+const db = require('db');
 const sql = require('./sql.js');
 
 module.exports = class UserAPI {

@@ -1,7 +1,7 @@
 'use strict';
 
 const uuid = require('uuid');
-const db = require('./../../../db.js');
+const db = require('db');
 const sql = require('./sql.js');
 let Sessions = require('./Sessions.js');
 

@@ -1,7 +1,7 @@
 'use strict';
 
 const sql = require('./sql.js');
-const db = require('./../../db.js');
+const db = require('db');
 
 module.exports = class SystemAPI {
   static getSystems(req, res) {

@@ -1,7 +1,7 @@
 'use strict';
 
 const validator = require('indicative');
-const db = require('./../../db.js');
+const db = require('db');
 const sql = require('./sql.js');
 
 module.exports = class CustomerAPI {

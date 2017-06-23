@@ -1,7 +1,6 @@
 'use strict';
 
-const UseCaseSlice = require('./class.UseCaseSlice.js');
-const db = require('./../../db.js');
+const db = require('db');
 const sql = require('./sql.js');
 
 module.exports = class UseCaseSliceAPI {
