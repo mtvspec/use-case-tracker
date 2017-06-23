@@ -15,7 +15,7 @@ module.exports = router
 .get('/:dict', (req, res) => {
   if (!validator.is.string(req.params.dict)) return res.status(400).end();
   else DictAPI.getDictValues(req.params.dict, (response) => {
-    return res.status(response.status).json(response).end();
+    return res.status(response.status).json(response.data).end();
   });
 })
 .post('/', (req, res) => {
