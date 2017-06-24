@@ -5,8 +5,8 @@
 
     let vm = this;
 
-    vm.persons = PersonAPI.persons;
     vm.genders = PersonAPI.genders;
+    vm.persons = PersonAPI.persons;
 
     vm.person = {};    
 

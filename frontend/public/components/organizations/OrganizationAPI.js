@@ -8,7 +8,11 @@
 ////////////////////////////////////////////////////////////////////////////////
   
     socket.on('createdOrganizationID', (id) => {
-      _getOrganizationByID(id);
+      let isFound = false;
+      for (let i in _organizations) {
+        if (_organizations[i] === id) isFound = true;  
+      }
+      if (isFound === false) _getOrganizationByID(id);
     });
     
     socket.on('updatedOrganizationID', (id) => {

@@ -5,13 +5,7 @@
 
     let vm = this;
 
-    vm.genders = [];
-
-    PersonAPI.getPersonGenders((genders) => {
-      for (let i in genders) {
-        vm.genders.push(genders[i]);
-      }
-    });
+    vm.genders = PersonAPI.genders;
 
     vm.person = angular.copy(person);
 

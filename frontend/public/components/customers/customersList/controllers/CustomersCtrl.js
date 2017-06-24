@@ -5,9 +5,7 @@
 
     var vm = this;
 
-    CustomerAPI.getCustomers(function (customers) {
-      console.log(customers);
-      vm.customers = customers;
-    });
+    vm.customers = CustomerAPI.customers;
+    
   })
 })();

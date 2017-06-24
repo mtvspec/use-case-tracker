@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('app', ['ui.router', 'ui.bootstrap']);
+let app = angular.module('app', ['ui.router', 'ui.bootstrap']);
 
 app.config(function ($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
@@ -17,16 +17,14 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     url: '/main',
     templateUrl: '/templates/main/main.html',
     controller: 'MainCtrl',
-    controllerAs: 'vm',
-    data: {
-      pageTitle: 'Main'
-    },
-    children: {
-      name: 'projects',
-      templateUrl: '/components/projects/views/template.html',
-      controller: 'ProjectsCtrl',
-      controllerAs: 'vm'
-    }
+    controllerAs: 'vm'
+  })
+  .state('main.projects', {
+    name: 'projects',
+    url: '/projects',
+    templateUrl: '/components/projects/views/template.html',
+    controller: 'ProjectsCtrl',
+    controllerAs: 'vm'
   })
   .state('createPerson', {
     url: '/createPerson',
@@ -55,6 +53,15 @@ app.config(function ($stateProvider, $urlRouterProvider) {
       pageTitle: 'Create use-case subject'
     }
   })
+  .state('OrgChart', {
+    url: '/orgChart',
+    templateUrl: '/components/org-chart/template.html',
+    controller: 'OrgChatCtrl',
+    controllerAs: 'vm',
+    data: {
+      pageTitle: 'OrgChart'
+    }
+  })
   .state('createUseCaseSlice', {
     url: '/createUseCaseSlice',
     templateUrl: '/components/use-case-slices/createUseCaseSlice/views/template.html',
@@ -79,7 +86,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     controller: 'ProjectsCtrl',
     controllerAs: 'vm',
     data: {
-      pageTitle: 'Systems'
+      pageTitle: 'Projects'
     }
   })
   .state('createProject', {
@@ -104,6 +111,15 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     controllerAs: 'vm',
     data: {
       pageTitle: 'Customers'
+    }
+  })
+  .state('issues', {
+    url: '/issues',
+    templateUrl: '/components/issues/issuesList/views/template.html',
+    controller: 'IssuesListCtrl',
+    controllerAs: 'vm',
+    data: {
+      pageTitle: 'Issues'
     }
   })
   .state('tracker', {

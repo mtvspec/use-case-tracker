@@ -5,27 +5,30 @@ const sql = require('./sql.js');
 
 module.exports = class DictAPI {
   static getAllDicts(cb) {
-    db.selectAllRecords({
+    db.selectAllRecordsP({
       text: sql.dict.SELECT_ALL_DICTS()
-    }, (response) => {
-      if (response) return cb(response);
-      else return cb({ status: 500, data: null });
-    })
+    }).then((response) => {
+      return cb(response);
+    }, (err) => {
+      return cb({ status: 500, data: null });
+    });
   }
   static getDictValues(dictName, cb) {
-    db.selectAllRecords({
+    db.selectAllRecordsP({
       text: sql.dict.SELECT_DICT_VALUES_BY_DICT_NAME(dictName)
-    }, (response) => {
-      if (response) return cb(response);
-      else return cb({ status: 500, data: null });
-    })
+    }).then((response) => {
+      return cb(response);
+    }, (err) => {
+      return cb({ status: 500, data: null });
+    });
   }
   static createDictValue(dictValue, cb) {
-    db.insertRecord({
+    db.insertRecordP({
       text: sql.dict.INSERT_DICT_VALUE(dictValue)
-    }, (response) => {
-      if (response) return cb(response);
-      else return cb({ status: 500, data: null });
-    })
+    }).then((response) => {
+      return cb(response);
+    }, (err) => {
+      return cb({ status: 500, data: null });
+    });
   }
 }

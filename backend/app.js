@@ -12,6 +12,10 @@ let Sessions = require('./routes/users/sessions/Sessions.js');
 
 const routes = require('./routes/index');
 const operations = require('./routes/operations');
+const organizations = require('./routes/organizations');
+const organizationalUnits = require('./routes/organizational-units');
+const persons = require('./routes/persons');
+const emp = require('./routes/emp');
 const issues = require('./routes/issues');
 const components = require('./routes/components');
 const subjects = require('./routes/use-case-subjects');
@@ -19,13 +23,15 @@ const useCases = require('./routes/use-cases');
 const users = require('./routes/users');
 const dict = require('./routes/dict');
 const slices = require('./routes/use-case-slices');
-const persons = require('./routes/persons');
-const organizations = require('./routes/organizations');
 const customers = require('./routes/customers');
 const projects = require('./routes/projects');
+const projectTeams = require('./routes/project-teams');
+const projectMembers = require('./routes/project-members');
 const systems = require('./routes/systems');
 
 const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -42,6 +48,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(function (req, res, next) {
   console.log('Request timestamp:');
   console.log(new Date());
+  
+  res.io = io;
+  
   if (req.params.id) {
     if (!validator.is.positive(req.params.id)) return res.status(400).end('id is invalid');
   }
@@ -51,7 +60,7 @@ app.use(function (req, res, next) {
     console.log(req.body);
   }
 
-  if (req.url === '/api/users/login' || req.url === '/api/users/username') next();
+  if (req.url === '/api/users/login' || req.url === '/api/users/username' || req.url === '/json') next();
   else if (!validator.is.string(req.cookies.session)) return res.status(401).end();
   else isAuthentificated(req, res, next);
   
@@ -69,8 +78,12 @@ app.use('/api/use-case-slices', slices);
 app.use('/api/users', users);
 app.use('/api/persons', persons);
 app.use('/api/organizations', organizations);
+app.use('/api/organizational-units', organizationalUnits);
+app.use('/api/emp', emp);
 app.use('/api/customers', customers);
 app.use('/api/projects', projects);
+app.use('/api/project-teams', projectTeams);
+app.use('/api/project-members', projectMembers);
 app.use('/api/systems', systems);
 
 // catch 404 and forward to error handler
@@ -130,4 +143,4 @@ function isAuthentificated(req, res, next) {
   }
 }
 
-module.exports = app;
+module.exports = {app: app, server: server};

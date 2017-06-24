@@ -4,9 +4,6 @@ const db = require('db');
 const sql = require('./sql.js');
 
 module.exports = class UseCaseSliceAPI {
-  constructor() {
-
-  }
   static getSlices (req, res) {
     db.selectAllRecords({
       text: sql.slices.SELECT_ALL_SLICES()

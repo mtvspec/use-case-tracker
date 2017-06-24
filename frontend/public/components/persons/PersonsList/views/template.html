@@ -1,10 +1,7 @@
 <div
-class="button-group">
+class="input-group">
   <!-- create person button -->
-  <button
-  class="btn btn-default"
-  id="openCreatePersonModal"
-  ng-click="vm.openCreatePersonModal()">New person</button>
+  <span class="input-group-addon" ng-click="vm.openCreatePersonModal()">New person</span>
   <!-- search person field -->
   <input
   class="form-control"
@@ -12,6 +9,7 @@ class="button-group">
   ng-model="searchPerson"
   placeholder="Search person...">
 </div>
+<hr>
 <div
 class="personsList">
   <table
@@ -26,7 +24,7 @@ class="personsList">
       <th>Status</th>
       <th>Manage</th>
     </tr>
-    <tr ng-repeat="person in vm.persons | filter: searchPerson">
+    <tr ng-repeat="person in vm.persons | filter: searchPerson | filter: person.isDeleted = false;">
       <td ng-bind="person.aPersonIIN"></td>
       <td ng-bind="person.aPersonLastName"></td>
       <td ng-bind="person.aPersonFirstName"></td>

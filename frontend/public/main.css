@@ -11,6 +11,7 @@ body {
   margin: 15px;
   font-family: 'Ubuntu Light';
   font-size: 14px;
+  text-shadow: 0px 1px 1px #FFF;
   font-weight: normal;
   padding: 10px;
 }
@@ -18,4 +19,150 @@ body {
 sv-btn {
   background-color: #4dbed2;
   border-radius: 3px;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.light-blue {
+  background-color: #b5d1ff !important;
+}
+
+.item-name {
+  color: black;
+  font-weight: 600;
+}
+
+.full button span {
+    background-color: limegreen;
+    border-radius: 32px;
+    color: black;
+  }
+  .partially button span {
+    background-color: orange;
+    border-radius: 32px;
+    color: black;
+  }
+
+*:before {
+  box-sizing: border-box;
+}
+
+div.list {
+  display: flex;
+  flex-direction: column;
+}
+
+div.item {
+  align-items: stretch;
+  border-bottom: 1px solid #eee;
+}
+
+li.item:nth-last-child(1) {
+  border-bottom: 0;
+}
+
+ui.item:after {
+  box-sizing: border-box;
+}
+
+li.issue {
+  text-align: -webkit-match-parent;
+  height: 40px;
+  margin: 0;
+  position: relative;
+  background-color: transparent;
+  border-color: #f0f0f0;
+  text-align: -webkit-match-parent;
+  display: block;
+}
+
+
+
+small {
+  font-family: 'Roboto Thin';
+}
+
+div.item:hover {
+  background-color: #999999;
+  opacity: 0.1;
+  border-radius: 5px;
+}
+
+div.issue-title {
+  margin-bottom: 2px;
+  box-sizing: border-box;
+}
+
+div.project-list-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+div.header-project-customer {
+  flex-basis: 20%;
+  max-width: 300px;
+}
+
+div.header-project-title {
+  flex-basis: 55%;
+  flex-grow: 1;
+}
+
+div.header-project-project-manager {
+  flex-basis: 10%;
+  max-width: 200px;
+}
+
+div.header-project-main-info {
+  flex-basis: 15%;
+  max-width: 200px;
+}
+
+div.project {
+  display: flex;
+  flex-direction: row;
+}
+
+div.project-customer {
+  flex-basis: 20%;
+  max-width: 300px;
+}
+
+div.project-title {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 55%;
+  flex-grow: 1;
+}
+
+div.project-manager {
+  flex-basis: 10%;
+  max-width: 200px;
+}
+
+.project-main-info {
+  display: flex;
+  flex-direction: row;
+  flex-basis: 15%;
+  max-width: 200px;
+}
+
+.project-main-info-plan-key {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-main-info-plan-value {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
 }

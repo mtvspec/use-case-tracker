@@ -3,18 +3,18 @@ const Queries = {
     SELECT_ALL_ORGANIZATIONS() {
       return `
       SELECT
-        t.*
+        o.*
       FROM
-        organizations.e_organization_view t;
+        organizations.e_organization_view o;
       `;
     },
     SELECT_ORGANIZATION_BY_ID(organization) {
       return `
       SELECT
-        t.*
+        o.*
       FROM
-        organizations.e_organization_view t
-      WHERE t.id = ${organization.id};
+        organizations.e_organization_view o
+      WHERE o.id = ${organization.id};
       `;
     },
     SELECT_ORGANIZATION_BY_BIN(organization) {

@@ -3,9 +3,8 @@
   
   app.factory('PersonAPI', function ($http, socket) {
     
-    let _persons = [];
-    
     let _genders = [];
+    let _persons = [];
     
 ////////////////////////////////////////////////////////////////////////////////    
     
@@ -56,22 +55,22 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-    (function _getPersons() {
-      $http.get(`api/persons/`).then((res) => {
+    (function _getPersonGenders() {
+      $http.get('api/dict/person-genders').then((res) => {
         if (res.status === 200) {
-          Object.assign(_persons, res.data);
+          Object.assign(_genders, res.data);
+          return _genders;
         }
       }, (err) => {
         console.error(err);
       });
     })();
     
-    (function _getPersonGenders() {
-      $http.get('api/dict/person-genders').then((res) => {
+    (function _getPersons() {
+      $http.get(`api/persons/`).then((res) => {
         if (res.status === 200) {
-          for (let i in res.data)
-          _genders.push(res.data[i]);
-          return _genders;
+          Object.assign(_persons, res.data);
+          return _persons;
         }
       }, (err) => {
         console.error(err);
@@ -91,11 +90,8 @@
         }
       },
       createPerson: (person) => {
-        $http.post('/api/persons', person).then((res) => {
-          if (res.status === 201) {
-            person.id = res.data.id;
-            _persons.push(person);
-          }
+        return $http.post('/api/persons', person).then((res) => {
+          return res.status;
         }, (err) => {
           console.error(err);
         });

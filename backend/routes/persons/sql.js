@@ -10,30 +10,6 @@ const Queries = {
         persons.e_person_view p;
       `;
     },
-    SELECT_PERSON_BY_ID(person) {
-      return `
-      SELECT
-        id,
-        a_person_iin "aPersonIIN",
-        a_person_last_name "aPersonLastName",
-        a_person_first_name "aPersonFirstName",
-        a_person_middle_name "aPersonMiddleName",
-        to_char(a_person_dob, 'DD.MM.YYYY') "aPersonDOB",
-        d_person_gender_id "dPersonGenderID",
-        is_deleted "isDeleted"
-      FROM
-        persons.e_person
-      WHERE id = ${person.id};
-      `;
-    },
-    SELECT_PERSON(person) {
-      return `
-      SELECT
-        id
-      FROM
-        persons.e_person
-      WHERE id = ${person.id};`;
-    },
     SELECT_PERSON_BY_IIN(person) {
       return `
       SELECT
@@ -46,12 +22,12 @@ const Queries = {
     INSERT_PERSON(person) {
       return `
       INSERT INTO persons.e_person (
-          a_person_iin,
-          a_person_last_name,
-          a_person_first_name,
-          a_person_middle_name,
-          a_person_dob,
-          d_person_gender_id
+          "aPersonIIN",
+          "aPersonLastName",
+          "aPersonFirstName",
+          "aPersonMiddleName",
+          "aPersonDOB",
+          "dPersonGenderID"
         ) VALUES (
         ${convertData(person.aPersonIIN)},
         ${convertData(person.aPersonLastName)},
@@ -59,15 +35,7 @@ const Queries = {
         ${convertData(person.aPersonMiddleName)},
         ${convertData(person.aPersonDOB)},
         ${convertData(person.dPersonGenderID)}
-      ) RETURNING
-        id,
-        a_person_iin "aPersonIIN",
-        a_person_last_name "aPersonLastName",
-        a_person_first_name "aPersonFirstName",
-        a_person_middle_name "aPersonMiddleName",
-        a_person_dob "aPersonDOB",
-        d_person_gender_id "dPersonGenderID",
-        is_deleted "isDeleted";
+      ) RETURNING *;
       `;
     },
     UPDATE_PERSON(person) {
@@ -135,6 +103,6 @@ const Queries = {
 module.exports = Queries;
 
 function convertData(data) {
-  if (data === undefined) return 'null';
+  if (data === undefined) return data = 'null';
   return `${data ? "'" + data + "'" : 'null'}`;
 }

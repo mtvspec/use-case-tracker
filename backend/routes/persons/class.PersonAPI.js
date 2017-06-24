@@ -1,68 +1,57 @@
 'use strict';
 
-let persons = [];
+////////////////////////////////////////////////////////////////////////////////
+
+const moment = require('moment');
 const validator = require('indicative');
 const db = require('db');
 const sql = require('./sql.js');
 const OperationAPI = require('./../operations/class.OperationAPI.js');
 const LogAPI = require('./../log');
 
+////////////////////////////////////////////////////////////////////////////////
+
+let _persons = [];
+
+////////////////////////////////////////////////////////////////////////////////
+
 module.exports = class PersonAPI {
   static getPersons(cb) {
-    if (persons.length > 0) return cb({ status: 200, data: persons });
+    if (_persons.length > 0) return cb({ status: 200, data: _persons });
     else return cb({ status: 204, data: [] });
   }
   static getPersonByID(person, cb) {
     let isFound = false;
-    for (let i in persons) {
-      if (persons[i].id == person.id) {
+    for (let i in _persons) {
+      if (_persons[i].id == person.id) {
         isFound = true;
-        return cb({ status: 200, data: persons[i] });
+        return cb({ status: 200, data: _persons[i] });
       }
     }
     if (isFound === false) return cb({ status: 204, data: [] });
-  }
-  static getPersonByIIN(aPersonIIN, cb) {
-    db.selectRecordById({
-      text: sql.persons.SELECT_PERSON_BY_IIN(aPersonIIN)
-    }, function (response) {
-      if (response) {
-        return cb({
-          status: response.status,
-          data: response.data
-        });
-      } else {
-        return cb({
-          status: 500,
-          data: null
-        });
-      }
-    });
   }
   static createPerson(session, data, cb) {
     const pattern = {
       aPersonIIN: 'string|min:12|max:12',
       aPersonLastName: 'string|min:2|max:100',
       aPersonFirstName: 'required|string|min:2|max:100',
-      aPersonMiddleName: 'string|min:2|max:100',
-      aPersonDOB: 'date_format:YYYY-MM-DD'
+      aPersonMiddleName: 'string|min:2|max:100'
     }
     validator.validateAll(data, pattern).then((person) => {
       if (person.aPersonIIN && !iinCheck(person.aPersonIIN, 1, new Date(person.aPersonDOB), person.dPersonGenderID === 9 ? true : false, true)) throw `invalid iin ${person.aPersonIIN}`;
-      db.insertRecord({
+      db.insertRecordP({
         text: sql.persons.INSERT_PERSON(person)
-      }, (response) => {
-        if (response.status === 201) {
-          const person = response.data;
-          persons.push(person);
-          OperationAPI.createOperation({
-            operationTypeID: 1, sessionID: session.sessionID
-          }, (response) => {
-            if (response.status === 201) LogAPI.logPerson(response.data.id, person);
-          });
-          return cb({ status: response.status, data: response.data });
-        } else if (response) return cb({ status: response.status, data: response.data });
-        else return cb({ status: 500, data: null });
+      }).then((response) => {
+        const person = response.data;
+        _persons.push(person);
+        OperationAPI.createOperation({
+          operationTypeID: 1, sessionID: session.sessionID
+        }, (response) => {
+          if (response.status === 201) LogAPI.logPerson(response.data.id, person);
+        });
+        return cb({ status: response.status, data: response.data });
+      }, (error) => {
+        return cb(error);
       });
     }).catch((errors) => {
       console.error(errors);
@@ -82,24 +71,24 @@ module.exports = class PersonAPI {
     }
     validator.validateAll(data, pattern).then((person) => {
       if (person.aPersonIIN && !iinCheck(person.aPersonIIN, 1, new Date(person.aPersonDOB), person.dPersonGenderID === 9 ? true : false, true)) throw `invalid iin ${person.aPersonIIN}`;
-      db.updateRecord({
+      db.updateRecordP({
         text: sql.persons.UPDATE_PERSON(person)
-      }, (response) => {
-        if (response.status === 200) {
-          const person = response.data;
-          for (let i in persons) {
-            if (persons[i].id == person.id) {
-              persons[i] = person;
-              break;
-            }
+      }).then((response) => {
+        const person = response.data;
+        for (let i in _persons) {
+          if (_persons[i].id == person.id) {
+            _persons[i] = person;
+            break;
           }
-          OperationAPI.createOperation({
-            operationTypeID: 11, sessionID: session.sessionID
-          }, (response) => {
-            if (response.status === 201) LogAPI.logPerson(response.data.id, person);
-          });
-          return cb({ status: response.status, data: response.data });
-        } else return cb({ status: 500, data: null });
+        }
+        OperationAPI.createOperation({
+          operationTypeID: 11, sessionID: session.sessionID
+        }, (response) => {
+          if (response.status === 201) LogAPI.logPerson(response.data.id, person);
+        });
+        return cb({ status: response.status, data: response.data });
+      }, (err) => {
+        return cb(err);
       });
     }).catch((errors) => {
       console.error(errors);
@@ -108,35 +97,35 @@ module.exports = class PersonAPI {
     });
   }
   static deletePerson(session, person, cb) {
-    db.updateRecord({
+    db.updateRecordP({
       text: sql.persons.DELETE_PERSON(person)
-    }, (response) => {
-      if (response.status === 200) {
-        const person = response.data;
-        for (let i in persons) {
-          if (persons[i].id == person.id) {
-            persons[i] = person;
-            break;
-          }
+    }).then((response) => {
+      const person = response.data;
+      for (let i in _persons) {
+        if (_persons[i].id == person.id) {
+          _persons[i] = person;
+          break;
         }
-        OperationAPI.createOperation({
-          operationTypeID: 12, sessionID: session.sessionID
-        }, (response) => {
-          if (response.status === 201) LogAPI.logPerson(response.data.id, person);
-        });
-        return cb({ status: response.status, data: response.data });
-      } else return cb({ status: 500, data: null });
+      }
+      OperationAPI.createOperation({
+        operationTypeID: 12, sessionID: session.sessionID
+      }, (response) => {
+        if (response.status === 201) LogAPI.logPerson(response.data.id, person);
+      });
+      return cb({ status: response.status, data: response.data });
+    }, (err) => {
+      return cb({ status: 500, data: null });
     });
   }
   static restorePerson(session, person, cb) {
-    db.updateRecord({
+    db.updateRecordP({
       text: sql.persons.RESTORE_PERSON(person)
-    }, (response) => {
+    }).then((response) => {
       if (response.status === 200) {
         const person = response.data;
-        for (let i in persons) {
-          if (persons[i].id == person.id) {
-            persons[i] = person;
+        for (let i in _persons) {
+          if (_persons[i].id == person.id) {
+            _persons[i] = person;
             break;
           }
         }
@@ -146,7 +135,10 @@ module.exports = class PersonAPI {
           if (response.status === 201) LogAPI.logPerson(response.data.id, person);
         });
         return cb({ status: response.status, data: response.data });
-      } else return cb({ status: 500, data: null });
+      } else if (response.status === 204) return cb({ status: response.status, data: response.data });
+      else return cb({ status: 500, data: null });
+    }, (err) => {
+      return cb({ status: 500, data: null });
     });
   }
 }
@@ -209,16 +201,18 @@ function iinCheck(iin, clientType, birthDate, sex, isResident) {
   return true;
 }
 
-function _getPersons () {
-  db.selectAllRecords({
+function _getPersons() {
+  db.selectAllRecordsP({
     text: sql.persons.SELECT_ALL_PERSONS()
-  }, (response) => {
+  }).then((response) => {
     if (response.status === 200) {
       for (let i in response.data) {
-        persons.push(response.data[i]);
+        _persons.push(response.data[i]);
       }
-      return persons;
-    } else return persons;
+      return _persons;
+    } else return _persons;
+  }, (err) => {
+    console.error(error);
   });
 };
 

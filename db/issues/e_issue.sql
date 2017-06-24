@@ -4,10 +4,10 @@
 CREATE TABLE issues.e_issue (
   id BIGSERIAL,
   e_issue_author_id BIGINT NOT NULL,
-  d_issue_type_id INTEGER NOT NULL,
+  d_issue_type_id BIGINT NOT NULL,
   a_issue_name VARCHAR (1000) NOT NULL,
   a_issue_desc TEXT,
-  d_issue_state_id INTEGER NOT NULL,
+  d_issue_state_id BIGINT NOT NULL,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
         id
