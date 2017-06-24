@@ -126,10 +126,10 @@ app.use(function (err, req, res, next) {
 function isAuthentificated(req, res, next) {
   let _isAuthentificated = false;
   for (let i = 0; i < Sessions.length; i++) {
-    if (Sessions[i].token === req.cookies.session) {
+    if (Sessions[i].aToken === req.cookies.session) {
       req.session = {
-        token: req.cookies.session,
-        userID: Sessions[i].userID,
+        aToken: req.cookies.session,
+        eUserID: Sessions[i].userID,
         sessionID: Sessions[i].id
       }
       _isAuthentificated = true;
