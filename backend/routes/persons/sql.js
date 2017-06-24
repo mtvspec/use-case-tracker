@@ -16,7 +16,7 @@ const Queries = {
         id
       FROM
         persons.e_person
-      WHERE a_person_iin = '${person.aPersonIIN}';
+      WHERE "aPersonIIN" = '${person.aPersonIIN}';
       `;
     },
     INSERT_PERSON(person) {
@@ -43,22 +43,14 @@ const Queries = {
       UPDATE
         persons.e_person
       SET
-        a_person_iin = ${convertData(person.aPersonIIN)},
-        a_person_last_name = ${convertData(person.aPersonLastName)},
-        a_person_first_name = ${convertData(person.aPersonFirstName)},
-        a_person_middle_name = ${convertData(person.aPersonMiddleName)},
-        a_person_dob = ${convertData(person.aPersonDOB)},
-        d_person_gender_id = ${convertData(person.dPersonGenderID)}
+        "aPersonIIN" = ${convertData(person.aPersonIIN)},
+        "aPersonLastName" = ${convertData(person.aPersonLastName)},
+        "aPersonFirstName" = ${convertData(person.aPersonFirstName)},
+        "aPersonMiddleName" = ${convertData(person.aPersonMiddleName)},
+        "aPersonDOB" = ${convertData(person.aPersonDOB)},
+        "dPersonGenderID" = ${convertData(person.dPersonGenderID)}
       WHERE id = ${person.id}
-      RETURNING
-        id,
-        a_person_iin "aPersonIIN",
-        a_person_last_name "aPersonLastName",
-        a_person_first_name "aPersonFirstName",
-        a_person_middle_name "aPersonMiddleName",
-        a_person_dob "aPersonDOB",
-        d_person_gender_id "dPersonGenderID",
-        is_deleted "isDeleted";
+      RETURNING *;
       `;
     },
     DELETE_PERSON(person) {
@@ -66,17 +58,9 @@ const Queries = {
       UPDATE
         persons.e_person
       SET
-        is_deleted = true
+        "isDeleted" = true
       WHERE id = ${person.id}
-      RETURNING
-        id,
-        a_person_iin "aPersonIIN",
-        a_person_last_name "aPersonLastName",
-        a_person_first_name "aPersonFirstName",
-        a_person_middle_name "aPersonMiddleName",
-        a_person_dob "aPersonDOB",
-        d_person_gender_id "dPersonGenderID",
-        is_deleted "isDeleted";
+      RETURNING *;
       `;
     },
     RESTORE_PERSON(person) {
@@ -84,17 +68,9 @@ const Queries = {
       UPDATE
         persons.e_person
       SET
-        is_deleted = false
+        "isDeleted" = false
       WHERE id = ${person.id}
-      RETURNING
-        id,
-        a_person_iin "aPersonIIN",
-        a_person_last_name "aPersonLastName",
-        a_person_first_name "aPersonFirstName",
-        a_person_middle_name "aPersonMiddleName",
-        a_person_dob "aPersonDOB",
-        d_person_gender_id "dPersonGenderID",
-        is_deleted "isDeleted";
+      RETURNING *;
       `;
     }
   }
