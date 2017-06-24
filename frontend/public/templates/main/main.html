@@ -2,16 +2,17 @@
   <div class="toolbar">
     <div class="btn-group">
       <button class="btn btn-default" ui-sref="main.projects">Projects</button>
-      <button class="btn btn-default" ui-sref="tracker">Tracker</button>
-      <button class="btn btn-default" ui-sref="organizations">Organizations</button>
-      <button class="btn btn-default" ui-sref="persons">Persons</button>
-      <button class="btn btn-default" ui-sref="issues">Issues</button>
-      <button class="btn btn-default" ui-sref="customers">Customers</button>
+      <button class="btn btn-default" ui-sref="main.tracker">Tracker</button>
+      <button class="btn btn-default" ui-sref="main.organizations">Organizations</button>
+      <button class="btn btn-default" ui-sref="main.persons">Persons</button>
+      <button class="btn btn-default" ui-sref="main.issues">Issues</button>
+      <button class="btn btn-default" ui-sref="main.customers">Customers</button>
     </div>
   </div>
   <div class="main-toolbar">
     <h1>Toolbar</h1>
     <button class="btn btn-default" type="button" name="button" ng-click="logOut()">Log out</button>
   </div>
+  <br>
   <div ui-view></div>
 </div>
