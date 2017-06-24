@@ -13,7 +13,7 @@ const Queries = {
         p.a_project_name "aProjectName",
         p.a_project_desc "aProjectDesc",
         pc.a_document_name "aContractName",
-        m.a_person_first_name||' '||m.a_person_last_name "aProjectManagerFirstNameLastName",
+        m."aPersonFirstName"||' '||m."aPersonLastName" "aProjectManagerFirstNameLastName",
         pp.a_document_name "aProjectPlanName",
         p.a_official_project_name "aOfficialProjectName",
         p.a_plan_start_date "aPlanStartDate",
