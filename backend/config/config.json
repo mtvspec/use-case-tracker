@@ -1,0 +1,23 @@
+{
+  "development": {
+    "dialect": "postgres",
+    "storage": "postgres://mtvspec:mtvspec@localhost:5432/mtvspec",
+    "define": {
+        "freezeTableName": "true"
+    }
+  },
+  "test": {
+    "dialect": "postgres",
+    "storage": ":memory:"
+  },
+  "production": {
+    "username": "uct",
+    "password": "uct",
+    "database": "mtvspec",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "define": {
+        "freezeTableName": "true"
+    }
+  }
+}
