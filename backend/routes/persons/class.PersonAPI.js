@@ -212,7 +212,7 @@ function _getPersons() {
       return _persons;
     } else return _persons;
   }, (err) => {
-    console.error(error);
+    console.error(err);
   });
 };
 
