@@ -39,20 +39,32 @@ module.exports = class PersonAPI {
     }
     validator.validateAll(data, pattern).then((person) => {
       if (person.aPersonIIN && !iinCheck(person.aPersonIIN, 1, new Date(person.aPersonDOB), person.dPersonGenderID === 9 ? true : false, true)) throw `invalid iin ${person.aPersonIIN}`;
-      db.insertRecordP({
-        text: sql.persons.INSERT_PERSON(person)
-      }).then((response) => {
-        const person = response.data;
+      Person.create(person).then(data => {
+        const person = data.get({ plain: true });
         _persons.push(person);
         OperationAPI.createOperation({
           operationTypeID: 1, sessionID: session.sessionID
         }, (response) => {
           if (response.status === 201) LogAPI.logPerson(response.data.id, person);
         });
-        return cb({ status: response.status, data: response.data });
-      }, (error) => {
-        return cb(error);
+        return cb({ status: 201, data: person });
+      }, (err) => {
+        return cb({ status: 500, data: err.message });
       });
+      // db.insertRecordP({
+      //   text: sql.persons.INSERT_PERSON(person)
+      // }).then((response) => {
+      //   const person = response.data;
+      //   _persons.push(person);
+      //   OperationAPI.createOperation({
+      //     operationTypeID: 1, sessionID: session.sessionID
+      //   }, (response) => {
+      //     if (response.status === 201) LogAPI.logPerson(response.data.id, person);
+      //   });
+      //   return cb({ status: response.status, data: response.data });
+      // }, (error) => {
+      //   return cb(error);
+      // });
     }).catch((errors) => {
       console.error(errors);
       if (errors) return cb({ status: 400, data: errors });

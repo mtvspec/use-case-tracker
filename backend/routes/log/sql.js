@@ -21,7 +21,7 @@ const Queries = {
         ${convertData(person.aPersonLastName)},
         ${convertData(person.aPersonFirstName)},
         ${convertData(person.aPersonMiddleName)},
-        ${convertData(person.aPersonDOB)},
+        ${convertData(new Date(person.aPersonDOB))},
         ${convertData(person.dPersonGenderID)},
         ${person.isDeleted}
       ) RETURNING id;

@@ -1,5 +1,6 @@
 'use strict';
 
+const SessionModel = require('./../../../models').e_session;
 const uuid = require('uuid');
 const db = require('db');
 const sql = require('./sql.js');
@@ -19,26 +20,16 @@ module.exports = class SessionAPI {
   */
   static openSession(userID, cb) {
     let sessionData = {
-      userID: userID,
-      token: uuid()
+      eUserID: userID,
+      aToken: uuid()
     };
-    db.insertRecord({
-      text: sql.sessions.OPEN_SESSION(sessionData)
-    }, function (response) {
-      if (response && response.status === 201) {
-        Sessions.push({
-          id: response.data.open_session,
-          userID: sessionData.userID,
-          token: sessionData.token,
-          state: 'O'
-        });
-        return cb({
-          status: 201,
-          data: sessionData.token
-        });
-      } else {
-        return cb(response);
-      }
+    SessionModel.create(sessionData).then(data => {
+      const session = data.get({ plain: true });
+      console.log(session);
+      Sessions.push(session);
+      return cb({ status: 201, data: session.aToken });
+    }, (err) => {
+      return cb({ status: 500, data: err.message });
     });
   }
   /***
@@ -46,21 +37,28 @@ module.exports = class SessionAPI {
    * @param token
    * @return cb
   */
-  static closeSession(token, cb) {
-    db.updateRecord({
-      text: sql.sessions.CLOSE_SESSION(token)
-    }, function (response) {
-      if (response.status === 200) {
-        for (let i = 0; i < Sessions.length; i++) {
-          if (Sessions[i].token === token) {
+  static closeSession(id, cb) {
+    SessionModel.update({
+      closedAt: 'now()',
+      dSessionStateID: 'C'
+    }, {
+        where: {
+          id: id
+        },
+        returning: true,
+        plain: true
+      }).then(data => {
+        const session = data[1].get({ plain: true });
+        for (let i in Sessions) {
+          if (Sessions[i].id === id) {
             Sessions.splice(i, 1);
             break;
           }
         }
-        return cb(response);
-      } else {
-        return cb(response);
-      }
-    });
+        return cb({ status: 200, data: session.id });
+      }, (err) => {
+        console.error(err);
+        return cb({ status: 500, data: err.message });
+      });
   }
 }

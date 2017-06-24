@@ -5,13 +5,14 @@ const sql = require('./sql.js');
 
 module.exports = class LogAPI {
   static logPerson (operationID, person) {
-    db.insertRecordP({
-      text: sql.persons.INSERT_RECORD(operationID, person)
-    }).then((response) => {
-      if (response.status !== 201) {
-        console.error(response);
-      }
-    });
+    PersonLog
+    // db.insertRecordP({
+    //   text: sql.persons.INSERT_RECORD(operationID, person)
+    // }).then((response) => {
+    //   if (response.status !== 201) {
+    //     console.error(response);
+    //   }
+    // });
   }
   static logProject(operationID, project) {
     db.insertRecord({

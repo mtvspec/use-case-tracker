@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const validate = require('indicative');
+const models = require('./../../models');
 const UserAPI = require('./class.UserAPI.js');
 
 module.exports = router

@@ -11,7 +11,7 @@ module.exports = class CustomerAPI {
     }, (response) => {
       if (response) return cb(response);
       else return cb({ status: 500, data: null });
-    })
+    });
   }
   /***
   * @param customerData
