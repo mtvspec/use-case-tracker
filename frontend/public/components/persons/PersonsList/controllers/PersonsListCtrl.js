@@ -5,10 +5,8 @@
 
     let vm = this;
 
-    vm.genders = PersonAPI.genders;
+    vm.genders = PersonAPI.genders;    
     vm.persons = PersonAPI.persons;
-
-    vm.person = {};    
 
     vm.getPersonGenderByID = function (id) {
       for (let i in vm.genders) {
