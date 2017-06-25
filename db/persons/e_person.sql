@@ -3,18 +3,18 @@
 --============================================================================--
 CREATE TABLE persons.e_person (
   id BIGSERIAL,
-  a_person_iin CHAR (12),
-  a_person_last_name VARCHAR (100),
-  a_person_first_name VARCHAR (100) NOT NULL,
-  a_person_middle_name VARCHAR (100),
-  a_person_dob TIMESTAMPTZ,
-  d_person_gender_id INTEGER,
-    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+  aPersonIIN CHAR (12),
+  aPersonName VARCHAR (100),
+  aPersonFirstName VARCHAR (100) NOT NULL,
+  aPersonMiddleName VARCHAR (100),
+  aPersonDOB TIMESTAMPTZ,
+  dPersonGenderID INTEGER,
+    isDeleted BOOLEAN NOT NULL DEFAULT FALSE,
       PRIMARY KEY (
         id
       ),
       FOREIGN KEY (
-        d_person_gender_id
+        dPersonGenderID
       ) REFERENCES dict.e_dict_value (id)
 );
 --============================================================================--
