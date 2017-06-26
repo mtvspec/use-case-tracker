@@ -1,0 +1,64 @@
+<div
+class="modal-demo noselect">
+  <div
+  class="modal-header">
+    <h3
+    class="modal-title">Update customer</h3>
+  </div>
+</div>
+<div
+class="modal-body">
+  <form
+  name="updateCustomerForm">
+    <div
+    class="form-group">
+      <label for="eOrganizationID">eOrganizationID</label>
+      <input
+      class="form-control"
+      type="text"
+      id="eOrganizationID"
+      ng-model="vm.customer.eOrganizationID"
+      required>
+    <div
+    class="form-group">
+      <label for="aCustomerName">Name</label>
+      <input
+      class="form-control"
+      type="text"
+      id="aCustomerName"
+      ng-model="vm.customer.aCustomerName"
+      minlength="2"
+      maxlength="1000"
+      required>
+    </div>
+    <div class="form-group">
+      <label for="aCustomerDesc">Description</label>
+      <input
+      class="form-control"
+      type="text"
+      id="aCustomerDesc"
+      ng-model="vm.customer.aCustomerDesc"
+      minlength="2"
+      maxlength="4000">
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <div class="button-group pull-left">
+    <button
+    class="btn btn-danger"
+    type="button"
+    ng-click="vm.deleteCustomer(vm.customer.id)">Delete & Close</button>
+  </div>
+  <div class="button-group">
+    <button
+    class="btn btn-primary"
+    type="button"
+    ng-click="vm.save(vm.customer)"
+    ng-disabled="updateCustomerForm.$invalid">Save & Close</button>
+    <button
+    class="btn btn-default"
+    type="button"
+    ng-click="vm.cancel()">Cancel</button>
+  </div>
+</div>

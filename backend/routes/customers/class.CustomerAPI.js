@@ -1,90 +1,109 @@
 'use strict';
 
-const validator = require('indicative');
-const db = require('db');
-const sql = require('./sql.js');
+const CustomerModel = require('./../../models').e_customer;
+const OperationAPI = require('./../operations/class.OperationAPI.js');
+const LogAPI = require('./../log');
 
 module.exports = class CustomerAPI {
   static getCustomers(cb) {
-    db.selectAllRecords({
-      text: sql.customers.SELECT_ALL_CUSTOMERS()
-    }, (response) => {
-      if (response) return cb(response);
-      else return cb({ status: 500, data: null });
+    CustomerModel.findAndCountAll().then(result => {
+      if (result.count > 0) return cb({ status: 200, data: result.rows })
+      else if (result.count === 0) return cb({ status: 204, data: [] })
+    }).catch(err => {
+      console.error(err);
+      return cb({ status: 500, data: err.message })
+    });
+  }
+  static getCustomerByID(data, cb) {
+    CustomerModel.findById(data.id, { returning: true, plain: true }).then(result => {
+      if (result === null) return cb({ status: 204, data: [] });
+      return cb({ status: 200, data: result });
+    }).catch(err => {
+      console.error(err);
+      return cb({ status: 500, data: err.message });
     });
   }
   /***
   * @param customerData
   * @return customerID
   */
-  static createCustomer(session, customerData, cb) {
-    const pattern = {
-      eOrganizationID: 'required',
-      aCustomerName: 'required|string',
-      aCustomerDesc: 'string'
-    }
-    validator.validate(customerData, pattern).then((customerData) => {
-      customerData.dCustomerStateID = 44;
-      db.insertRecord({
-        text: sql.customers.INSERT_CUSTOMER(customerData)
+  static createCustomer(session, data, cb) {
+    CustomerModel.create(data).then(data => {
+      const customer = data.get({ plain: true });
+      OperationAPI.createOperation({
+        operationTypeID: 1, sessionID: session.sessionID
       }, (response) => {
-        if (response) return cb(response);
-        else return cb({ status: 500, data: null });
+        if (response.status === 201) LogAPI.logPerson(response.data.id, customer);
       });
-    }).catch((errors) => {
-      console.error(errors);
-      if (errors) return res.status({ status: 400, data: errors });
-      else return res.status({ status: 500, data: null });
-    })    
+      return cb({ status: 201, data: customer });
+    }).catch(err => {
+      console.error(err.message);
+      return cb({ status: 400, data: err.message });
+    });
   }
   /***
   * @param customerData
   * @return customerID
   */
-  static updateCustomer(session, customerData, cb) {
-    const pattern = {
-      id: 'required',
-      eOrganizationID: 'required',
-      aCustomerName: 'required|string',
-      aCustomerDesc: 'string'
-    }
-    validator.validate(customerData, pattern).then((customerData) => {
-      customerData.dCustomerStateID = 46;
-      db.updateRecord({
-        text: sql.customers.UPDATE_CUSTOMER(customerData)
+  static updateCustomer(session, data, cb) {
+    CustomerModel.update(data, {
+      where: { id: data.id },
+      returning: true,
+      plain: true
+    }).then(data => {
+      if (data[0] === 0) return cb({ status: 204, data: [] });
+      const customer = data[1].get({ plain: true });
+      OperationAPI.createOperation({
+        operationTypeID: 11, sessionID: session.sessionID
       }, (response) => {
-        if (response) return cb(response);
-        else return cb({ status: 500, data: null });
+        if (response.status === 201) LogAPI.logPerson(response.data.id, customer);
       });
-    }).catch((errors) => {
-      console.error(errors);
-      if (errors) return res.status({ status: 400, data: errors });
-      else return res.status({ status: 500, data: null });
-    })    
+      return cb({ status: 200, data: customer });
+    }).catch(err => {
+      console.error(err.message);
+      return cb({ status: 400, data: err.message });
+    });
   }
   /***
    * @param customerID
    * @return customerID
    */
-   static deleteCustomer(req, res) {
-     db.updateRecord({
-       text: sql.customers.DELETE_CUSTOMER(customerID)
-     }, function (response) {
-       if (response && response.status === 200) {
-         return res
-         .status(200)
-         .json(response.data.delete_customer)
-         .end();
-       } else if (response && response.status === 204) {
-         return res.
-         status(204)
-         .end();
-       } else {
-         return
-         res
-         .status(500)
-         .end();
-       }
-     })
-   }
+  static deleteCustomer(session, data, cb) {
+    CustomerModel.update({ isDeleted: true }, {
+      where: { id: data.id },
+      returning: true,
+      plain: true
+    }).then(result => {
+      if (result[0] === 0) return cb({ status: 204, data: [] });
+      const customer = result[1].get({ plain: true });
+      OperationAPI.createOperation({
+        operationTypeID: 12, sessionID: session.sessionID
+      }, (response) => {
+        if (response.status === 201) LogAPI.logPerson(response.data.id, customer);
+      })
+      return cb({ status: 200, data: customer });
+    }).catch(err => {
+      console.error(err);
+      return cb({ status: 500, data: null });
+    });
+  }
+  static restoreCustomer(session, data, cb) {
+    CustomerModel.update({ isDeleted: false }, {
+      where: { id: data.id },
+      returning: true,
+      plain: true
+    }).then(result => {
+      if (result[0] === 0) return cb({ status: 204, data: [] });
+      const customer = result[1].get({ plain: true });
+      OperationAPI.createOperation({
+        operationTypeID: 12, sessionID: session.sessionID
+      }, (response) => {
+        if (response.status === 201) LogAPI.logPerson(response.data.id, customer);
+      })
+      return cb({ status: 200, data: customer });
+    }).catch(err => {
+      console.error(err);
+      return cb({ status: 500, data: null });
+    });
+  }
 }
