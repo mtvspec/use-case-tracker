@@ -7,7 +7,7 @@
 
     vm.organizations = OrganizationAPI.organizations;
 
-    vm.openCreateOrganizationModal = function () {
+    vm.openCreateOrganizationModal = () => {
       let modal = $modal.open({
         templateUrl: 'components/organizations/CreateOrganization/views/template.html',
         controller: 'CreateOrganizationCtrl as vm'

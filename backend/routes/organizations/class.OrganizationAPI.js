@@ -1,145 +1,101 @@
 'use strict';
 
-let organizations = [];
-const app = require('./../../app.js');
-const validator = require('indicative');
-const db = require('db');
-const sql = require('./sql.js');
+////////////////////////////////////////////////////////////////////////////////
+
+const OrganizationModel = require('./../../models').e_organization;
 const OperationAPI = require('./../operations/class.OperationAPI.js');
 const LogAPI = require('./../log');
 
+////////////////////////////////////////////////////////////////////////////////
+
 module.exports = class OrganizationAPI {
   static getOrganizations(cb) {
-    if (organizations.length > 0) return cb({ status: 200, data: organizations });
-    else return cb({ status: 204, data: [] });
+    OrganizationModel.findAndCountAll().then(result => {
+      if (result.count > 0) return cb({ status: 200, data: result.rows })
+      else if (result.count === 0) return cb({ status: 204, data: [] })
+    }).catch(err => {
+      console.error(err)
+      return cb({ status: 500, data: err.message })
+    })
   }
-  static getOrganizationByID(organization, cb) {
-    let isFound = false;
-    for (let i in organizations) {
-      if (organizations[i].id == organization.id) {
-        isFound = true;
-        return cb({ status: 200, data: organizations[i] });
-      }
-    }
-    if (isFound === false) return cb({ status: 204, data: [] });
+  static getOrganizationByID(data, cb) {
+    OrganizationModel.findById(data.id).then(result => {
+      if (result === null) return cb({ status: 204, data: [] })
+      return cb({ status: 200, data: result })
+    }).catch(err => {
+      console.error(err);
+      return cb({ status: 500, data: err.message })
+    })
   }
   static createOrganization(session, data, cb) {
-    const pattern = {
-      aOrganizarionBin: 'string|min:12|max:12',
-      aOrganizationShortName: 'required|string|min: 1, max: 1000',
-      aOrganizationOfficialName: 'string|min:1, max: 4000'
-    }
-    validator.validateAll(data, pattern).then((organization) => {
-      db.insertRecord({
-        text: sql.organizations.INSERT_ORGANIZATION(organization)
+    OrganizationModel.create(data).then(data => {
+      const organization = data.get({ plain: true })
+      OperationAPI.createOperation({
+        operationTypeID: 49, sessionID: session.sessionID
       }, (response) => {
-        if (response.status === 201) {
-          const organization = response.data;
-          organizations.push(organization);
-          OperationAPI.createOperation({
-            operationTypeID: 49, sessionID: session.sessionID
-          }, (response) => {
-            if (response.status === 201) LogAPI.logOrganization(response.data.id, organization);
-          });
-          return cb({ status: response.status, data: response.data });
-        } else if (response) return cb({ status: response.status, data: response.data });
-        else return cb({ status: 500, data: null });
+        if (response.status === 201) LogAPI.logOrganization(response.data.id, organization)
       });
-    }).catch((errors) => {
-      console.error(errors);
-      if (errors) return cb({ status: 400, data: errors });
-      else return cb({ status: 500, data: null });
-    });
+      return cb({ status: 201, data: organization })
+    }).catch(err => {
+      console.error(err.message)
+      return cb({ status: 400, data: err.message })
+    })
   }
   static updateOrganization(session, data, cb) {
-    const pattern = {
-      aOrganizarionBin: 'string|min:12|max:12',
-      aOrganizationShortName: 'required|string|min: 1, max: 1000',
-      aOrganizationOfficialName: 'string|min:1, max: 4000'
-    }
-    validator.validateAll(data, pattern).then((organization) => {
-      db.updateRecord({
-        text: sql.organizations.UPDATE_ORGANIZATION(organization)
+    OrganizationModel.update(data, {
+      where: { id: data.id },
+      returning: true,
+      plain: true
+    }).then(data => {
+      if (data[0] === 0) return cb({ status: 204, data: [] })
+      const organization = data[1].get({ plain: true })
+      OperationAPI.createOperation({
+        operationTypeID: 151, sessionID: session.sessionID
       }, (response) => {
-        const organization = response.data;
-        if (response.status === 200) {
-          for (let i in organizations) {
-            if (organizations[i].id == organization.id) {
-              organizations[i] = organization;
-              break;
-            }
-          }
-          OperationAPI.createOperation({
-            operationTypeID: 49, sessionID: session.sessionID
-          }, (response) => {
-            if (response.status === 201) LogAPI.logOrganization(response.data.id, organization);
-          });
-          return cb({ status: response.status, data: response.data });
-        } else if (response) return cb({ status: response.status, data: response.data });
-        else return cb({ status: 500, data: null });
+        if (response.status === 201) LogAPI.logOrganization(response.data.id, organization)
       });
-    }).catch((errors) => {
-      console.error(errors);
-      if (errors) return cb({ status: 400, data: errors });
-      else return cb({ status: 500, data: null });
-    });
+      return cb({ status: 200, data: organization })
+    }).catch(err => {
+      console.error(err.message)
+      return cb({ status: 400, data: err.message })
+    })
   }
-  static deleteOrganization(session, organization, cb) {
-    db.updateRecord({
-      text: sql.organizations.DELETE_ORGANIZATION(organization)
-    }, (response) => {
-      if (response.status === 200) {
-        const organization = response.data;
-        for (let i in organizations) {
-          if (organizations[i].id == organization.id) {
-            organizations[i] = organization;
-            break;
-          }
-        }
-        OperationAPI.createOperation({
-          operationTypeID: 49, sessionID: session.sessionID
-        }, (response) => {
-          if (response.status === 201) LogAPI.logOrganization(response.data.id, organization);
-        });
-        return cb({ status: response.status, data: response.data });
-      } else if (response) return cb({ status: response.status, data: response.data });
-      else return cb({ status: 500, data: null });
-    });
+  static deleteOrganization(session, data, cb) {
+    OrganizationModel.update({ isDeleted: true }, {
+      where: { id: data.id },
+      returning: true,
+      plain: true
+    }).then(result => {
+      if (result[0] === 0) return cb({ status: 204, data: [] })
+      const organization = result[1].get({ plain: true })
+      OperationAPI.createOperation({
+        operationTypeID: 152, sessionID: session.sessionID
+      }, (response) => {
+        if (response.status === 201) LogAPI.logOrganization(response.data.id, organization)
+      })
+      return cb({ status: 200, data: organization })
+    }).catch(err => {
+      console.error(err)
+      return cb({ status: 500, data: null })
+    })
   }
-  static restoreOrganization(session, organization, cb) {
-    db.updateRecord({
-      text: sql.organizations.RESTORE_ORGANIZATION(organization)
-    }, (response) => {
-      if (response.status === 200) {
-        const organization = response.data;
-        for (let i in organizations) {
-          if (organizations[i].id == organization.id) {
-            organizations[i] = organization;
-            break;
-          }
-        }
-        OperationAPI.createOperation({
-          operationTypeID: 49, sessionID: session.sessionID
-        }, (response) => {
-          if (response.status === 201) LogAPI.logOrganization(response.data.id, organization);
-        });
-        return cb({ status: response.status, data: response.data });
-      } else if (response) return cb({ status: response.status, data: response.data });
-      else return cb({ status: 500, data: null });
-    });
+  static restoreOrganization(session, data, cb) {
+    OrganizationModel.update({ isDeleted: false }, {
+      where: { id: data.id },
+      returning: true,
+      plain: true
+    }).then(result => {
+      if (result[0] === 0) return cb({ status: 204, data: [] })
+      const organization = result[1].get({ plain: true })
+      OperationAPI.createOperation({
+        operationTypeID: 153, sessionID: session.sessionID
+      }, (response) => {
+        if (response.status === 201) LogAPI.logOrganization(response.data.id, organization)
+      })
+      return cb({ status: 200, data: organization })
+    }).catch(err => {
+      console.error(err)
+      return cb({ status: 500, data: null });
+    })
   }
 }
-
-function getOrganizations() {
-  db.selectAllRecords({
-    text: sql.organizations.SELECT_ALL_ORGANIZATIONS()
-  }, (response) => {
-    if (response.status === 200) {
-      for (let i in response.data) {
-        organizations.push(response.data[i]);
-      }
-    }
-  });
-}
-
-getOrganizations();

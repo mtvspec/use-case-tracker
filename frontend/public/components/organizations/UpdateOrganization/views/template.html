@@ -18,7 +18,9 @@ class="modal-demo noselect">
         class="form-control"
         type="text"
         id="aOrganizationBin"
-        ng-model="vm.organization.aOrganizationBin">
+        ng-model="vm.organization.aOrganizationBin"
+        minlength="12"
+        maxlength="12">
       </div>
       <div class="form-group">
         <label
@@ -27,7 +29,10 @@ class="modal-demo noselect">
         class="form-control"
         type="text"
         id="aOrganizationShortName"
-        ng-model="vm.organization.aOrganizationShortName">
+        ng-model="vm.organization.aOrganizationShortName"
+        minlength="2"
+        maxlength="1000"
+        required>
       </div>
       <div class="form-group">
         <label
@@ -37,7 +42,8 @@ class="modal-demo noselect">
         type="text"
         id="aOrganizationOfficialName"
         ng-model="vm.organization.aOrganizationOfficialName"
-        required>
+        minlength="2"
+        maxlength="4000">
       </div>
     </form>
   </div>
@@ -45,7 +51,8 @@ class="modal-demo noselect">
     <button
     class="btn btn-primary"
     type="button"
-    ng-click="vm.save()">Save & Close</button>
+    ng-click="vm.save()"
+    ng-disabled="updateOrganizationForm.$invalid">Save & Close</button>
     <button
     class="btn btn-default"
     type="button"

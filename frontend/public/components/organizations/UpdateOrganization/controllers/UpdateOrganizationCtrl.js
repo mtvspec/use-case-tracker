@@ -8,11 +8,9 @@
     vm.organization = angular.copy(organization);
 
     vm.save = function () {
-      OrganizationAPI.updateOrganization(vm.organization, function (response) {
-        if (response.status === 200) {
-          $modalInstance.close(vm.organization);
-        }
-      })
+      OrganizationAPI.updateOrganization(vm.organization).then(res => {
+        if (res === 200) $modalInstance.close(vm.organization);
+      }, err => console.error(err));
     }
 
     vm.cancel = function () {

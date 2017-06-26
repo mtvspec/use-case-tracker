@@ -1,8 +1,5 @@
-<div class="form-group">
-  <button
-  class="btn btn-default"
-  type="button"
-  ng-click="vm.openCreateOrganizationModal()">New organizaton</button>
+<div class="input-group">
+  <span class="input-group-addon" ng-click="vm.openCreateOrganizationModal()">New organization</span>
   <input
   class="form-control"
   type="text"
@@ -10,6 +7,7 @@
   ng-model="searchOrganization"
   placeholder="Search organization ...">
 </div>
+<hr>
 <table class="table table-striped table-hover">
   <tr>
     <th>BIN</th>
