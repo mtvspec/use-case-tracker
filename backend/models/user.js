@@ -9,7 +9,7 @@ module.exports = function (sequelize, DataTypes) {
         primaryKey: true,
         autoIncrement: true
       },
-      personId: {
+      ePersonID: {
         type: DataTypes.BIGINT,
         allowNull: false
       },
@@ -28,8 +28,8 @@ module.exports = function (sequelize, DataTypes) {
       schema: 'users'
     });
 
-  User.associate = function (models) {
-    User.belongsTo(models.e_person, { foreignKey: 'personId' });
+  User.associate = (models) => {
+    User.belongsTo(models.e_person, { foreignKey: 'ePersonID' });
   }
 
   return User;

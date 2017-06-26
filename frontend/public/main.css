@@ -22,6 +22,7 @@ sv-btn {
 }
 
 .noselect {
+  cursor: default;
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
      -khtml-user-select: none; /* Konqueror HTML */
@@ -33,6 +34,10 @@ sv-btn {
 
 .light-blue {
   background-color: #b5d1ff !important;
+}
+
+.input-group-addon {
+  cursor: pointer;
 }
 
 .item-name {
@@ -165,4 +170,50 @@ div.project-manager {
   display: flex;
   flex-direction: column;
   margin: 10px;
+}
+
+.dark-blue {
+  display: flex;
+  background-image: url(9001880fd075fd540f02c30278633584.jpg);
+}
+
+div.table {
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  margin: 100px;
+  flex-basis: 180px;
+  
+}
+
+div.table-name {
+  background-color: transparent;
+  flex-grow: 0;
+  margin: 0;
+  padding: 5px;
+  text-align: center;
+  border: 1px solid #FFF;
+  border-bottom: 0;
+  color: #fff;
+  box-shadow: 0 1px 5px #fff;
+}
+
+div.table-body {
+  background-color: transparent;
+  flex-grow: 0;
+  border: 1px solid #fff;
+  padding: 5px;
+  color: #fff;
+  box-shadow: 0 1px 5px #fff;
+}
+
+ul {
+  margin: 0;
+  margin-left: 30px;
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  padding: 1px;
 }

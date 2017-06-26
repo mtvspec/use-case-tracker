@@ -7,9 +7,9 @@ const Queries = {
       SELECT
         p.id,
         k.a_dict_value_name_en "aProjectKindNameEN",
-        o.id "aOrganizationID",
-        o.a_organization_short_name "aOrganizationName",
-        c.a_customer_name "aCustomerName",
+        o.id "eOrganizationID",
+        o."aOrganizationShortName",
+        c."aCustomerName",
         p.a_project_name "aProjectName",
         p.a_project_desc "aProjectDesc",
         pc.a_document_name "aContractName",
@@ -31,7 +31,7 @@ const Queries = {
       LEFT JOIN documents.e_document pc ON p.e_contract_id = pc.id
       LEFT JOIN documents.e_document pp ON p.e_project_plan_id = pp.id
       LEFT JOIN customers.e_customer c ON p.e_customer_id = c.id
-      LEFT JOIN organizations.e_organization o ON c.e_organization_id = o.id
+      LEFT JOIN organizations.e_organization o ON c."eOrganizationID" = o.id
       LEFT JOIN dict.e_dict_value k ON p.d_project_kind_id = k.id
       LEFT JOIN dict.e_dict_value s ON p.d_project_state_id = s.id;
       `;

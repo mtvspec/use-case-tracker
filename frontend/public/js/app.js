@@ -17,7 +17,10 @@ app.config(function ($stateProvider, $urlRouterProvider) {
       url: '/main',
       templateUrl: '/templates/main/main.html',
       controller: 'MainCtrl',
-      controllerAs: 'vm'
+      controllerAs: 'vm',
+      data: {
+        pageTitle: 'Main'
+      }
     })
     .state('main.projects', {
       name: 'projects',
@@ -95,9 +98,9 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         pageTitle: 'Organizations'
       }
     })
-    .state('main.contacts', {
-      url: '/contacts',
-      templateUrl: 'contacts.html'
+    .state('main.tables', {
+      url: '/tables',
+      templateUrl: '/components/tables/views/template.html'
     });
 });
 

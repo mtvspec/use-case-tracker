@@ -7,6 +7,11 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 const validator = require('indicative');
+const interceptor = require('express-interceptor');
+const mung = require('express-mung');
+const winston = require('winston');
+
+winston.level = 'debug'
 
 let Sessions = require('./routes/users/sessions/Sessions.js');
 
@@ -46,6 +51,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function (req, res, next) {
+  winston.log('info', { requestBody: req.body });
   console.log('Request timestamp:');
   console.log(new Date());
   
@@ -65,6 +71,29 @@ app.use(function (req, res, next) {
   else isAuthentificated(req, res, next);
   
 });
+
+const finalParagraphInterceptor = interceptor(function(req, res){
+  return {
+    // Only HTML responses will be intercepted 
+    isInterceptable: function(){
+      return true;
+    },
+    // Appends a paragraph at the end of the response body 
+    intercept: function(body, send) {
+      return body, send;
+    }
+  };
+});
+
+app.use(mung.json(function transform(body, req, res) {
+
+  console.log(body);
+
+  return body;
+}));
+
+// Add the interceptor middleware 
+// app.use(finalParagraphInterceptor);
 
 // routes
 app.use('/api', routes);
@@ -128,9 +157,9 @@ function isAuthentificated(req, res, next) {
   for (let i = 0; i < Sessions.length; i++) {
     if (Sessions[i].aToken === req.cookies.session) {
       req.session = {
+        sessionID: Sessions[i].id,
         aToken: req.cookies.session,
-        eUserID: Sessions[i].userID,
-        sessionID: Sessions[i].id
+        eUserID: Sessions[i].eUserID
       }
       _isAuthentificated = true;
       next();

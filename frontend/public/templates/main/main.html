@@ -7,12 +7,13 @@
       <button class="btn btn-default" ui-sref="main.persons">Persons</button>
       <button class="btn btn-default" ui-sref="main.issues">Issues</button>
       <button class="btn btn-default" ui-sref="main.customers">Customers</button>
+      <button class="btn btn-default" ui-sref="main.tables">Tables</button>
+    </div>
+    <div class="btn-group pull-right">
+      <button class="btn btn-default pull-right" type="button" name="button" ng-click="logOut()">Log out</button>
     </div>
   </div>
-  <div class="main-toolbar">
-    <h1>Toolbar</h1>
-    <button class="btn btn-default" type="button" name="button" ng-click="logOut()">Log out</button>
-  </div>
-  <br>
-  <div ui-view></div>
+</div>
+<br>
+<div ui-view></div>
 </div>
