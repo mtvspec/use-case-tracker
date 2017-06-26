@@ -33,7 +33,7 @@
           }
         }
       });
-      modal.result.then(function (res) {
+      modal.result.then(res => {
         if (res && res.id) {
           Object.assign(person, res);
         }

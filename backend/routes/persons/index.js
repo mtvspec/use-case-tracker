@@ -36,7 +36,7 @@ module.exports = router
   PersonAPI.createPerson(req.session, req.body, (response) => {
     if (response.status === 201) res.io.emit('createdPersonID', response.data.id);
     return res.status(response.status).json(response.data).end();
-  })
+  });
 })
 /**
   * @desc This service updates person data

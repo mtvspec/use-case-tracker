@@ -10,11 +10,9 @@
     vm.person = angular.copy(person);
 
     vm.save = function () {
-      PersonAPI.updatePerson(vm.person, function (response) {
-        if (response.status === 200) {
-          $modalInstance.close(vm.person);
-        }
-      })
+      PersonAPI.updatePerson(vm.person).then(res => {
+        if (res === 200) $modalInstance.close(vm.person);
+      }, err => console.error(err));
     }
 
     vm.cancel = function () {

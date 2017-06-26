@@ -4,13 +4,16 @@
   </div>
 </div>
 <div class="modal-body" name="createCustomerForm">
-  <div class="form-group">
+  <form name="createPersonForm">
+    <div class="form-group">
     <label for="aPersonIIN">IIN</label>
     <input
     class="form-control"
     type="text"
     id="aPersonIIN"
-    ng-model="vm.person.aPersonIIN">
+    ng-model="vm.person.aPersonIIN"
+    minlength="12"
+    maxlength="12">
   </div>
   <div class="form-group">
     <label for="aPersonLastName">Last name</label>
@@ -18,7 +21,9 @@
     class="form-control"
     type="text"
     id="aPersonLastName"
-    ng-model="vm.person.aPersonLastName">
+    ng-model="vm.person.aPersonLastName"
+    minlength="2"
+    maxlength="100">
   </div>
   <div class="form-group">
     <label for="aPersonFirstName">First name</label>
@@ -27,6 +32,8 @@
     type="text"
     id="aPersonFirstName"
     ng-model="vm.person.aPersonFirstName"
+    minlength="2"
+    maxlength="100"
     required>
   </div>
   <div class="form-group">
@@ -35,7 +42,9 @@
     class="form-control"
     type="text"
     id="aPersonMiddleName"
-    ng-model="vm.person.aPersonMiddleName">
+    ng-model="vm.person.aPersonMiddleName"
+    minlength="2"
+    maxlength="100">
   </div>
   <div class="form-group">
     <label for="aPersonDob">Date of birth</label>
@@ -49,22 +58,18 @@
     <label for="dPersonGenderID">Gender</label>
     <select
     class="form-control"
-    ng-model="vm.person.dPersonGenderID">
+    ng-model="vm.person.dPersonGenderID"
+    min="1"
+    max="1">
       <option
       ng-value="gender.id"
       ng-bind="gender.aDictValueNameRU"
       ng-repeat="gender in vm.genders"></option>
     </select>
   </div>
+  </form>
 </div>
 <div class="modal-footer">
-  <button
-  class="btn btn-primary"
-  type="button"
-  ng-click="vm.createPerson(vm.person)"
-  ng-disabled="createPersonForm.$invalid">Add & Close</button>
-  <button
-  class="btn btn-default"
-  type="button"
-  ng-click="vm.cancel()">Cancel</button>
+  <button class="btn btn-primary" type="button" ng-click="vm.createPerson(vm.person)" ng-disabled="createPersonForm.$invalid">Add & Close</button>
+  <button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
 </div>

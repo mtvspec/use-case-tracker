@@ -1,37 +1,50 @@
 'use strict';
 
-module.exports = function (sequelize, DataTypes) {
+module.exports = function (sq, dt) {
 
-  const Person = sequelize
+  const PersonModel = sq
     .define('e_person', {
       id: {
-        type: DataTypes.BIGINT,
+        type: dt.BIGINT,
         primaryKey: true,
         autoIncrement: true
       },
       aPersonIIN: {
-        type: DataTypes.STRING(100)
+        type: dt.CHAR(12),
+        validate: {
+          len: [12, 12]
+        }
       },
       aPersonLastName: {
-        type: DataTypes.STRING(100)
+        type: dt.STRING(100),
+        validate: {
+          len: [2, 100]
+        }
       },
       aPersonFirstName: {
-        type: DataTypes.STRING(100),
-        allowNull: false
+        type: dt.STRING(100),
+        allowNull: false,
+        validate: {
+          len: [2, 100]
+        }
       },
       aPersonMiddleName: {
-        type: DataTypes.STRING(100)
+        type: dt.STRING(100)
       },
       aPersonDOB: {
-        type: DataTypes.DATE
+        type: dt.DATE
       },
       dPersonGenderID: {
-        type: DataTypes.BIGINT
+        type: dt.BIGINT
+      },
+      isDeleted: {
+        type: dt.BOOLEAN,
+        defaultValue: false 
       }
     }, {
       schema: 'persons'
     });
 
-  return Person;
+  return PersonModel;
 
 }
