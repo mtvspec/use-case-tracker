@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html ng-app="app">
+  <head>
+    <title ng-bind="title"></title>
+    <!--  styles -->
+    <link rel="stylesheet" href="assets/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.css">    
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="modules/user/user/user-login/user-login-css.css">
+    <!-- dependencies -->
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/socket.io.js"></script>
+    <script src="assets/js/angular.js"></script>
+    <script src="assets/js/angular-ui-bootstrap.js"></script>
+    <script src="assets/js/angular-ui-router.js"></script>
+    <!-- app -->
+    <script src="app.js"></script>
+    <script src="common/socket.js"></script>
+    <script src="modules/user/user/user-login/user-login-ctrl.js"></script>
+    <script src="modules/user/main/main-ctrl.js"></script>
+    <!-- API -->
+    <script src="modules/user/organization/organization-api.js"></script>
+    <script src="modules/user/organizational-unit/organizational-unit-api.js"></script>
+    <script src="modules/user/customer/customer-api.js"></script>
+    <script src="modules/user/person/person-api.js"></script>
+    <script src="modules/user/project/project-api.js"></script>
+    <script src="modules/user/project-member/project-member-api.js"></script>
+    <script src="modules/user/issue/issue-api.js"></script>
+    <!--  modules  -->
+    <script src="modules/user/person/person-list/person-list-ctrl.js"></script>
+    <script src="modules/user/person/person-create/person-create-ctrl.js"></script>
+    <script src="modules/user/person/person-update/person-update-ctrl.js"></script>
+    <script src="modules/user/organization/organization-list/organization-list-ctrl.js"></script>
+    <script src="modules/user/organization/organization-create/organization-create-ctrl.js"></script>
+    <script src="modules/user/organization/organization-update/organization-update-ctrl.js"></script>
+    <script src="modules/user/issue/issue-list/issue-list-ctrl.js"></script>
+    <script src="modules/user/issue/issue-show-info/issue-show-info-ctrl.js"></script>
+    <script src="modules/user/issue/issue-create/issue-create-ctrl.js"></script>   
+    <script src="modules/user/customer/customer-list/customer-list-ctrl.js"></script>
+    <script src="modules/user/customer/customer-create/customer-create-ctrl.js"></script>
+    <script src="modules/user/customer/customer-update/customer-update-ctrl.js"></script>
+    <script src="modules/user/project/project-list/project-list-ctrl.js"></script>
+    <script src="modules/user/project/project-show-info/project-show-info-ctrl.js"></script>
+    <script src="modules/user/project/project-create/project-create-ctrl.js"></script>
+    <script src="modules/user/org-chart/org-chart-ctrl.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8"/>
+  </head>
+  <body class="noselect">
+    <div class="container-fluid">
+      <div ui-view></div>
+    </div>
+  </body>
+</html>

@@ -13,7 +13,7 @@ const winston = require('winston');
 
 winston.level = 'debug'
 
-let Sessions = require('./routes/users/sessions/Sessions.js');
+let Sessions = require('./routes/users/sessions/session.js');
 
 const routes = require('./routes/index');
 const operations = require('./routes/operations');

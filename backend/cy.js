@@ -1,0 +1,1 @@
+const cytoscape = require('cytoscape');

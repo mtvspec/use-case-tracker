@@ -6,7 +6,7 @@ const Queries = {
       return `
       SELECT
         p.id,
-        k.a_dict_value_name_en "aProjectKindNameEN",
+        k."aDictValueNameEN" "aProjectKindNameEN",
         o.id "eOrganizationID",
         o."aOrganizationShortName",
         c."aCustomerName",
@@ -22,7 +22,7 @@ const Queries = {
         p.a_fact_start_date "aFactStartDate",
         p.a_fact_end_date "aFactEndDate",
         p.a_fact_budget "aFactBudget",
-        s.a_dict_value_name_en "aProjectStateNameEN",
+        s."aDictValueNameEN" "aProjectStateNameEN",
         p.is_deleted "isDeleted"
       FROM
         projects.e_project p

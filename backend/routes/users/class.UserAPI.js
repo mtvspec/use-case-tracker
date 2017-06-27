@@ -1,7 +1,7 @@
 'use strict';
 
 const bcrypt = require('bcrypt-nodejs');
-const SessionAPI = require('./sessions/class.SessionAPI.js');
+const SessionAPI = require('./sessions');
 const db = require('db');
 const sql = require('./sql.js');
 

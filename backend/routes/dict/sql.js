@@ -20,19 +20,19 @@ const Queries = {
       return `
       SELECT
         v.id,
-        v.a_dict_value_name_en "aDictValueNameEN",
-        v.a_dict_value_desc_en "aDictValueDescEN",
-        v.a_dict_value_name_ru "aDictValueNameRU",
-        v.a_dict_value_desc_ru "aDictValueDescRU",
-        v.is_deleted "isDeleted"
+        v."aDictValueNameEN",
+        v."aDictValueDescEN",
+        v."aDictValueNameRU",
+        v."aDictValueDescRU",
+        v."isDeleted"
       FROM
         dict.e_dict_value v,
         dict.e_dict d
-      WHERE v.e_dict_id = d.id
-      AND d.a_dict_system_name = '${dictName}'
+      WHERE v."eDictID" = d.id
+      AND d."aDictSystemName" = '${dictName}'
       ORDER BY
         v.id ASC;
-      `
+      `;
     },
     INSERT_DICT_VALUE(dictValue) {
       return `
