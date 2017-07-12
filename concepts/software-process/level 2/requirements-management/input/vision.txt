@@ -1,4 +1,0 @@
-business requirements
-business benefits
-business risks
-use case model
