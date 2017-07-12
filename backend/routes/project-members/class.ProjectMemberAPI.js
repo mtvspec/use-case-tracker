@@ -135,15 +135,3 @@ module.exports = class ProjectMemberAPI {
     });
   }
 }
-
-
-
-function _getProjectMembers() {
-  db.selectAllRecords({
-    text: sql.projectMembers.SELECT_ALL_PROJECT_MEMBERS()
-  }, (response) => {
-    if (response.status === 200) Object.assign(_projectMembers, response.data);
-  })
-}
-
-_getProjectMembers();

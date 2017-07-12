@@ -136,15 +136,3 @@ module.exports = class ProjectTeamAPI {
     });
   }
 }
-
-
-
-function _getProjectTeams() {
-  db.selectAllRecords({
-    text: sql.projectTeams.SELECT_ALL_PROJECT_TEAMS()
-  }, (response) => {
-    if (response.status === 200) Object.assign(_projectTeams, response.data);
-  })
-}
-
-_getProjectTeams();

@@ -1,0 +1,50 @@
+body {
+  font-family: 'Roboto Light';
+  font-size: 14px;
+}
+
+table {
+  margin: 0;
+  font-family: 'Ubuntu Mono';
+  font-size: 14px;
+  border: 1px solid #999;
+  -moz-box-shadow: 1px 4px 8px #888; /* FF 3.5+ */
+	-webkit-box-shadow: 1px 4px 8px #888; /* Safari 3.0+, Chrome */
+	box-shadow: 0 2px 8px #888; /* Opera 10.5, IE 9.0 */
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=5, Direction=135, Color='#888888'); /* IE 6, IE 7 */
+	-ms-filter: progid:DXImageTransform.Microsoft.Shadow(Strength=5, Direction=135, Color='#888888'); /* IE 8 */
+	border-radius: 3px;
+  text-shadow: 1px 1px 3px #FFF;
+}
+
+thead {
+  margin: 0;
+  padding: 5px;
+  text-align: center;
+}
+
+tbody {
+  display: block;
+  margin: 0;
+  border-top: 1px solid #999;
+}
+
+.table-column {
+  margin: 0;
+}
+
+.key {
+  margin: 0;
+}
+
+.nullable {
+  margin: 0;
+}
+
+.column-name {
+  margin: 0;
+}
+
+.column-type {
+  margin: 0;
+}

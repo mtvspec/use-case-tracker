@@ -49,9 +49,10 @@ module.exports = router
       }, (response) => {
         if (response.status === 201) LogAPI.logPerson(response.data.id, person);
       });
+      res.io.emit('createdPersonID', person.id);
       return res.status(201).json(person).end();
     }).catch(err => {
-      console.error(err.message);
+      console.error(err);
       return res.status(400).json(err.message).end();
     });
   })
@@ -65,7 +66,7 @@ module.exports = router
   .put('/:id', (req, res) => {
     req.body.id = req.params.id;
     PersonModel.update(req.body, {
-      where: { id: data.id },
+      where: { id: req.body.id },
       returning: true,
       plain: true
     }).then(data => {
@@ -76,9 +77,10 @@ module.exports = router
       }, (response) => {
         if (response.status === 201) LogAPI.logPerson(response.data.id, person);
       });
+      res.io.emit('updatedPersonID', person.id);
       return res.status(200).json(person).end();
     }).catch(err => {
-      console.error(err.message);
+      console.error(err);
       return res.status(400).json(err.message).end();
     });
   })
@@ -101,6 +103,7 @@ module.exports = router
       }, (response) => {
         if (response.status === 201) LogAPI.logPerson(response.data.id, person);
       })
+      res.io.emit('deletedPersonID', person.id);
       return res.status(200).json(person).end();
     }).catch(err => {
       console.error(err);
@@ -125,7 +128,8 @@ module.exports = router
         operationTypeID: 12, sessionID: session.sessionID
       }, (response) => {
         if (response.status === 201) LogAPI.logPerson(response.data.id, person);
-      })
+      });
+      res.io.emit('restoredPersonID', person.id);
       return res.status(200).json(person).end();
     }).catch(err => {
       console.error(err);

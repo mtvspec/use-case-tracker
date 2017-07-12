@@ -36,6 +36,6 @@ module.exports = function (sq, dt) {
       schema: 'organizations'
     })
 
-  return OrganizationModel
+  return OrganizationModel;
 
 }

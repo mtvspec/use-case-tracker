@@ -1,7 +1,7 @@
-node_modules/
-backend/node_modules/
-/frontend/public/bower_components/**
-.vscode/
+node_modules
+backend/node_modules
+backend/.tscache
+frontend-old
 *.DS_Store
 test.js
 db

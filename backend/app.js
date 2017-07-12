@@ -16,6 +16,8 @@ winston.level = 'debug'
 let Sessions = require('./routes/users/sessions/session.js');
 
 const routes = require('./routes/index');
+const tasks = require('./routes/tasks');
+const dbStructure = require('./routes/db-structure');
 const operations = require('./routes/operations');
 const organizations = require('./routes/organizations');
 const organizationalUnits = require('./routes/organizational-units');
@@ -97,6 +99,8 @@ app.use(mung.json(function transform(body, req, res) {
 
 // routes
 app.use('/api', routes);
+app.use('/api/tasks', tasks);
+app.use('/api/db-structure', dbStructure);
 app.use('/api/operations', operations);
 app.use('/api/issues', issues);
 app.use('/api/dict', dict);
