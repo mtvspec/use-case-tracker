@@ -6,7 +6,12 @@ const express = require("express");
 const logger = require("morgan");
 const path = require("path");
 const errorHandler = require("errorHandler");
+const users_1 = require("./routes/users");
 const persons_1 = require("./routes/persons");
+const organizations_1 = require("./routes/organizations");
+const issues_1 = require("./routes/issues");
+const emp_1 = require("./routes/emp");
+const customers_1 = require("./routes/customers");
 const projects_1 = require("./routes/projects");
 const index_1 = require("./routes/index");
 class Server {
@@ -37,8 +42,13 @@ class Server {
         });
     }
     api() {
-        this.app.use('/api/persons/', persons_1.default);
-        this.app.use('/api/projects/', projects_1.default);
+        this.app.use('/api/users/', users_1.users);
+        this.app.use('/api/persons/', persons_1.persons);
+        this.app.use('/api/organizations', organizations_1.organizations);
+        this.app.use('/api/issues/', issues_1.issues);
+        this.app.use('/api/emp/', emp_1.emp);
+        this.app.use('/api/customers/', customers_1.customers);
+        this.app.use('/api/projects/', projects_1.projects);
     }
     routes() {
         let router;

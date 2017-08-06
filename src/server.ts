@@ -6,9 +6,13 @@ import * as path from 'path';
 import errorHandler = require('errorHandler');
 import methodOverride = require('method-override');
 
-
-import persons from './routes/persons';
-import projects from './routes/projects';
+import { users } from './routes/users';
+import { persons } from './routes/persons';
+import { organizations } from './routes/organizations';
+import { issues } from './routes/issues';
+import { emp } from './routes/emp';
+import { customers } from './routes/customers';
+import { projects } from './routes/projects';
 
 import { IndexRoute } from "./routes/index";
 
@@ -58,7 +62,12 @@ export class Server {
   }
 
   public api () {
+    this.app.use('/api/users/', users);
     this.app.use('/api/persons/', persons);
+    this.app.use('/api/organizations', organizations);
+    this.app.use('/api/issues/', issues);
+    this.app.use('/api/emp/', emp);
+    this.app.use('/api/customers/', customers);
     this.app.use('/api/projects/', projects);
   }
 

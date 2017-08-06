@@ -1,16 +1,12 @@
 import { Router, Request, Response } from 'express';
-import { ProjectsService } from './projects.service/projects.service';
-const ps = new ProjectsService();
+import { CustomersService } from './customers.service/customers.service';
+const cs = new CustomersService();
 
-import { projectTeams } from './project-teams';
+export const customers = Router();
 
-export const projects = Router();
-
-projects.use('/:id/project-teams', projectTeams);
-
-projects
+customers
   .get('/', (req: Request, res: Response) => {
-    ps.getAllProjects()
+    cs.getAllCustomers()
       .then(
       result => res.status(result.status).json(result.data).end(),
       error => res.status(error.status).json(error.data).end()
