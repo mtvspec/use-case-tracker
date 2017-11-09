@@ -4,7 +4,6 @@ import { ProjectsService } from './../../../services'
 import { DictService } from './../../../services'
 import { CustomersService } from './../../../services'
 import { UsersService } from './../../../services'
-import { log } from 'util';
 
 class PersonsQueriesResolver {
   private personsFields = []
@@ -14,7 +13,6 @@ class PersonsQueriesResolver {
   }
   public static getPersons = async (root, args, context, info) => {
     const unfilteredFields = info.fieldNodes[0].selectionSet.selections.map(selection => selection.name.value)
-    console.log(root.args)
     if (root && root.args && (root.args.isDeleted === true || root.args.isDeleted === false)) return await PersonsService.getPersonsByRecordState(unfilteredFields, root.args.isDeleted)
     else if (root && root.args && (root.args.search.length > 0 || root.args.search === '')) return await PersonsService.searchPersons(unfilteredFields, root.args.search)
     else return await PersonsService.getPersons(unfilteredFields)
@@ -27,7 +25,13 @@ class PersonsQueriesResolver {
   }
 }
 
+const getMainMobileContactByID = async (root) => {
+  return root.mainMobileContactID ?
+    await PersonsService.getContact(root.mainMobileContactID) : null
+}
+
 const Person = {
+  mainMobileContact: getMainMobileContactByID,
   contacts: (root) => (root),
   employee: (root) => (root.id ? root : null),
   customers: async (root) => {

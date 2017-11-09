@@ -17,7 +17,7 @@ export class PersonsService extends DatabaseService {
   private static async getTableFields () {
     return await this.query(new QueryConfig({
       qty: 1,
-      text: 'SELECT * FROM persons.e_person LIMIT 1;'
+      text: `SELECT * FROM ${personsTable} LIMIT 1;`
     }))
   }
   public static async getPersonsCount () {
@@ -34,6 +34,7 @@ export class PersonsService extends DatabaseService {
   public static async getPersons (fields: any) {
     const filterFields = (field) => { return (personTableFields.indexOf(field) > -1) }
     const filteredFields = fields.filter(filterFields)
+    filteredFields.push('mainMobileContactID')
     return await db
       .select(filteredFields)
       .from(personsTable)
@@ -42,6 +43,7 @@ export class PersonsService extends DatabaseService {
   public static async searchPersons (fields: any, value: string) {
     const filterFields = (field) => { return (personTableFields.indexOf(field) > -1) }
     const filteredFields = fields.filter(filterFields)
+    filteredFields.push('mainMobileContactID')
     // return await this.query(new QueryConfig({
     //   qty: '*',
     //   text: queries.persons.SEARCH_PERSONS(value)
@@ -70,6 +72,7 @@ export class PersonsService extends DatabaseService {
   public static async getPerson (unfilteredFiels: any, id: number) {
     const filterFields = (field) => { return (personTableFields.indexOf(field) > -1) }
     const filteredFields = unfilteredFiels.filter(filterFields)
+    filteredFields.push('mainMobileContactID')
     return await db
       .select(filteredFields)
       .from(personsTable)
