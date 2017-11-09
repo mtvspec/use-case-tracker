@@ -30,27 +30,29 @@ User:
     ☐ Unblock user @timestamp(2016-11-27 09:48)
     ☐ Delete user @timestamp(2016-11-27 09:49)
     ☐ Restore user @timestamp(2016-11-27 09:49)
-    ☐ Get users @timestamp(2016-11-27 09:49)
-    ☐ Get user @timestamp(2016-11-27 09:49)
+    ✔ Get users @timestamp(2016-11-27 09:49) @done (August 16th 2017, 16:56)
+    ✔ Get user @timestamp(2016-11-27 09:49) @done (August 16th 2017, 16:57)
   Frontend:
-    ☐ Create user @timestamp(2016-11-27 13:49)
+  Create user @timestamp(2016-11-27 13:49)
+	☐ Create user
+	☐ 
 Customer:
   Backend:
-  ☐ Create customer @timestamp(2016-11-25 20:21)
+  ✔ Create customer @timestamp(2016-11-25 20:21) @done (August 16th 2017, 16:56)
   ☐ Update customer @timestamp(2016-11-25 20:21)
   ☐ Delete customer @timestamp(2016-11-25 20:21)
   ☐ Restore customer @timestamp(2016-11-25 20:21)
-  ☐ Get customers @timestamp(2016-11-25 20:21)
-  ☐ Get customer @timestamp(2016-11-25 20:21)
+  ✔ Get customers @timestamp(2016-11-25 20:21) @done (August 16th 2017, 16:56)
+  ✔ Get customer @timestamp(2016-11-25 20:21) @done (August 16th 2017, 16:56)
   Frontend:
-  ☐ Create customer @timestamp(2016-11-25 20:22)
+  ✔ Create customer @timestamp(2016-11-25 20:22) @done (August 16th 2017, 16:56)
   ☐ Update customer @timestamp(2016-11-25 20:22)
   ☐ Delete customer @timestamp(2016-11-25 20:22)
   ☐ Restore customer @timestamp(2016-11-25 20:22)
-  ☐ Get customers @timestamp(2016-11-25 20:22)
-  ☐ Get customer @timestamp(2016-11-25 20:22)
+  ✔ Get customers @timestamp(2016-11-25 20:22) @done (August 16th 2017, 16:56)
+  ✔ Get customer @timestamp(2016-11-25 20:22) @done (August 16th 2017, 16:56)
 Project:
-  ☐ Create project @timestamp(2016-11-25 20:24)
+  ✔ Create project @timestamp(2016-11-25 20:24) @done (August 16th 2017, 16:56)
   ☐ Start project
   ☐ Update project @timestamp(2016-11-25 20:24)
   ☐ Delete project @timestamp(2016-11-25 20:24)
@@ -79,5 +81,5 @@ Test:
 Project team:
   ☐ Create team
   ☐ Close team
-  ☐ Add team member
-  ☐ Remove team member
+  ✔ Add project member @done (August 16th 2017, 16:56)
+  ☐ Remove project member

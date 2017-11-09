@@ -9,11 +9,16 @@ exports.projects.use('/:id/project-teams', project_teams_1.projectTeams);
 exports.projects
     .get('/', (req, res) => {
     ps.getAllProjects()
-        .then(result => res.status(result.status).json(result.data).end(), error => res.status(error.status).json(error.data).end());
+        .then(result => res.status(result.status).json(result.data).end())
+        .catch(err => res.status(err.status).end());
+})
+    .get('/:id', (req, res) => {
+    ps.getProject(req.params.id)
+        .then(result => res.status(result.status).json(result.data).end())
+        .catch(err => res.status(err.status).end());
 })
     .post('/', (req, res) => {
-    console.log(req.body);
-    if (req.body)
-        res.status(201).json({ id: 3 }).end();
+    ps.createProject(req.body)
+        .then(result => res.status(result.status).json(result.data).end(), error => res.status(error.status).json(error.data).end());
 });
 //# sourceMappingURL=index.js.map

@@ -33,6 +33,11 @@ exports.persons
         .then(result => res.status(result.status).json(result.data).end())
         .catch(err => res.status(err.status).json(err.data).end());
 })
+    .post('/:id/contact', (req, res) => {
+    ps.createContact(req.body)
+        .then(result => res.status(result.status).json(result.data).end())
+        .catch(err => res.status(err.status).json(err.data).end());
+})
     .delete('/:id', (req, res) => {
     ps.deletePerson(req.params.id)
         .then(result => res.status(result.status).json(result.data).end())

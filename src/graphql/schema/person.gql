@@ -1,0 +1,14 @@
+type Person implements IName {
+  id: ID
+  iin: String
+  lastName: String
+  firstName: String
+  lastName: String
+  dob: String
+  contacts: Contact
+}
+
+type Contact {
+  id
+  contact
+}
