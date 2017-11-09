@@ -44,10 +44,6 @@ export class PersonsService extends DatabaseService {
     const filterFields = (field) => { return (personTableFields.indexOf(field) > -1) }
     const filteredFields = fields.filter(filterFields)
     filteredFields.push('mainMobileContactID')
-    // return await this.query(new QueryConfig({
-    //   qty: '*',
-    //   text: queries.persons.SEARCH_PERSONS(value)
-    // }))
     return await db
       .select(filteredFields)
       .from(personsTable)
@@ -57,6 +53,7 @@ export class PersonsService extends DatabaseService {
   public static async getPersonsByRecordState (fields: any, isDeleted: boolean) {
     const filterFields = (field) => { return (personTableFields.indexOf(field) > -1) }
     const filteredFields = fields.filter(filterFields)
+    filteredFields.push('mainMobileContactID')
     return await db
       .select(filteredFields)
       .from(personsTable)
