@@ -23,7 +23,7 @@ export class Contact {
 
 export interface IUser {
   user: {
-    id
+    id: number
   }
 }
 
@@ -33,9 +33,10 @@ export interface ICreateContact extends IUser {
   contact: string
 }
 
-export interface IUpdateContact extends ICreateContact {
+export interface IUpdateContact extends IUser {
   id: number
-
+  contactTypeID: number
+  contact: string
 }
 
 export interface IDeleteContact extends IUser {

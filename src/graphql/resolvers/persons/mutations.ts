@@ -1,4 +1,9 @@
 import { PersonsService } from './../../../services'
+import {
+  ICreateContact,
+  IUpdateContact,
+  IDeleteContact
+} from './../../../models/contact.model'
 const mutations = {
   createPerson: async (root, data, context) => {
     const _data = {
@@ -42,8 +47,7 @@ const mutations = {
     return Object.assign(response);
   },
   createContact: async (root, data, context) => {
-    const _data = {
-      id: 0,
+    const _data: ICreateContact = {
       personID: data.personID,
       contactTypeID: data.params.contactTypeID,
       contact: data.params.contact,
@@ -55,7 +59,7 @@ const mutations = {
     return Object.assign(response)
   },
   updateContact: async (root, data, context) => {
-    const _data = {
+    const _data: IUpdateContact = {
       id: data.id,
       contactTypeID: data.params.contactTypeID,
       contact: data.params.contact,
@@ -67,7 +71,7 @@ const mutations = {
     return Object.assign(response)
   },
   deleteContact: async (root, data, context) => {
-    const _data = {
+    const _data: IDeleteContact = {
       id: data.id,
       user: {
         id: context.session.userID

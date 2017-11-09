@@ -10,10 +10,18 @@ import {
 } from './../database.service'
 import { fail } from 'assert';
 
-let personTableFields = []
+interface field {
+
+}
+
+interface fields {
+
+}
+
+let personTableFields: field[] = []
 
 export class PersonsService extends DatabaseService {
-  personTableFields: any[]
+  personTableFields: field[] = []
   private static async getTableFields () {
     return await this.query(new QueryConfig({
       qty: 1,
@@ -31,8 +39,8 @@ export class PersonsService extends DatabaseService {
       .where({ isDeleted })
       .count(totalCount).first()
   }
-  public static async getPersons (fields: any) {
-    const filterFields = (field) => { return (personTableFields.indexOf(field) > -1) }
+  public static async getPersons (fields: field[]) {
+    const filterFields = (field: field) => { return (personTableFields.indexOf(field) > -1) }
     const filteredFields = fields.filter(filterFields)
     filteredFields.push('mainMobileContactID')
     return await db
@@ -40,8 +48,8 @@ export class PersonsService extends DatabaseService {
       .from(personsTable)
       .orderBy('lastName', 'firstName', 'middleName')
   }
-  public static async searchPersons (fields: any, value: string) {
-    const filterFields = (field) => { return (personTableFields.indexOf(field) > -1) }
+  public static async searchPersons (fields: field[], value: string) {
+    const filterFields = (field: field) => { return (personTableFields.indexOf(field) > -1) }
     const filteredFields = fields.filter(filterFields)
     filteredFields.push('mainMobileContactID')
     return await db
@@ -50,8 +58,8 @@ export class PersonsService extends DatabaseService {
       .whereRaw(`"isDeleted" = false and lower(concat("lastName", ' ', "firstName", ' ', "middleName", ' ', "iin")) ~ lower('\\m${value}')`)
       .orderBy('lastName', 'firstName', 'middleName')
   }
-  public static async getPersonsByRecordState (fields: any, isDeleted: boolean) {
-    const filterFields = (field) => { return (personTableFields.indexOf(field) > -1) }
+  public static async getPersonsByRecordState (fields: field[], isDeleted: boolean) {
+    const filterFields = (field: field) => { return (personTableFields.indexOf(field) > -1) }
     const filteredFields = fields.filter(filterFields)
     filteredFields.push('mainMobileContactID')
     return await db
@@ -66,8 +74,8 @@ export class PersonsService extends DatabaseService {
       text: queries.persons.GET_PERSONS_BY_GENDER_ID(genderID)
     }))
   }
-  public static async getPerson (unfilteredFiels: any, id: number) {
-    const filterFields = (field) => { return (personTableFields.indexOf(field) > -1) }
+  public static async getPerson (unfilteredFiels: field[], id: number) {
+    const filterFields = (field: field) => { return (personTableFields.indexOf(field) > -1) }
     const filteredFields = unfilteredFiels.filter(filterFields)
     filteredFields.push('mainMobileContactID')
     return await db
@@ -117,7 +125,7 @@ export class PersonsService extends DatabaseService {
       text: queries.persons.INSERT_CONTACT(data)
     }))
   }
-  public static async updateContact (data) {
+  public static async updateContact (data: IUpdateContact) {
     return await this.query(new QueryConfig({
       qty: 1,
       text: queries.persons.UPDATE_CONTACT(data)
