@@ -32,13 +32,13 @@ const typeDefs = `
     id: ID
     isDeleted: Boolean
     createdBy: User
-    createdAt: String
+    createdAt: Date
     deletedBy: User
-    deletedAt: String
+    deletedAt: Date
     updatedBy: User
-    updatedAt: String
+    updatedAt: Date
     modifiedBy: User
-    modifiedAt: String
+    modifiedAt: Date
   }
 
   interface Edge {
@@ -62,13 +62,13 @@ const typeDefs = `
     email: String
     isDeleted: Boolean
     createdBy: User
-    createdAt: String
+    createdAt: Date
     updatedBy: User
-    updatedAt: String
+    updatedAt: Date
     deletedBy: User
-    deletedAt: String
+    deletedAt: Date
     modifiedBy: User
-    modifiedAt: String
+    modifiedAt: Date
   }
 
   type CustomerProjectEdge {
@@ -105,13 +105,13 @@ const typeDefs = `
     projectMember: [ProjectMember]
     isDeleted: Boolean
     createdBy: User
-    createdAt: String
+    createdAt: Date
     updatedBy: User
-    updatedAt: String
+    updatedAt: Date
     deletedBy: User
-    deletedAt: String
+    deletedAt: Date
     modifiedBy: User
-    modifiedAt: String
+    modifiedAt: Date
   }
   
   type ProjectMemberRolesConnection {
@@ -119,7 +119,7 @@ const typeDefs = `
     roles: [ProjectMemberRole!]
   }
 
-  type ProjectMemberRole {
+  type ProjectMemberRole implements Node {
     id: ID
     projectMemberRole: DictValue
     issuesConnection: ProjectMemberRoleIssuesConnection
@@ -147,13 +147,13 @@ const typeDefs = `
     person: Person
     isDeleted: Boolean
     createdBy: User
-    createdAt: String
+    createdAt: Date
     updatedBy: User
-    updatedAt: String
+    updatedAt: Date
     deletedBy: User
-    deletedAt: String
+    deletedAt: Date
     modifiedBy: User
-    modifiedAt: String
+    modifiedAt: Date
   }
 
   type EmployeesConnection {
@@ -177,13 +177,13 @@ const typeDefs = `
     contact: String
     isDeleted: Boolean
     createdBy: User
-    createdAt: String
+    createdAt: Date
     updatedBy: User
-    updatedAt: String
+    updatedAt: Date
     deletedBy: User
-    deletedAt: String
+    deletedAt: Date
     modifiedBy: User
-    modifiedAt: String
+    modifiedAt: Date
   }
 
   type SystemComponentsConnection {
@@ -196,7 +196,7 @@ const typeDefs = `
     components: [Component!]
   }
 
-  type Component {
+  type Component implements Node {
     id: ID
     component: Component
     type: DictValue
@@ -226,7 +226,7 @@ const typeDefs = `
     node: Issue
   }
 
-  type System {
+  type System implements Node {
     id: ID
     kind: DictValue
     type: DictValue
@@ -256,13 +256,13 @@ const typeDefs = `
     closedBy: User
     isDeleted: Boolean
     createdBy: User
-    createdAt: String
+    createdAt: Date
     updatedBy: User
-    updatedAt: String
+    updatedAt: Date
     deletedBy: User
-    deletedAt: String
+    deletedAt: Date
     modifiedBy: User
-    modifiedAt: String
+    modifiedAt: Date
   }
 
   type DictValue implements Node {
@@ -271,13 +271,13 @@ const typeDefs = `
     nameRu: String
     isDeleted: Boolean
     createdBy: User
-    createdAt: String
+    createdAt: Date
     updatedBy: User
-    updatedAt: String
+    updatedAt: Date
     deletedBy: User
-    deletedAt: String
+    deletedAt: Date
     modifiedBy: User
-    modifiedAt: String
+    modifiedAt: Date
   }
 
   type CustomersConnection {
@@ -299,13 +299,13 @@ const typeDefs = `
     projectsConnection: CustomerProjectsConnection
     isDeleted: Boolean
     createdBy: User
-    createdAt: String
+    createdAt: Date
     updatedBy: User
-    updatedAt: String
+    updatedAt: Date
     deletedBy: User
-    deletedAt: String
+    deletedAt: Date
     modifiedBy: User
-    modifiedAt: String
+    modifiedAt: Date
   }
 
   type ProjectsConnection {
@@ -318,7 +318,7 @@ const typeDefs = `
     systems: [System!]
   }
 
-  type Project {
+  type Project implements Node {
     id: ID
     kind: DictValue
     projectName: String
@@ -373,7 +373,7 @@ const typeDefs = `
     teams: [ProjectTeam!]
   }
 
-  type ProjectTeam {
+  type ProjectTeam implements Node {
     id: ID
     name: String
     description: String
@@ -406,31 +406,33 @@ const typeDefs = `
     salary: Float
     isDeleted: Boolean
     createdBy: User
-    createdAt: String
+    createdAt: Date
     updatedBy: User
-    updatedAt: String
+    updatedAt: Date
     deletedBy: User
-    deletedAt: String
+    deletedAt: Date
     modifiedBy: User
-    modifiedAt: String
+    modifiedAt: Date
   }
 
   type Organization implements Node {
     id: ID
-    organizationalUnit: OrganizationalUnit
+    organizationalUnits: [OrganizationalUnit]
     bin: String
     name: String
     officialName: String
+    address: String
+    manager: Employee
     state: DictValue
     isDeleted: Boolean
     createdBy: User
-    createdAt: String
+    createdAt: Date
     updatedBy: User
-    updatedAt: String
+    updatedAt: Date
     deletedBy: User
-    deletedAt: String
+    deletedAt: Date
     modifiedBy: User
-    modifiedAt: String
+    modifiedAt: Date
   }
 
   type Query {
@@ -487,30 +489,29 @@ const typeDefs = `
     state: DictValue
     isDeleted: Boolean
     createdBy: User
-    createdAt: String
+    createdAt: Date
     updatedBy: User
-    updatedAt: String
+    updatedAt: Date
     deletedBy: User
-    deletedAt: String
+    deletedAt: Date
     modifiedBy: User
-    modifiedAt: String
+    modifiedAt: Date
   }
   # Штатная единица (ШЕ)
   type PositionalUnit implements Node {
     id: ID
-    organizationalUnit: OrganizationalUnit
     name: String
     description: String
     state: DictValue
     isDeleted: Boolean
     createdBy: User
-    createdAt: String
+    createdAt: Date
     updatedBy: User
-    updatedAt: String
+    updatedAt: Date
     deletedBy: User
-    deletedAt: String
+    deletedAt: Date
     modifiedBy: User
-    modifiedAt: String
+    modifiedAt: Date
   }
 
   type OrganizationsConnection {
