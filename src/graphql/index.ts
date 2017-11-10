@@ -92,8 +92,11 @@ const typeDefs = `
     lastName: String
     # Дата рождения
     dob: Date
+    address: String
     # Заказчики
     customers: [Customer]
+    internalPhone: Contact
+    workPhone: Contact
     mainMobileContact: Contact
     contacts: ContactsConnection
     # Пол
