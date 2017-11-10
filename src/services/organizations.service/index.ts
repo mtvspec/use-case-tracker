@@ -38,6 +38,20 @@ export class OrganizationsService extends DatabaseService {
       text: queries.organizations.GET_ORGANIZATIONS_COUNT()
     }))
   }
+  public static async getSubordinades (id: number) {
+    return await this.query(new QueryConfig({
+      qty: '*',
+      text: `
+        SELECT
+          s.*
+        FROM
+          emp.e_emp s,
+          emp.e_emp m
+        WHERE s."managerID" = m.id
+        AND m.id = ${id};
+      `
+    }))
+  }
   public static async getOrganizationalUnitByOrganizationID (organizationalUnitID: number) {
     return await this.query(new QueryConfig({
       qty: 1,
@@ -142,7 +156,7 @@ export class OrganizationsService extends DatabaseService {
         organizations.e_organizational_unit ou,
         emp.e_emp e
       WHERE e."organizationalUnitID" = ou.id
-      AND ou."managerID" != e.id
+      --AND ou."managerID" != e.id
       AND e."firedAt" IS NULL
       AND ou.id = ${organizationalUnitID}
       ORDER BY ou.id;`
