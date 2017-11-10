@@ -30,7 +30,20 @@ const getMainMobileContactByID = async (root) => {
     await PersonsService.getContact(root.mainMobileContactID) : null
 }
 
+const getInternalPhone = async (root) => {
+  return root.internalPhoneID ?
+    await PersonsService.getContact(root.internalPhoneID) : null
+}
+
+const getWorkPhone = async (root) => {
+  console.log(root)
+  return root.workPhoneID ?
+    await PersonsService.getContact(root.workPhoneID) : null
+}
+
 const Person = {
+  internalPhone: getInternalPhone,
+  workPhone: getWorkPhone,
   mainMobileContact: getMainMobileContactByID,
   contacts: (root) => (root),
   employee: (root) => (root.id ? root : null),
