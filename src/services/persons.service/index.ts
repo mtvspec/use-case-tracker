@@ -42,7 +42,7 @@ export class PersonsService extends DatabaseService {
   public static async getPersons (fields: field[]) {
     const filterFields = (field: field) => { return (personTableFields.indexOf(field) > -1) }
     const filteredFields = fields.filter(filterFields)
-    filteredFields.push('mainMobileContactID')
+    filteredFields.push('internalPhoneID', 'workPhoneID', 'mainMobileContactID')
     return await db
       .select(filteredFields)
       .from(personsTable)
@@ -51,7 +51,7 @@ export class PersonsService extends DatabaseService {
   public static async searchPersons (fields: field[], value: string) {
     const filterFields = (field: field) => { return (personTableFields.indexOf(field) > -1) }
     const filteredFields = fields.filter(filterFields)
-    filteredFields.push('mainMobileContactID')
+    filteredFields.push('internalPhoneID', 'workPhoneID', 'mainMobileContactID')
     return await db
       .select(filteredFields)
       .from(personsTable)
@@ -61,7 +61,7 @@ export class PersonsService extends DatabaseService {
   public static async getPersonsByRecordState (fields: field[], isDeleted: boolean) {
     const filterFields = (field: field) => { return (personTableFields.indexOf(field) > -1) }
     const filteredFields = fields.filter(filterFields)
-    filteredFields.push('mainMobileContactID')
+    filteredFields.push('internalPhoneID', 'workPhoneID', 'mainMobileContactID')
     return await db
       .select(filteredFields)
       .from(personsTable)
@@ -77,7 +77,7 @@ export class PersonsService extends DatabaseService {
   public static async getPerson (unfilteredFiels: field[], id: number) {
     const filterFields = (field: field) => { return (personTableFields.indexOf(field) > -1) }
     const filteredFields = unfilteredFiels.filter(filterFields)
-    filteredFields.push('mainMobileContactID')
+    filteredFields.push('internalPhoneID', 'workPhoneID', 'mainMobileContactID')
     return await db
       .select(filteredFields)
       .from(personsTable)
