@@ -10,6 +10,22 @@ export class OrganizationsService extends DatabaseService {
       text: queries.organizations.GET_ORGANIZATION_BY_ID(id)
     }))
   }
+  public static async getOrganizationalUnits (id: number) {
+    return await this.query(new QueryConfig({
+      qty: '*',
+      text: `
+        
+        SELECT
+          ou.*
+        FROM
+          organizations.e_organizational_unit ou,
+          organizations.e_organization o
+        WHERE ou."organizationID" = o.id
+        AND o.id = ${id};
+
+      `
+    }))
+  }
   public static async getOrganizations () {
     return await this.query(new QueryConfig({
       qty: '*',
