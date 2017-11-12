@@ -1,13 +1,17 @@
 import CommonResovers from './../common'
 import { UsersService } from './../../../services'
+import { DictService } from './../../../services'
+
+const parseFields = require('graphql-parse-fields')
 
 const getUserByID = async (root, args, context, info) => {
-  const unfilteredFields = info.fieldNodes[0].selectionSet.selections.map(selection => selection.name.value)
-  return await UsersService.getUser(unfilteredFields, args.id)
+  const fields = Object.keys(parseFields(info))
+  return await UsersService.getUser(fields, args.id)
 }
 
 const User = {
   person: CommonResovers.getPersonByUserID,
+  state: CommonResovers.state,
   createdBy: CommonResovers.createdBy,
   updatedBy: CommonResovers.updatedBy,
   deletedBy: CommonResovers.deletedBy,

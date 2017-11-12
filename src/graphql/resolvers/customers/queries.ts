@@ -1,40 +1,42 @@
-import { CustomersService } from './../../../services/customers.service'
+const parseFields = require('graphql-parse-fields')
 import CommonResolvers from './../common'
+import { CustomersService } from './../../../services/customers.service'
 import { OrganizationsService } from './../../../services'
 
-const getCustomerByID = async (root, args, context) => {
+const getCustomerByID = async (_: any, args: { id: number }) => {
   return await CustomersService.getCustomer(args.id)
 }
 
 const CustomersConnection = {
-  totalCount: async (root, args, context) => {
+  totalCount: async (root: any) => {
     return await CustomersService.getCustomersCount()
-      .then((data: { totalCount }) => { return data.totalCount })
+      .then((data: { totalCount: number }) => { return data.totalCount })
   },
-  customers: async (root, args) => {
+  customers: async (root: any) => {
     return await CustomersService.getCustomers()
   }
 }
 
 const CustomerProjectsConnection = {
-  totalCount: async (root, args):
-    Promise<{ totalCount }> => {
+  totalCount: async (root: { id: number }, _: any):
+    Promise<number> => {
     return await CustomersService.getCustomersProjectsCount(root.id)
-      .then((data: { totalCount }) => { return data.totalCount })
+      .then((data: { totalCount: number }) => { return data.totalCount })
   },
-  projects: async (root) => {
+  projects: async (root: { id: number }) => {
     return await CustomersService.getCustomersProjects(root.id)
   }
 }
 
-const CustomerProjectEdge = (root, args) => ({ root, args })
+const CustomerProjectEdge = (root: any, args: any) => ({ root, args })
 
 const Customer = {
-  organization: async (root, args, context) => {
-    return root.organizationID ?
-      await OrganizationsService.getOrganization(root.organizationID) : null
+  organization: async (root: any, args: any, context: any, info: any) => {
+    const fields = Object.keys(parseFields(info))
+    return root.organization ?
+      await OrganizationsService.getOrganization(fields, root.organization) : null
   },
-  projectsConnection: (root) => (root),
+  projectsConnection: (root: any) => (root),
   createdBy: CommonResolvers.createdBy,
   updatedBy: CommonResolvers.updatedBy,
   deletedBy: CommonResolvers.deletedBy,

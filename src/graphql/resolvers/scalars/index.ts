@@ -1,7 +1,10 @@
 import { GraphQLScalarType, GraphQLError } from 'graphql'
 const { Kind } = require('graphql/language')
 
-const Date = new GraphQLScalarType({
+import { DictService } from './../../../services'
+
+
+const DateTime: any = new GraphQLScalarType({
   name: 'Date',
   description: 'Date type',
   parseValue (value) {
@@ -23,12 +26,12 @@ const Date = new GraphQLScalarType({
   },
 })
 
-const validateValue = value => {
+const validateValue = (value: any) => {
   if (isNaN(Date.parse(value))) {
     throw new GraphQLError(`Query error: not a valid date`, [value]);
   }
 }
 
 export default {
-  Date
+  DateTime,
 }

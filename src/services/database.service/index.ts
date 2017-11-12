@@ -1,5 +1,6 @@
+const totalCount: string = 'id as totalCount'
 const { Pool } = require('pg')
-import { convertData } from './../../utils'
+import { convertData, field } from './../../utils'
 const config = {
   user: 'postgres', //env var: PGUSER
   database: 'postgres', //process.env.PGDATABASE, //env var: PGDATABASE
@@ -9,6 +10,12 @@ const config = {
   max: 10, // max number of clients in the pool
   idleTimeoutMillis: 30000, // how long a client is allowed to remain idle before being closed
 }
+
+interface Service {
+  table: string
+}
+
+import db from './../../knex'
 
 const successDatabaseResponse: string = '----------------------------------------------------- Database Success Response -----------------------------------------------------'
 const failureDatabaseResponse: string = '------------------------------------------------------- Database Failure Response ---------------------------------------------------'
@@ -36,13 +43,13 @@ const ErrorMessages = {
 
 const pool = new Pool(config)
 
-pool.on('error', function (err) {
+pool.on('error', function (err: Error) {
   console.trace(err);
   throw new Error(ErrorMessages.db);
 })
 
 export class DatabaseService {
-  public static convertData
+  public static convertData: any
   public static async query (queryConfig: QueryConfig) {
     if (!(queryConfig instanceof QueryConfig)) {
       console.trace(queryConfig)
@@ -53,13 +60,13 @@ export class DatabaseService {
       throw new Error(ErrorMessages.qty)
     }
     return new Promise((resolve, reject) => {
-      pool.connect(async (err, client, done) => {
+      pool.connect(async (err: Error, client: any, done: any) => {
         if (err) {
           done(err)
           this.errorHadler(queryConfig, err)
           return await reject(this.createResponse(500, null))
         } else {
-          await client.query(queryConfig.text, async (err, result) => {
+          await client.query(queryConfig.text, async (err: any, result: any) => {
             if (err) {
               done(err)
               this.errorHadler(queryConfig, err)
@@ -80,19 +87,165 @@ export class DatabaseService {
       })
     })
   }
-  public static async fields (table) {
+  public static filterFields (tableFields: field[], unfilteredFiels: field[]) {
+    return unfilteredFiels.filter((field: field) => { return (tableFields.indexOf(field) > -1) })
+  }
+  public static filterFieldsAndReturnValues (tableFields: field[], unfilteredFiels: field[], args: any) {
+    let obj: any = {}
+    return unfilteredFiels.filter((field: field) => {
+      return (tableFields.indexOf(field) > -1)
+    }).map((field: any) => {
+      obj[field] = args[field]
+      return obj
+    })[0]
+  }
+  public static async getNodes (table: string, tableFields: field[], unfilteredFiels: field[], id?: number | string, orderBy: any[] = ['id']) {
+    if (id)
+      return await db(table)
+        .select(this.filterFields(tableFields, unfilteredFiels))
+        .where(id)
+        .orderBy(this.filterFields(tableFields, orderBy))
+    else
+      return await db(table)
+        .select(this.filterFields(tableFields, unfilteredFiels))
+        .orderBy(this.filterFields(tableFields, orderBy))
+  }
+  public static async getNode (table: string, tableFields: field[], unfilteredFiels: field[], id: number, args?: any) {
+    return await db(table)
+      .select(this.filterFields(tableFields, unfilteredFiels))
+      .andWhere({ id }).first()
+  }
+  public static async getNodesCount (table: string, source?: number, args?: any) {
+    if (source)
+      return await db(table)
+        .count(totalCount).first()
+        .where({ source })
+    else if (args)
+      return await db(table)
+        .where(args)
+        .count(totalCount).first()
+    else
+      return await db(table)
+        .count(totalCount).first()
+  }
+  public static async filterNodes (table: string, tableFields: field[], unfilteredFiels: field[], args: any, orderBy: any[] = ['id']) {
+    const _args: any[] = Object.keys(args)
+    return await db(table)
+      .select(this.filterFields(tableFields, unfilteredFiels))
+      .where(this.filterFieldsAndReturnValues(tableFields, _args, args))
+      .orderBy(this.filterFields(tableFields, orderBy))
+  }
+  public static async searchNode (table: string, tableFields: field[], unfilteredFiels: field[], search: string, fields: any, orderBy: any = ['id']) {
+    return await db(table)
+      .select(this.filterFields(tableFields, unfilteredFiels))
+      .whereRaw(`lower(concat(${fields})) ~ lower('\\m${search}')`)
+      .orderBy(orderBy)
+  }
+  public static async createNode (table: string, data: any, user: number) {
+    const fields: any[] = Object.keys(data.input)
+    const _user = {
+      createdBy: user,
+      createdAt: 'now()',
+      modifiedBy: user
+    }
+    let _data = Object.assign({}, data.input, _user)
+    const response = await db(table)
+      .where({ id: _data.id })
+      .insert(_data)
+      .returning('*')
+    return response[0]
+  }
+  public static async updateNode (table: string, data: any, user: number) {
+    const fields: any[] = Object.keys(data.input)
+    const _user = {
+      updatedBy: user,
+      updatedAt: 'now()',
+      modifiedBy: user
+    }
+    let _data = Object.assign({}, data.input, _user)
+    const response = await db(table)
+      .where({ id: _data.id })
+      .update(_data)
+      .returning('*')
+    return response[0]
+  }
+  public static async deleteNode (table: string, id: any, user: number) {
+    const _user = {
+      deletedBy: user,
+      deletedAt: 'now()',
+      modifiedBy: user
+    }
+    let _data = Object.assign({}, { isDeleted: true }, _user)
+    const response = await db(table)
+      .where({ id })
+      .update(_data)
+      .returning('*')
+    return response[0]
+  }
+  public static async restoreDeletedNode (table: string, id: number, user: number) {
+    const _user = {
+      restoredBy: user,
+      restoredAt: 'now()',
+      modifiedBy: user
+    }
+    let _data = Object.assign({}, { isDeleted: false }, _user)
+    const response = await db(table)
+      .where({ id })
+      .update(_data)
+      .returning('*')
+    return response[0]
+  }
+  public static async getEdge (table: string, tableFields: any, unfilteredFiels: field[], source: number, args: any) {
+    const field = Object.keys(args)
+    const fields = this.filterFields(tableFields, unfilteredFiels)
+    if (args.length > 0) {
+      const range = args.createdAt || args.updatedAt || args.deletedAt || args.modifiedAt
+      const queries: any = {
+        'createdAt': async () => {
+          return await db(table)
+            .select(fields)
+            .whereBetween(`${field}`, [range.start, range.end])
+            .andWhere({ source })
+        },
+        'updatedAt': async () => {
+          console.log(range)
+          return await db(table)
+            .select(fields)
+            .whereBetween(`${field}`, [range.start, range.end])
+            .andWhere({ source })
+        },
+        'deletedAt': async () => {
+          return await db(table)
+            .select(fields)
+            .whereBetween(`${field}`, [range.start, range.end])
+            .andWhere({ source })
+        },
+        'modifiedAt': async () => {
+          return await db(table)
+            .select(fields)
+            .whereBetween(`${field}`, [range.start, range.end])
+            .andWhere({ source })
+        }
+      }
+      return queries[field[0]]()
+    } else return await db(table)
+      .select(fields)
+      .where({ source })
+  }
+  public static async fields (table: string) {
+    console.log(table)
     if (!(typeof table === 'string')) {
       console.trace(table)
       throw new Error(ErrorMessages.queryConfig)
     }
     return new Promise((resolve, reject) => {
-      pool.connect(async (err, client, done) => {
+      pool.connect(async (err: any, client: any, done: any) => {
         if (err) {
           done(err)
           console.trace(err)
           return await reject(this.createResponse(500, null))
         } else {
-          await client.query(`SELECT * FROM ${table} LIMIT 1;`, async (err, result) => {
+          await client.query(`SELECT * FROM ${table} LIMIT 1;`, async (err: any, result: any) => {
             if (err) {
               done(err)
               console.trace(err)
@@ -116,14 +269,14 @@ export class DatabaseService {
     };
     this.queryConfigLogger(queryConfig)
     return new Promise((resolve, reject) => {
-      pool.connect(async (err, client, done) => {
+      pool.connect(async (err: any, client: any, done: any) => {
         if (err) {
           done(err)
           console.trace(err)
           this.errorHadler(queryConfig, err)
           return await reject(this.createResponse(500, null))
         } else {
-          await client.query(queryConfig.text, async (err, result) => {
+          await client.query(queryConfig.text, async (err: any, result: any) => {
             if (err) {
               done(err)
               this.errorHadler(queryConfig, err)
@@ -146,14 +299,14 @@ export class DatabaseService {
     Promise<DatabaseResponse> {
     this.queryConfigLogger(queryConfig);
     return new Promise((resolve, reject) => {
-      pool.connect((err, client, done) => {
+      pool.connect((err: any, client: any, done: any) => {
         if (err) {
           done(err);
           console.trace(err);
           this.errorHadler(queryConfig, err);
           return reject(this.createResponse(500, null));
         } else {
-          client.query(queryConfig.text, (err, result) => {
+          client.query(queryConfig.text, (err: any, result: any) => {
             if (err) {
               done(err);
               console.trace(err);
@@ -175,14 +328,14 @@ export class DatabaseService {
   public static insertRecord (queryConfig: QueryConfig): Promise<SuccessDatabaseResponse | ErrorDatabaseResponse> {
     this.queryConfigLogger(queryConfig)
     return new Promise((resolve, reject) => {
-      pool.connect((err, client, done) => {
+      pool.connect((err: any, client: any, done: any) => {
         if (err) {
           done(err)
           console.trace(err)
           this.errorHadler(queryConfig, err)
           return reject(this.createResponse(500, null))
         } else {
-          client.query(queryConfig.text, (err, result) => {
+          client.query(queryConfig.text, (err: any, result: any) => {
             if (err) {
               done(err)
               console.trace(err)
@@ -203,14 +356,14 @@ export class DatabaseService {
   public static updateRecord (queryConfig: QueryConfig): Promise<SuccessDatabaseResponse | ErrorDatabaseResponse> {
     this.queryConfigLogger(queryConfig);
     return new Promise((resolve, reject) => {
-      pool.connect((err, client, done) => {
+      pool.connect((err: any, client: any, done: any) => {
         if (err) {
           done(err);
           console.trace(err);
           this.errorHadler(queryConfig, err);
           return reject(this.createResponse(500, null));
         } else {
-          client.query(queryConfig.text, (err, result) => {
+          client.query(queryConfig.text, (err: any, result: any) => {
             if (err) {
               done(err);
               console.trace(err);

@@ -1,25 +1,29 @@
+const parseFields = require('graphql-parse-fields')
 import CommonResolvers from './../common'
-import { OrganizationsService } from './../../../services/organizations.service'
+import { OrganizationsService, ITotalCount } from './../../../services/organizations.service'
 import { EmployeesService } from './../../../services/employees.service'
 import { PersonsService } from './../../../services/persons.service'
-const getOrganizationalUnitByID = async (root: any, args: any) => {
-  return await OrganizationsService.getOrganizationalUnitByID(args.id)
+import { DictService } from '../../../services/index';
+const getOrganizationalUnit = async (_: any, args: { id: number }) => {
+  return await OrganizationsService.getOrganizationalUnit(args.id)
 }
 
-const getOrganizationByID = async (root: any, args: any) => {
-  return await OrganizationsService.getOrganization(args.id)
+const getOrganization = async (_: any, args: { id: number }, context: any, info: any) => {
+  const fields = Object.keys(parseFields(info))
+  return await OrganizationsService.getOrganization(fields, args.id)
 }
 
-const getManagerByID = async (root: any) => {
-  return root.managerID ?
-    await EmployeesService.getEmployee(root.managerID) : null
+const getManager = async (root: { manager: number }) => {
+  return root.manager ?
+    await EmployeesService.getEmployee(root.manager) : null
 }
 
 const Organization = {
-  organizationalUnits: async (root: any) => {
+  organizationalUnits: async (root: { id: number }) => {
     return await OrganizationsService.getOrganizationalUnits(root.id)
   },
-  manager: getManagerByID,
+  manager: getManager,
+  state: CommonResolvers.state,
   createdBy: CommonResolvers.createdBy,
   updatedBy: CommonResolvers.updatedBy,
   deletedBy: CommonResolvers.deletedBy,
@@ -27,32 +31,50 @@ const Organization = {
 }
 
 const OrganizationsConnection = {
-  totalCount: async (root: any) => {
+  totalCount: async (_: any) => {
     return await OrganizationsService.getOrganizationsCount()
-      .then((data: any) => { return data.totalCount })
+      .then(({ totalCount }) => { return totalCount })
   },
-  organizations: async (root: any) => {
+  organizations: async (_: any) => {
     return await OrganizationsService.getOrganizations()
   }
 }
 
 const OrganizationalUnit = {
-  manager: async (root: any) => {
-    return root.managerID > 0 ?
-      await OrganizationsService.getManagerByID(root.managerID) : null
+  organization: async (root: { organization: number }, info: any) => {
+    const fields = Object.keys(parseFields(info))
+    return root.organization > 0 ?
+      await OrganizationsService.getOrganization(fields, root.organization) : null
   },
-  managers: async (root: any) => {
+  organizationalUnit: async (root: { organizationalUnit: number }) => {
+    return root.organizationalUnit > 0 ?
+      await OrganizationsService.getOrganizationalUnit(root.organizationalUnit) : null
+  },
+  kind: async (root: { kind: number }) => {
+    return root.kind > 0 ?
+      await DictService.getDictValue(root.kind) : null
+  },
+  type: async (root: { type: number }) => {
+    return root.type > 0 ?
+      await DictService.getDictValue(root.type) : null
+  },
+  manager: async (root: { manager: number }) => {
+    return root.manager > 0 ?
+      await OrganizationsService.getManagerByID(root.manager) : null
+  },
+  managers: async (root: { id: number }) => {
     return OrganizationsService.getManagersByOrganizationalUnitID(root.id)
   },
-  childOrganizationalUnits: async (root: any) => {
+  childOrganizationalUnits: async (root: { id: number }) => {
     return await OrganizationsService.getChildOrganizationalUnitsByOrganizationalUnitID(root.id)
   },
-  employees: async (root: any) => {
+  employees: async (root: { id: number }) => {
     return await OrganizationsService.getEmployeesByOrganizationalUnitID(root.id)
   },
-  allEmployees: async (root: any) => {
+  allEmployees: async (root: { id: number }) => {
     return await OrganizationsService.getAllEmployeesByOrganizationalUnitID(root.id)
   },
+  state: CommonResolvers.state,
   createdBy: CommonResolvers.createdBy,
   updatedBy: CommonResolvers.updatedBy,
   deletedBy: CommonResolvers.deletedBy,
@@ -67,10 +89,10 @@ const PositionalUnit = {
 }
 
 const EmployeesConnection = {
-  totalCount: async (root: any) => {
+  totalCount: async (root: { id: number }) => {
     return root.id ?
       await EmployeesService.getEmployeesCount(root.id)
-        .then((data: any) => { return data.totalCount }) : null
+        .then(({ totalCount }) => { return totalCount }) : null
   },
   edges: async (root: any) => {
     return root.id ?
@@ -79,19 +101,19 @@ const EmployeesConnection = {
 }
 
 const PersonEmployeeEdge = {
-  node: async (root: any) => {
-    return await EmployeesService.getEmployee(root.empID)
+  node: async (root: { emp: number }) => {
+    return await EmployeesService.getEmployee(root.emp)
   }
 }
 
 const Employee = {
-  person: async (root: any, args: any, context: any, info: any) => {
-    const unfilteredFields = info.fieldNodes[0].selectionSet.selections.map((selection: any) => selection.name.value)
-    return await PersonsService.getPerson(unfilteredFields, root.personID)
+  person: async (root: { person: number }, _: any, context: any, info: any) => {
+    const fields = Object.keys(parseFields(info))
+    return await PersonsService.getPerson(fields, root.person)
   },
-  organizationalUnit: async (root: any) => {
-    return root.organizationalUnitID ?
-      await OrganizationsService.getOrganizationalUnitByID(root.organizationalUnitID) : null
+  organizationalUnit: async (root: { organizationalUnit: number }) => {
+    return root.organizationalUnit ?
+      await OrganizationsService.getOrganizationalUnit(root.organizationalUnit) : null
   },
   positionalUnit: async (root: any) => {
     return root.positionalUnitID ?
@@ -113,8 +135,8 @@ const Employee = {
 export default {
   OrganizationsConnection,
   Organization,
-  getOrganizationalUnitByID,
-  getOrganizationByID,
+  getOrganizationalUnit,
+  getOrganization,
   OrganizationalUnit,
   PositionalUnit,
   EmployeesConnection,

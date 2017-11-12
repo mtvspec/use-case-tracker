@@ -8,3 +8,4 @@ frontend-old
 test.js
 db
 .idea
+npm-debug.log

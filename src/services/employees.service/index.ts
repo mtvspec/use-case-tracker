@@ -2,6 +2,9 @@ import {
   DatabaseService, QueryConfig
 } from './../database.service';
 import { Organization } from './../../models/organization.model';
+import db from './../../knex'
+const employeesTable: string = 'emp.e_emp'
+const totalCount: string = 'id as totalCount'
 export class EmployeesService extends DatabaseService {
   public static async getEmployees () {
     return await this.query(new QueryConfig({
@@ -26,7 +29,7 @@ export class EmployeesService extends DatabaseService {
     }))
   }
 
-  public static async getEmployeesByPersonID (personID: number) {
+  public static async getEmployeesByPersonID (person: number) {
     return await this.query(new QueryConfig({
       qty: '*',
       text: `
@@ -34,20 +37,14 @@ export class EmployeesService extends DatabaseService {
         ep.*
       FROM
         emp.e_emp_e_person ep
-      WHERE ep."personID" = ${personID}
+      WHERE ep."person" = ${person}
       ORDER BY ep.id;`
     }))
   }
-  public static async getEmployeesCount (personID: number) {
-    return await this.query(new QueryConfig({
-      qty: 1,
-      text: `
-      SELECT
-        count(ep.id) "totalCount"
-      FROM
-        emp.e_emp_e_person ep
-      WHERE ep."personID" = ${personID};`
-    }))
+  public static async getEmployeesCount (person: number) {
+    return db(employeesTable)
+      .where({ person })
+      .count(totalCount).first()
   }
   public static async getSubordinatesByEmployeeID (employeeID: number) {
     return await this.query(new QueryConfig({

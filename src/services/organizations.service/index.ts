@@ -3,12 +3,35 @@ import {
   DatabaseService, QueryConfig
 } from './../database.service';
 import { Organization } from './../../models/organization.model';
+import { INewOrganizationalUnitData, IUpdatedOrganizationalUnitData } from '../../graphql/resolvers/organizations/mutations';
+import { convertData, field } from '../../utils/index';
+import db from './../../knex'
+const organizationsTable: string = 'organizations.e_organization'
+const organizationalUnitsTable: string = 'organizations.e_organizational_unit'
+export interface ITotalCount {
+  totalCount: number
+}
+
+let organizationTableFields: field[] = []
+
 export class OrganizationsService extends DatabaseService {
-  public static async getOrganization (id: number) {
+  private static async getTableFields () {
     return await this.query(new QueryConfig({
       qty: 1,
-      text: queries.organizations.GET_ORGANIZATION_BY_ID(id)
+      text: `SELECT * FROM ${organizationsTable} LIMIT 1;`
     }))
+  }
+  public static async getOrganization (fields: field[], id: number) {
+    const filterFields = (field: field) => { return (organizationTableFields.indexOf(field) > -1) }
+    const filteredFields = fields.filter(filterFields)
+    return await db
+      .select(filteredFields)
+      .from(organizationsTable)
+      .where({ id }).first()
+    // return await this.query(new QueryConfig({
+    //   qty: 1,
+    //   text: queries.organizations.GET_ORGANIZATION_BY_ID(id)
+    // }))
   }
   public static async getOrganizationalUnits (id: number) {
     return await this.query(new QueryConfig({
@@ -26,17 +49,73 @@ export class OrganizationsService extends DatabaseService {
       `
     }))
   }
+  public static async createOrganizationalUnit (data: INewOrganizationalUnitData) {
+    console.log(data)
+    return await this.query(new QueryConfig({
+      qty: 1,
+      text: `
+        INSERT INTO organizations.e_organizational_unit (
+          "organizationID",
+          "managerID",
+          "organizationalUnitID",
+          "kindID",
+          "typeID",
+          name,
+          description,
+          "createdBy",
+          "modifiedBy"
+        ) VALUES (
+          ${convertData(data.organizationID)},
+          ${convertData(data.managerID)},
+          ${convertData(data.organizationalUnitID)},
+          ${convertData(data.kindID)},
+          ${convertData(data.typeID)},
+          '${data.name}',
+          ${convertData(data.description)},
+          ${data.user.id},
+          ${data.user.id}
+        ) RETURNING *;
+      `
+    }))
+  }
+  public static async updateOrganizationalUnit (data: IUpdatedOrganizationalUnitData) {
+    const response = await db(organizationalUnitsTable)
+      .update(data)
+      .where({ id: data.id })
+      .returning('*').first()
+    console.log(response)
+    return response
+    // return await this.query(new QueryConfig({
+    //   qty: 1,
+    //   text: `
+    //     UPDATE organizations.e_organizational_unit
+    //     SET
+    //       "organizationID" = ${convertData(data.organizationID)},
+    //       "organizationalUnitID" = ${convertData(data.organizationalUnitID)},
+    //       "kindID" = ${convertData(data.kindID)},
+    //       "typeID" = ${convertData(data.typeID)},
+    //       name = '${data.name}',
+    //       description = ${convertData(data.description)},
+    //       "updatedBy" = ${data.user.id},
+    //       "updatedAt" = 'now()',
+    //       "modifiedBy" = ${data.user.id}
+    //     WHERE id = ${data.id}
+    //     RETURNING *;
+    //   `
+    // }))
+  }
   public static async getOrganizations () {
     return await this.query(new QueryConfig({
       qty: '*',
       text: queries.organizations.GET_ORGANIZATIONS()
     }))
   }
-  public static async getOrganizationsCount () {
+  public static async getOrganizationsCount ():
+    Promise<ITotalCount> {
     return await this.query(new QueryConfig({
       qty: 1,
       text: queries.organizations.GET_ORGANIZATIONS_COUNT()
-    }))
+    })) as ITotalCount
   }
   public static async getSubordinades (id: number) {
     return await this.query(new QueryConfig({
@@ -85,7 +164,7 @@ export class OrganizationsService extends DatabaseService {
       ORDER BY pu.id;`
     }))
   }
-  public static async getOrganizationalUnitByID (organizationUnitID: number) {
+  public static async getOrganizationalUnit (organizationUnitID: number) {
     return await this.query(new QueryConfig({
       qty: 1,
       text: `
@@ -311,3 +390,8 @@ export class OrganizationsService extends DatabaseService {
     }))
   }
 }
+
+const getFields = (async () => {
+  const response: any = await <any>OrganizationsService.fields(organizationsTable)
+  response.forEach((field: any) => organizationTableFields.push(field.name))
+})()

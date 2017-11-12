@@ -18,16 +18,15 @@ export class UsersService extends DatabaseService {
   public static async getAllUsers (unfilteredFields: any) {
     const filterFields = (field) => { return (userTableFields.indexOf(field) > -1) }
     let filteredFields = unfilteredFields.filter(filterFields)
-    filteredFields.push('personID')
     return await db(usersTable)
       .select(filteredFields)
       .whereNot({ id: 0 })
       .orderBy('id')
   }
   public static async getUser (unfilteredFields: any, id: number) {
+    console.log(unfilteredFields)
     const filterFields = (field) => { return (userTableFields.indexOf(field) > -1) }
     let filteredFields = unfilteredFields.filter(filterFields)
-    filteredFields.push('personID')
     return await db
       .select(filteredFields)
       .from(usersTable)

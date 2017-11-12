@@ -4,11 +4,16 @@ import {
 import db from './../../knex'
 const sessionsTable: string = 'sessions.e_session'
 import { queries } from './queries'
+import { token } from 'morgan';
+export interface ISession {
+  user: number
+  token: string
+}
 export class SessionsService extends DatabaseService {
   public static async getSession (id: number) {
 
   }
-  public static async openSession (data: { userID: number, token: string }):
+  public static async openSession (data: ISession):
     Promise<any> {
     return await db(sessionsTable)
       .insert(data)
@@ -31,7 +36,7 @@ export class SessionsService extends DatabaseService {
   public static validateToken = async (token: string) => {
     return await db
       .from(sessionsTable)
-      .where({ stateID: 'O', token })
+      .where({ state: 'O', token })
       .first()
   }
   public static getSessionBySessionToken = async (token: string) => {

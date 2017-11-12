@@ -1,145 +1,119 @@
-import { ICreatePerson, IUpdatePerson, IDeletePerson } from './../../models/person.model';
-import { ICreateContact, IUpdateContact, IDeleteContact } from './../../models/contact.model';
-import queries from './queries';
+import { ICreatePerson, IUpdatePerson, IDeletePerson } from './../../models/person.model'
 import db from './../../knex'
-const totalCount: string = 'id as totalCount'
-const personsTable: string = 'persons.e_person'
-const personContactsTable: string = 'persons.e_contact'
+const PERSONS_TABLE: string = 'persons.e_person'
+const PERSON_CONTACT_EDGES_TABLE: string = 'persons.r_e_person_e_contact'
 import {
-  DatabaseService, QueryConfig
+  DatabaseService
 } from './../database.service'
-import { fail } from 'assert';
 
 interface field {
-
-}
-
-interface fields {
-
+  name: string
 }
 
 let personTableFields: field[] = []
+let personContactEdgesTableFields: field[] = []
+let contactTableFields: field[] = []
 
 export class PersonsService extends DatabaseService {
-  personTableFields: field[] = []
-  private static async getTableFields () {
-    return await this.query(new QueryConfig({
-      qty: 1,
-      text: `SELECT * FROM ${personsTable} LIMIT 1;`
-    }))
+  public static getPersonsCount () {
+    return this.getNodesCount(
+      PERSONS_TABLE
+    )
   }
-  public static async getPersonsCount () {
-    return await db
-      .from(personsTable)
-      .count(totalCount).first()
+  public static getPersonContactsEdges (unfilteredFiels: field[], node: number, args: any) {
+    return this.getEdge(
+      PERSON_CONTACT_EDGES_TABLE,
+      personContactEdgesTableFields,
+      unfilteredFiels,
+      node,
+      args
+    )
   }
-  public static async getPersonsCountByRecordState (isDeleted: boolean) {
-    return await db
-      .from(personsTable)
-      .where({ isDeleted })
-      .count(totalCount).first()
+  public static getPersonsCountByArgs (args: any) {
+    return this.getNodesCount(
+      PERSONS_TABLE,
+      null,
+      args
+    )
   }
-  public static async getPersons (fields: field[]) {
-    const filterFields = (field: field) => { return (personTableFields.indexOf(field) > -1) }
-    const filteredFields = fields.filter(filterFields)
-    filteredFields.push('internalPhoneID', 'workPhoneID', 'mainMobileContactID')
-    return await db
-      .select(filteredFields)
-      .from(personsTable)
-      .orderBy('lastName', 'firstName', 'middleName')
+  public static getPersons (unfilteredFiels: field[]) {
+    return this.getNodes(
+      PERSONS_TABLE,
+      personTableFields,
+      unfilteredFiels
+    )
   }
-  public static async searchPersons (fields: field[], value: string) {
-    const filterFields = (field: field) => { return (personTableFields.indexOf(field) > -1) }
-    const filteredFields = fields.filter(filterFields)
-    filteredFields.push('internalPhoneID', 'workPhoneID', 'mainMobileContactID')
-    return await db
-      .select(filteredFields)
-      .from(personsTable)
-      .whereRaw(`"isDeleted" = false and lower(concat("lastName", ' ', "firstName", ' ', "middleName", ' ', "iin")) ~ lower('\\m${value}')`)
-      .orderBy('lastName', 'firstName', 'middleName')
+  public static restorePerson (id: number, user: number) {
+    return this.restoreDeletedNode(
+      PERSONS_TABLE,
+      id,
+      user
+    )
   }
-  public static async getPersonsByRecordState (fields: field[], isDeleted: boolean) {
-    const filterFields = (field: field) => { return (personTableFields.indexOf(field) > -1) }
-    const filteredFields = fields.filter(filterFields)
-    filteredFields.push('internalPhoneID', 'workPhoneID', 'mainMobileContactID')
-    return await db
-      .select(filteredFields)
-      .from(personsTable)
-      .where({ isDeleted })
-      .orderBy('lastName', 'firstName', 'middleName')
+  public static async searchPersons (unfilteredFiels: field[], search: string, args: any, orderBy?: any) {
+    const fields = ["\"lastName\"", '\' \'', "\"firstName\"", '\' \'', "\"middleName\"", '\' \'', "\"iin\""]
+    return this.searchNode(
+      PERSONS_TABLE,
+      personTableFields,
+      unfilteredFiels,
+      search,
+      fields,
+      orderBy
+    )
   }
-  public static async getPersonsByGenderID (genderID: number) {
-    return await this.query(new QueryConfig({
-      qty: '*',
-      text: queries.persons.GET_PERSONS_BY_GENDER_ID(genderID)
-    }))
+  public static async filterPersons (unfilteredFiels: field[], args: any, orderBy?: any) {
+    return this.filterNodes(
+      PERSONS_TABLE,
+      personTableFields,
+      unfilteredFiels,
+      args,
+      orderBy
+    )
   }
-  public static async getPerson (unfilteredFiels: field[], id: number) {
-    const filterFields = (field: field) => { return (personTableFields.indexOf(field) > -1) }
-    const filteredFields = unfilteredFiels.filter(filterFields)
-    filteredFields.push('internalPhoneID', 'workPhoneID', 'mainMobileContactID')
-    return await db
-      .select(filteredFields)
-      .from(personsTable)
-      .where({ id }).first()
+  public static getPerson (unfilteredFiels: field[], id: number) {
+    return this.getNode(
+      PERSONS_TABLE,
+      personTableFields,
+      unfilteredFiels,
+      id
+    )
   }
-  public static async createPerson (data: ICreatePerson) {
-    return await this.query(new QueryConfig({
-      qty: 1,
-      text: queries.persons.INSERT_PERSON(data)
-    }))
+  public static async createPerson (data: ICreatePerson, user: number) {
+    return this.createNode(
+      PERSONS_TABLE,
+      data,
+      user
+    )
   }
-  public static async updatePerson (data: IUpdatePerson) {
-    return await this.query(new QueryConfig({
-      qty: 1,
-      text: queries.persons.UPDATE_PERSON(data)
-    }))
+  public static updatePerson (data: IUpdatePerson, user: number) {
+    return this.updateNode(
+      PERSONS_TABLE,
+      data,
+      user
+    )
   }
-  public static async deletePerson (data: IDeletePerson) {
-    return await this.query(new QueryConfig({
-      qty: 1,
-      text: queries.persons.DELETE_PERSON(data)
-    }))
+  public static deletePerson (id: number, user: number) {
+    return this.deleteNode(
+      PERSONS_TABLE,
+      id,
+      user
+    )
   }
-  public static async getPersonsContactsCount (personID: number) {
-    return await db
-      .count(totalCount).first()
-      .from(personContactsTable)
-      .where({ personID })
+  public static async getPersonsContactsCount (source: number) {
+    return this.getNodesCount(
+      PERSON_CONTACT_EDGES_TABLE,
+      source
+    )
   }
-  public static async getContacts (personID: number) {
-    return await this.query(new QueryConfig({
-      qty: '*',
-      text: queries.persons.GET_PERSON_CONTACTS(personID)
-    }))
-  }
-  public static async getContact (contactID: number) {
-    return await this.query(new QueryConfig({
-      qty: 1,
-      text: queries.persons.GET_PERSON_CONTACT(contactID)
-    }))
-  }
-  public static async createContact (data: ICreateContact) {
-    return await this.query(new QueryConfig({
-      qty: 1,
-      text: queries.persons.INSERT_CONTACT(data)
-    }))
-  }
-  public static async updateContact (data: IUpdateContact) {
-    return await this.query(new QueryConfig({
-      qty: 1,
-      text: queries.persons.UPDATE_CONTACT(data)
-    }))
-  }
-  public static async deleteContact (data: IDeleteContact) {
-    return await this.query(new QueryConfig({
-      qty: 1,
-      text: queries.persons.DELETE_CONTACT(data)
-    }))
-  }
+
 }
 
-const getFields = (async () => {
-  const response: any = await <any>PersonsService.fields(personsTable)
+const getPersonTableFields = (async () => {
+  const response: any = await <any>PersonsService.fields(PERSONS_TABLE)
   response.forEach((field: any) => personTableFields.push(field.name))
+})()
+
+const getPersonContactEdgesTableFields = (async () => {
+  const response: any = await <any>PersonsService.fields(PERSON_CONTACT_EDGES_TABLE)
+  response.forEach((field: any) => personContactEdgesTableFields.push(field.name))
 })()

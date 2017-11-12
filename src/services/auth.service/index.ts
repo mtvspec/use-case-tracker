@@ -1,14 +1,13 @@
-import * as uuid from 'uuid';
+const uuid = require('uuid/v4');
 const bcrypt = require('bcrypt-nodejs');
 import { UsersService } from './../users.service';
-import { SessionsService } from './../sessions.service';
+import { SessionsService, ISession } from './../sessions.service';
 interface ICredentials {
   username: string;
   password: string;
 }
-export class AuthService {
+export default class AuthService {
   private credentials: ICredentials;
-  private _uuid: uuid;
   public static async authentificateUser (credentials: ICredentials) {
     return await new Promise(async (resolve, reject) => {
       let result = await this.authentificate(credentials);
@@ -25,10 +24,10 @@ export class AuthService {
         response.id : false)
       : false;
   }
-  private static async openSession (userID: number):
-    Promise<{ userID: number, token: string } | boolean> {
-    const token: string = uuid.v4();
-    const response = await <any>SessionsService.openSession({ userID, token });
+  private static async openSession (user: number):
+    Promise<ISession | boolean> {
+    const token: string = uuid();
+    const response = await <any>SessionsService.openSession({ user, token });
     return (response.id && response.id > 0) ?
       response : false;
   }

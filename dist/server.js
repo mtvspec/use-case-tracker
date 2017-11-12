@@ -8,9 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const parseFields = require('graphql-parse-fields');
 const apollo_server_express_1 = require("apollo-server-express");
 const graphql_tools_1 = require("graphql-tools");
-const graphqlLogger = { log: (e) => console.error(e.stack) };
+const graphqlLogger = { log: (e) => console.trace(e.stack) };
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const express = require("express");
@@ -54,7 +55,7 @@ class Server {
         }));
         this.app.use('/api/graphql', apollo_server_express_1.graphqlExpress((req) => ({
             schema: graphql_1.default,
-            context: { services, session: req.body.session },
+            context: { services, session: req.body.session, utils: { parseFields } },
             debug: true,
         })));
         this.app.use('/graphiql', apollo_server_express_1.graphiqlExpress({ endpointURL: '/api/graphql' }));
