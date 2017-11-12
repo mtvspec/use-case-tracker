@@ -1,4 +1,4 @@
-import { AuthService } from './auth.service'
+import AuthService from './auth.service'
 import { CustomersService } from './customers.service'
 import { ProjectsService } from './projects.service'
 import { DictService } from './dict.service'
@@ -8,6 +8,7 @@ import { UsersService } from './users.service'
 import { PersonsService } from './persons.service'
 import { IssuesService } from './issues.service'
 import { OrganizationsService } from './organizations.service'
+import ContactsService from './contacts.service'
 export {
   AuthService,
   UsersService,
@@ -18,5 +19,6 @@ export {
   CustomersService,
   ProjectsService,
   EmployeesService,
-  IssuesService
+  IssuesService,
+  ContactsService
 }
