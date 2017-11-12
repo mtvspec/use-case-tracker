@@ -4,22 +4,22 @@ import { ProjectsService } from './../../../services/projects.service'
 import { DictService } from './../../../services/dict.service'
 import CommonResolvers from './../common'
 
-const getIssueByID = async (root, args) => {
+const getIssueByID = async (root: any, args: any) => {
   return await IssuesService.getIssue(args.id)
 }
 
-const closedBy = async (root, args, context, info) => {
-  const unfilteredFields = info.fieldNodes[0].selectionSet.selections.map(selection => selection.name.value)
+const closedBy = async (root: any, args: any, ctx: any, info: any) => {
+  const fields: any = Object.keys(ctx.utils.parseFields(info))
   return root.closedBy ?
-    await UsersService.getUser(unfilteredFields, root.closedBy) : null
+    await UsersService.getUser(fields, root.closedBy) : null
 }
 
 const IssuesConnection = {
-  totalCount: async (root) => {
+  totalCount: async (root: any) => {
     return await IssuesService.getIssuesCount()
-      .then((data: { totalCount: number }) => { return data.totalCount })
+      .then((data: any) => { return data.totalCount })
   },
-  issues: async (root) => {
+  issues: async (root: any) => {
     if (root.args.filter) return await IssuesService.filterIssues(root.args.filter)
     return (root.args.input) ?
       await IssuesService.getIssuesByFieldValue(root.args.input)
@@ -28,17 +28,19 @@ const IssuesConnection = {
 }
 
 const Issue = {
-  author: async (root) => {
-    return root.authorID ?
-      await ProjectsService.getProjectMember(root.authorID) : null
+  author: async (root: any) => {
+    return root.author ?
+      await ProjectsService.getProjectMember(root.author) : null
   },
-  issueType: async (root) => {
-    return root.issueTypeID ?
-      await DictService.getDictValue(root.issueTypeID) : null
+  issueType: async (root: any, args: any, ctx: any, info: any) => {
+    const fields: any = Object.keys(ctx.utils.parseFields(info))
+    return root.type ?
+      await DictService.getDictValue(fields, root.type) : null
   },
-  state: async (root) => {
-    return root.stateID ?
-      await DictService.getDictValue(root.stateID) : null
+  state: async (root: any, args: any, ctx: any, info: any) => {
+    const fields: any = Object.keys(ctx.utils.parseFields(info))
+    return root.state ?
+      await DictService.getDictValue(fields, root.state) : null
   },
   closedBy: closedBy,
   createdBy: CommonResolvers.createdBy,

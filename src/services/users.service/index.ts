@@ -24,7 +24,6 @@ export class UsersService extends DatabaseService {
       .orderBy('id')
   }
   public static async getUser (unfilteredFields: any, id: number) {
-    console.log(unfilteredFields)
     const filterFields = (field) => { return (userTableFields.indexOf(field) > -1) }
     let filteredFields = unfilteredFields.filter(filterFields)
     return await db

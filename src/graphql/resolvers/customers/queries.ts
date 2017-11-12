@@ -1,4 +1,3 @@
-const parseFields = require('graphql-parse-fields')
 import CommonResolvers from './../common'
 import { CustomersService } from './../../../services/customers.service'
 import { OrganizationsService } from './../../../services'
@@ -31,8 +30,8 @@ const CustomerProjectsConnection = {
 const CustomerProjectEdge = (root: any, args: any) => ({ root, args })
 
 const Customer = {
-  organization: async (root: any, args: any, context: any, info: any) => {
-    const fields = Object.keys(parseFields(info))
+  organization: async (root: any, args: any, ctx: any, info: any) => {
+    const fields: any = Object.keys(ctx.utils.parseFields(info))
     return root.organization ?
       await OrganizationsService.getOrganization(fields, root.organization) : null
   },

@@ -34,8 +34,9 @@ const OrganizationsConnection = {
     return await OrganizationsService.getOrganizationsCount()
       .then(({ totalCount }) => { return totalCount })
   },
-  organizations: async (_: any) => {
-    return await OrganizationsService.getOrganizations()
+  organizations: async (_: any, args: any, ctx: any, info: any) => {
+    const fields: any = Object.keys(ctx.utils.parseFields(info))
+    return await OrganizationsService.getOrganizations(fields)
   }
 }
 

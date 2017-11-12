@@ -4,10 +4,8 @@ import {
 import { Organization } from './../../models/organization.model';
 import { Profiler } from 'inspector';
 import { Customer } from '../../models/customer.model';
-import { ITotalCount } from '../organizations.service/index';
 export class CustomersService extends DatabaseService {
-  public static async getCustomersCount ():
-    Promise<ITotalCount> {
+  public static async getCustomersCount () {
     return await this.query(new QueryConfig({
       qty: 1,
       text: `
@@ -15,11 +13,10 @@ export class CustomersService extends DatabaseService {
         count(c.id) "totalCount"
       FROM
         customers.e_customer c;`
-    })) as ITotalCount
+    }))
   }
 
-  public static async getCustomersProjectsCount (customerID: number):
-    Promise<ITotalCount> {
+  public static async getCustomersProjectsCount (customerID: number) {
     return await this.query(new QueryConfig({
       qty: 1,
       text: `
@@ -30,7 +27,7 @@ export class CustomersService extends DatabaseService {
         customers.e_customer c
       WHERE p."customerID" = c.id
       AND c.id = ${customerID};`
-    })) as ITotalCount
+    }))
   }
 
   public static async getCustomersProjects (customerID: number) {
