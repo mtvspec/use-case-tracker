@@ -1,6 +1,5 @@
-const parseFields = require('graphql-parse-fields')
 import CommonResolvers from './../common'
-import { OrganizationsService, ITotalCount } from './../../../services/organizations.service'
+import { OrganizationsService } from './../../../services/organizations.service'
 import { EmployeesService } from './../../../services/employees.service'
 import { PersonsService } from './../../../services/persons.service'
 import { DictService } from '../../../services/index';
@@ -8,8 +7,8 @@ const getOrganizationalUnit = async (_: any, args: { id: number }) => {
   return await OrganizationsService.getOrganizationalUnit(args.id)
 }
 
-const getOrganization = async (_: any, args: { id: number }, context: any, info: any) => {
-  const fields = Object.keys(parseFields(info))
+const getOrganization = async (_: any, args: { id: number }, ctx: any, info: any) => {
+  const fields: any = Object.keys(ctx.utils.parseFields(info))
   return await OrganizationsService.getOrganization(fields, args.id)
 }
 
@@ -41,8 +40,8 @@ const OrganizationsConnection = {
 }
 
 const OrganizationalUnit = {
-  organization: async (root: { organization: number }, info: any) => {
-    const fields = Object.keys(parseFields(info))
+  organization: async (root: { organization: number }, args: any, ctx: any, info: any) => {
+    const fields: any = Object.keys(ctx.utils.parseFields(info))
     return root.organization > 0 ?
       await OrganizationsService.getOrganization(fields, root.organization) : null
   },
@@ -50,13 +49,15 @@ const OrganizationalUnit = {
     return root.organizationalUnit > 0 ?
       await OrganizationsService.getOrganizationalUnit(root.organizationalUnit) : null
   },
-  kind: async (root: { kind: number }) => {
+  kind: async (root: { kind: number }, args: any, ctx: any, info: any) => {
+    const fields: any = Object.keys(ctx.utils.parseFields(info))
     return root.kind > 0 ?
-      await DictService.getDictValue(root.kind) : null
+      await DictService.getDictValue(fields, root.kind) : null
   },
-  type: async (root: { type: number }) => {
+  type: async (root: { type: number }, args: any, ctx: any, info: any) => {
+    const fields: any = Object.keys(ctx.utils.parseFields(info))
     return root.type > 0 ?
-      await DictService.getDictValue(root.type) : null
+      await DictService.getDictValue(fields, root.type) : null
   },
   manager: async (root: { manager: number }) => {
     return root.manager > 0 ?
@@ -107,8 +108,8 @@ const PersonEmployeeEdge = {
 }
 
 const Employee = {
-  person: async (root: { person: number }, _: any, context: any, info: any) => {
-    const fields = Object.keys(parseFields(info))
+  person: async (root: { person: number }, _: any, ctx: any, info: any) => {
+    const fields: any = Object.keys(ctx.utils.parseFields(info))
     return await PersonsService.getPerson(fields, root.person)
   },
   organizationalUnit: async (root: { organizationalUnit: number }) => {
