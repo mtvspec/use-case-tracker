@@ -1,7 +1,8 @@
+const parseFields = require('graphql-parse-fields')
 // import * as graphql from 'express-graphql';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import { addErrorLoggingToSchema } from 'graphql-tools';
-const graphqlLogger = { log: (e) => console.error(e.stack) };
+const graphqlLogger = { log: (e) => console.trace(e.stack) };
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
@@ -10,7 +11,7 @@ import * as path from 'path';
 import * as uuid from 'uuid';
 import errorHandler = require('errorHandler');
 import methodOverride = require('method-override');
-import { AuthService } from './services/auth.service';
+import AuthService from './services/auth.service';
 import { UsersService } from './services/users.service'
 import { SessionsService } from './services/sessions.service'
 
@@ -75,7 +76,7 @@ export class Server {
         (req: express.Request) => (
           {
             schema,
-            context: { services, session: req.body.session },
+            context: { services, session: req.body.session, utils: { parseFields } },
             debug: true,
           }
         )
