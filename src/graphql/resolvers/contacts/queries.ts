@@ -15,12 +15,10 @@ const Contact = {
   deletedBy: CommonResolvers.deletedBy,
   modifiedBy: CommonResolvers.modifiedBy
 }
-
 const getContact = async (root: { node: number }, args: any, ctx: any, info: any) => {
   const fields: any = Object.keys(ctx.utils.parseFields(info))
   return await ContactsService.getContact(fields, root.node)
 }
-
 const queries = {
   Contact,
   getContact

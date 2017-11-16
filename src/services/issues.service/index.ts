@@ -3,6 +3,11 @@ import {
   DatabaseService, QueryConfig
 } from './../database.service'
 import queries from './queries'
+
+const ISSUES_TABLE: string = 'issues.e_issue'
+
+let issuesTableFields: string[] = []
+
 export class IssuesService extends DatabaseService {
   public static async getIssuesCount () {
     return await this.query(new QueryConfig({
@@ -65,3 +70,9 @@ export class IssuesService extends DatabaseService {
     }))
   }
 }
+
+const getIssuesTableFields = (async () => {
+  const response: any = await <any>IssuesService.fields(ISSUES_TABLE)
+  if (response && response.length > 0) issuesTableFields = response
+  else console.trace(response)
+})

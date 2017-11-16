@@ -22,7 +22,7 @@ export default {
       SELECT
         e.*
       FROM
-        emp.e_emp e,
+        organizations.e_emp e,
         organizations.e_organizational_unit ou
       WHERE ou."managerID" = e.id
       AND ou.id = ${organizationalUnitID}
@@ -48,7 +48,7 @@ export default {
       SELECT
         e.*
       FROM
-        emp.e_emp e
+        organizations.e_emp e
       WHERE e.id = ${employeeID};`
     },
     GET_MANAGERS_BY_ORGANIZATIONAL_UNIT_ID: (organizationalUnitID: number) => {
@@ -57,7 +57,7 @@ export default {
         e.*
       FROM
         organizations.e_organizational_unit ou,
-        emp.e_emp e
+        organizations.e_emp e
       WHERE e."subordinadeOrganizationalUnitID" = ou.id
       AND ou.id = ${organizationalUnitID};`
     },

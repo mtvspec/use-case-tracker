@@ -1,60 +1,70 @@
 import {
-  DatabaseService, QueryConfig
+  DatabaseService
 } from './../database.service'
-const usersTable: string = 'users.e_user'
-const totalCount: string = 'id as totalCount'
-import db from './../../knex'
-import queries from './queries'
+const USERS_TABLE: string = 'users.e_user'
+const SESSIONS_TABLE: string = 'sessions.e_session'
 import { SessionsService } from './../sessions.service'
 
-let userTableFields = []
+let userTableFields: string[] = []
+let SESSIONS_TABLE_FIESDS: string[] = []
 
 export class UsersService extends DatabaseService {
   public static async getUsersCount () {
-    return await db(usersTable)
-      .whereNot({ id: 0 })
-      .count(totalCount).first()
+    return this.getNodesCount(
+      USERS_TABLE,
+      null,
+      null,
+      { id: 0 }
+    )
   }
-  public static async getAllUsers (unfilteredFields: any) {
-    const filterFields = (field) => { return (userTableFields.indexOf(field) > -1) }
-    let filteredFields = unfilteredFields.filter(filterFields)
-    return await db(usersTable)
-      .select(filteredFields)
-      .whereNot({ id: 0 })
-      .orderBy('id')
+  public static getAllUsers (unfilteredFields: any) {
+    return this.getNodes(
+      USERS_TABLE,
+      userTableFields,
+      unfilteredFields,
+      null,
+      { id: 0 }
+    )
   }
   public static async getUser (unfilteredFields: any, id: number) {
-    const filterFields = (field) => { return (userTableFields.indexOf(field) > -1) }
-    let filteredFields = unfilteredFields.filter(filterFields)
-    return await db
-      .select(filteredFields)
-      .from(usersTable)
-      .where({ id }).first()
+    return this.getNode(
+      USERS_TABLE,
+      userTableFields,
+      unfilteredFields,
+      id
+    )
   }
   public static async getUserPasswordByUsername (username: string) {
-    return await db
-      .select('id', 'password')
-      .from(usersTable)
-      .where({ username }).first()
+    return this.getNode(
+      USERS_TABLE,
+      userTableFields,
+      ['id', 'password'],
+      username
+    )
   }
-  public static async getUserByUsername (username: string):
-    Promise<any> {
-    return await this.query(new QueryConfig({
-      qty: 1,
-      text: queries.users.SELECT_USER_BY_USERNAME(username)
-    }))
+  public static getUserByUsername (username: string) {
+    return this.getNode(
+      USERS_TABLE,
+      userTableFields,
+      null,
+      username
+    )
   }
-  public static async getSessionByToken (token: string):
-    Promise<any> {
-    return await SessionsService.getSessionBySessionToken(token)
+  public static getSessionByToken (token: string) {
+    return this.getNode(
+      SESSIONS_TABLE,
+      SESSIONS_TABLE_FIESDS,
+      [],
+      token
+    )
   }
-  public static async closeSession (id: number):
-    Promise<any> {
+  public static async closeSession (id: number) {
     return await SessionsService.closeSession(id)
   }
 }
 
-const getFields = (async () => {
-  const response: any = await <any>UsersService.fields(usersTable)
-  response.forEach((field: any) => userTableFields.push(field.name))
+const getUserTableFields = (async () => {
+  const response: any[] = await <any>UsersService.fields(USERS_TABLE)
+  if (response && response.length > 0) userTableFields = response
+  else console.trace(response)
 })()

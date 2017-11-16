@@ -22,6 +22,7 @@
     "express-interceptor": "^1.2.0",
     "express-mung": "^0.4.6",
     "graphql": "^0.11.7",
+    "graphql-iso-date": "^3.3.0",
     "graphql-list-fields": "^2.0.0",
     "graphql-parse-fields": "^1.2.0",
     "graphql-tag": "^2.5.0",

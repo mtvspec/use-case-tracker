@@ -1,5 +1,8 @@
 import { makeExecutableSchema } from 'graphql-tools'
 import { resolvers } from './resolvers'
+import { DocumentNode } from 'graphql';
+
+import gql from 'graphql-tag'
 
 const createGraphQLLogger = require('graphql-log')
 
@@ -11,25 +14,10 @@ const logExecutions = createGraphQLLogger({
 
 logExecutions(resolvers)
 
-const typeDefs = `
-
-  type ContactEdge implements Edge {
-    id: ID!
-    node: Contact!
-    isActive: Boolean!
-    isDeleted: Boolean!
-    createdAt: String!
-    createdBy: User!
-    updatedBy: User
-    updatedAt: String
-    deletedBy: User
-    deletedAt: String
-    modifiedBy: User!
-    modifiedAt: String!
-  }
+const typeDefs = gql`
 
   interface Node {
-    id: ID
+    id: ID!
     isDeleted: Boolean
     createdBy: User
     createdAt: DateTime
@@ -44,19 +32,35 @@ const typeDefs = `
   interface Edge {
     id: ID!
     node: Node!
-    isDeleted: Boolean!
-    createdBy: User!
-    createdAt: String!
+    isDeleted: Boolean
+    createdBy: User
+    createdAt: DateTime
     deletedBy: User
-    deletedAt: String
+    deletedAt: DateTime
     updatedBy: User
-    updatedAt: String
-    modifiedBy: User!
-    modifiedAt: String!
+    updatedAt: DateTime
+    modifiedBy: User
+    modifiedAt: DateTime
   }
 
+  type ContactEdge implements Edge {
+    id: ID!
+    node: Contact!
+    isActive: Boolean
+    isDeleted: Boolean
+    createdBy: User
+    createdAt: DateTime
+    updatedBy: User
+    updatedAt: DateTime
+    deletedBy: User
+    deletedAt: DateTime
+    modifiedBy: User
+    modifiedAt: DateTime
+  }
+
+  # Пользователь
   type User implements Node {
-    id: ID
+    id: ID!
     person: Person
     username: String
     email: String
@@ -72,8 +76,18 @@ const typeDefs = `
     modifiedAt: DateTime
   }
 
-  type CustomerProjectEdge {
-    node: Project
+  type CustomerProjectEdge implements Edge {
+    id: ID!
+    node: Project!
+    isDeleted: Boolean
+    createdBy: User
+    createdAt: DateTime
+    updatedBy: User
+    updatedAt: DateTime
+    deletedBy: User
+    deletedAt: DateTime
+    modifiedBy: User
+    modifiedAt: DateTime
   }
 
   type PersonsConnection {
@@ -81,8 +95,9 @@ const typeDefs = `
     persons: [Person!]
   }
 
+  # Физическое лицо
   type Person implements Node {
-    id: ID
+    id: ID!
     # ИИН
     iin: String
     # Имя
@@ -99,6 +114,7 @@ const typeDefs = `
     internalPhone: Contact
     workPhone: Contact
     mobilePhone: Contact
+    # Контакты
     contacts: PersonContactsConnection
     # Пол
     gender: DictValue
@@ -116,6 +132,7 @@ const typeDefs = `
     modifiedAt: DateTime
   }
 
+  # Контакты ФЛ
   type PersonContactsConnection {
     totalCount: Int
     edges (
@@ -126,10 +143,12 @@ const typeDefs = `
     ): [PersonContactEdge]
   }
 
-  type PersonContactEdge {
-    id: ID
-    node: Contact
+  # Контакт ФЛ
+  type PersonContactEdge implements Edge {
+    id: ID!
+    node: Contact!
     state: DictValue
+    isDeleted: Boolean
     createdBy: User
     createdAt: DateTime
     updatedBy: User
@@ -140,8 +159,9 @@ const typeDefs = `
     modifiedAt: DateTime
   }
 
+  # Контакт
   type Contact implements Node {
-    id: ID
+    id: ID!
     contactType: DictValue
     contact: String
     isDeleted: Boolean
@@ -161,7 +181,7 @@ const typeDefs = `
   }
 
   type ProjectMemberRole implements Node {
-    id: ID
+    id: ID!
     projectMemberRole: DictValue
     issuesConnection: ProjectMemberRoleIssuesConnection
     description: String
@@ -182,7 +202,7 @@ const typeDefs = `
   }
 
   type ProjectMember implements Node {
-    id: ID
+    id: ID!
     team: ProjectTeam
     projectMemberRolesConnection: ProjectMemberRolesConnection
     person: Person
@@ -202,9 +222,18 @@ const typeDefs = `
     edges: [PersonEmployeeEdge]
   }
 
-  type PersonEmployeeEdge {
-    id: ID
-    node: Employee
+  type PersonEmployeeEdge implements Edge {
+    id: ID!
+    node: Employee!
+    isDeleted: Boolean
+    createdBy: User
+    createdAt: DateTime
+    updatedBy: User
+    updatedAt: DateTime
+    deletedBy: User
+    deletedAt: DateTime
+    modifiedBy: User
+    modifiedAt: DateTime
   }
 
   type SystemComponentsConnection {
@@ -223,7 +252,7 @@ const typeDefs = `
   }
 
   type Component implements Node {
-    id: ID
+    id: ID!
     component: Component
     type: DictValue
     name: String
@@ -247,13 +276,22 @@ const typeDefs = `
     edges: [ComponentIssueEdge!]
   }
 
-  type ComponentIssueEdge {
-    id: ID
-    node: Issue
+  type ComponentIssueEdge implements Edge {
+    id: ID!
+    node: Issue!
+    isDeleted: Boolean
+    createdBy: User
+    createdAt: DateTime
+    updatedBy: User
+    updatedAt: DateTime
+    deletedBy: User
+    deletedAt: DateTime
+    modifiedBy: User
+    modifiedAt: DateTime
   }
 
   type System implements Node {
-    id: ID
+    id: ID!
     kind: DictValue
     type: DictValue
     name: String
@@ -272,7 +310,7 @@ const typeDefs = `
   }
 
   type Issue implements Node {
-    id: ID
+    id: ID!
     author: ProjectMember
     issueType: DictValue
     title: String
@@ -292,7 +330,7 @@ const typeDefs = `
   }
 
   type DictValue implements Node {
-    id: ID
+    id: ID!
     nameEn: String
     nameRu: String
     isDeleted: Boolean
@@ -316,9 +354,10 @@ const typeDefs = `
     projects: [Project!]
   }
 
+  # Заказчик
   type Customer implements Node {
-    id: ID
-    organization: Organization
+    id: ID!
+    organization: Organization!
     name: String
     description: String
     state: DictValue
@@ -344,8 +383,9 @@ const typeDefs = `
     systems: [System!]
   }
 
+  # Проект
   type Project implements Node {
-    id: ID
+    id: ID!
     kind: DictValue
     projectName: String
     projectDescription: String
@@ -379,9 +419,9 @@ const typeDefs = `
     edges: [ProjectCustomerEdge!]
   }
 
-  type ProjectCustomerEdge {
-    id: ID
-    node: Organization
+  type ProjectCustomerEdge implements Edge {
+    id: ID!
+    node: Organization!
     state: DictValue
     isDeleted: Boolean
     createdBy: User
@@ -400,7 +440,7 @@ const typeDefs = `
   }
 
   type ProjectTeam implements Node {
-    id: ID
+    id: ID!
     name: String
     description: String
     projectMembersConnection: ProjectMembersConnection
@@ -423,7 +463,7 @@ const typeDefs = `
 
   # Кадровая единица (КЕ)
   type Employee implements Node {
-    id: ID
+    id: ID!
     organizationalUnit: OrganizationalUnit
     positionalUnit: PositionalUnit
     person: Person
@@ -442,7 +482,7 @@ const typeDefs = `
   }
 
   type Organization implements Node {
-    id: ID
+    id: ID!
     organizationalUnits: [OrganizationalUnit]
     bin: String
     name: String
@@ -461,43 +501,13 @@ const typeDefs = `
     modifiedAt: DateTime
   }
 
-  type Query {
-    node: Node
-    edge: Edge
-    allPersons (
-      gender: Int
-      filter: String
-      isDeleted: Boolean
-      search: String
-      searchPersonFields: SearchPersonFields
-    ): PersonsConnection
-    person (id: ID!, genderID: Int): Person
-    allUsers: UsersConnection
-    user (id: ID!): User
-    allIssues (input: Field, filter: Field): IssuesConnection
-    issue (id: ID!): Issue
-    projectMember(id: ID!): ProjectMember
-    allCustomers: CustomersConnection
-    customer (id: ID!): Customer
-    allProjects (projectName: String): ProjectsConnection
-    project (id: ID!): Project
-    allOrganizations: OrganizationsConnection
-    organization (id: ID!): Organization
-    dictValues(dictName: String!): DictConnection
-    organizationalUnit (id: ID!): OrganizationalUnit
-    session (id: ID!): Session!,
-    system (id: ID!): System
-    component (id: ID!): Component,
-    organizationalUnit (id: ID!): OrganizationalUnit
-  }
-
   type DictConnection {
     dictValues: [DictValue!]
   }
 
   # Организационная единица (ОЕ)
   type OrganizationalUnit implements Node {
-    id: ID
+    id: ID!
     organization: Organization
     organizationalUnit: OrganizationalUnit
     # Наименование ОЕ
@@ -530,7 +540,7 @@ const typeDefs = `
   }
   # Штатная единица (ШЕ)
   type PositionalUnit implements Node {
-    id: ID
+    id: ID!
     name: String
     description: String
     state: DictValue
@@ -565,12 +575,27 @@ const typeDefs = `
     value: String!
   }
 
+  input NewPersonContactData {
+    person: ID!
+    contactType: ID!
+    contact: String!
+    isMainInternalPhone: Boolean
+    isMainWorkPhone: Boolean
+    isMainMobilePhone: Boolean
+  }
+
+  input UpdatedPersonContactData {
+    id: ID!,
+    contactType: ID
+    contact: String
+  }
+
   input NewPersonData {
     iin: String
     firstName: String!
     middleName: String
     lastName: String
-    dob: String
+    dob: DateTime
     gender: Int
   }
 
@@ -590,11 +615,6 @@ const typeDefs = `
     title: String!
     description: String
     stateID: Int
-  }
-
-  input ContactData {
-    contactTypeID: ID!,
-    contact: String!
   }
 
   type Session {
@@ -638,13 +658,20 @@ const typeDefs = `
   }
 
   input OrganizationalUnitInputData {
-    organizationID: ID
-    managerID: ID
-    organizationalUnitID: ID
-    kindID: ID
-    typeID: ID
+    organization: ID
+    manager: ID
+    organizationalUnit: ID
+    kind: ID
+    type: ID
     name: String!
     description: String
+  }
+
+  input UpdatedOrganizationInputData {
+    id: ID!
+    bin: String
+    name: String
+    officialName: String
   }
 
   input UpdatedOrganizationalUnitInputData {
@@ -656,6 +683,36 @@ const typeDefs = `
     typeID: ID
     name: String
     description: String
+  }
+
+  type Query {
+    node: Node
+    edge: Edge
+    allPersons (
+      gender: Int
+      filter: String
+      isDeleted: Boolean
+      search: String
+      searchPersonFields: SearchPersonFields
+    ): PersonsConnection
+    person (id: ID!, genderID: Int): Person
+    allUsers: UsersConnection
+    user (id: ID!): User
+    allIssues (input: Field, filter: Field): IssuesConnection
+    issue (id: ID!): Issue
+    projectMember(id: ID!): ProjectMember
+    allCustomers: CustomersConnection
+    customer (id: ID!): Customer
+    allProjects (projectName: String): ProjectsConnection
+    project (id: ID!): Project
+    allOrganizations: OrganizationsConnection
+    organization (id: ID!): Organization
+    dictValues(dictName: String!): DictConnection
+    organizationalUnit (id: ID!): OrganizationalUnit
+    session (id: ID!): Session!,
+    system (id: ID!): System
+    component (id: ID!): Component,
+    organizationalUnit (id: ID!): OrganizationalUnit
   }
 
   type Mutation {
@@ -682,8 +739,7 @@ const typeDefs = `
       input: OrganizationData!
     ): Organization
     updateOrganization (
-      id: ID!
-      input: OrganizationData!
+      input: UpdatedOrganizationInputData!
     ): Organization
     deleteOrganization (
       id: ID!
@@ -728,13 +784,11 @@ const typeDefs = `
       id: ID!
       input: ComponentDataInput!
     ): Component
-    createContact (
-      personID: ID!,
-      input: ContactData!
+    createPersonContact (
+      input: NewPersonContactData!
     ): Contact
-    updateContact (
-      id: ID!
-      input: ContactData!
+    updatePersonContact (
+      input: UpdatedPersonContactData!
     ): Contact
     deleteContact (
       id: ID!

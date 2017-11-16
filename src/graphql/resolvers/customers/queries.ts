@@ -9,7 +9,7 @@ const getCustomerByID = async (_: any, args: { id: number }) => {
 const CustomersConnection = {
   totalCount: async (root: any) => {
     return await CustomersService.getCustomersCount()
-      .then((data: { totalCount: number }) => { return data.totalCount })
+      .then((data: any) => { return data.totalCount })
   },
   customers: async (root: any) => {
     return await CustomersService.getCustomers()
@@ -20,7 +20,7 @@ const CustomerProjectsConnection = {
   totalCount: async (root: { id: number }, _: any):
     Promise<number> => {
     return await CustomersService.getCustomersProjectsCount(root.id)
-      .then((data: { totalCount: number }) => { return data.totalCount })
+      .then((data: any) => { return data.totalCount })
   },
   projects: async (root: { id: number }) => {
     return await CustomersService.getCustomersProjects(root.id)

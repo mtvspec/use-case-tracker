@@ -3,7 +3,8 @@ const pg = require('knex')({
   connection: {
     host: '192.168.1.16',
     database: 'postgres',
-    user: 'postgres'
+    user: 'postgres',
+    application_name: 'Contacts App - knex'
   },
   debug: false
 })

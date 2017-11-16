@@ -2,9 +2,9 @@ import CommonResolvers from './../common'
 
 import { DictService } from './../../../services'
 
-const getDictValue = async (source, args, context, info) => {
-  const unfilteredFields = info.fieldNodes[0].selectionSet.selections.map(selection => selection.name.value)
-  return await DictService.getAllDictValues(source.args.dictName)
+const getDictValue = async (source: any, args: any, ctx: any, info: any) => {
+  const unfilteredFields = Object.keys(ctx.utils.parseFields(info))
+  return await DictService.getAllDictValues(unfilteredFields, source.args.dictName)
 }
 
 const DictConnection = {

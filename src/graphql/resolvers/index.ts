@@ -8,8 +8,8 @@ import ProjectsResolvers from './../resolvers/projects'
 import OrganizationsResolvers from './organizations'
 import SystemsResolvers from './systems'
 import SessionsResovers from './sessions'
-import CustomScalarsResolvers from './scalars'
 import ContactsResolvers from './contacts'
+import Scalars from './scalars'
 
 const resolvers = {
   Query: {
@@ -72,7 +72,7 @@ const resolvers = {
   Issue: IssuesResolvers.queries.Issue,
   DictConnection: DictResolvers.queries.DictConnection,
   DictValue: DictResolvers.queries.DictValue,
-  DateTime: CustomScalarsResolvers.DateTime,
+  DateTime: Scalars.DateTime,
   Mutation: {
     authentificateUser: UsersResolvers.mutations.authentificateUser,
     closeSession: SessionsResovers.mutations.closeSession,
@@ -85,8 +85,8 @@ const resolvers = {
     deleteOrganization: OrganizationsResolvers.mutations.deleteOrganization,
     createOrganizationalUnit: OrganizationsResolvers.mutations.createOrganizationalUnit,
     updateOrganizationalUnit: OrganizationsResolvers.mutations.updateOrganizationalUnit,
-    createContact: ContactsResolvers.mutations.createContact,
-    updateContact: ContactsResolvers.mutations.updateContact,
+    createPersonContact: ContactsResolvers.mutations.createPersonContact,
+    updatePersonContact: ContactsResolvers.mutations.updatePersonContact,
     deleteContact: ContactsResolvers.mutations.deleteContact,
     createProject: ProjectsResolvers.mutations.createProject,
     updateProject: ProjectsResolvers.mutations.updateProject,

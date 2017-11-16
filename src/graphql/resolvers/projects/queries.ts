@@ -3,7 +3,7 @@ import { ProjectsService } from './../../../services/projects.service'
 import { EmployeesService } from './../../../services'
 import { PersonsService } from './../../../services'
 import { CustomersService } from './../../../services'
-import CommonResolvers from './../common';
+import CommonResolvers from './../common'
 const getProject = async (root: any, args: { id: number }) => {
   return await ProjectsService.getProject(args.id)
 }
@@ -44,13 +44,15 @@ const Project = {
     return root.customer ?
       await CustomersService.getCustomer(root.customer) : null
   },
-  manager: async (root: { projectManager: number }) => {
+  manager: async (root: { projectManager: number }, args: any, ctx: any, info: any) => {
+    const fields: any = Object.keys(ctx.utils.parseFields(info))
     return root.projectManager ?
-      await EmployeesService.getEmployee(root.projectManager) : null
+      await EmployeesService.getEmployee(fields, root.projectManager) : null
   },
-  curator: async (root: { projectCurator: number }) => {
+  curator: async (root: { projectCurator: number }, args: any, ctx: any, info: any) => {
+    const fields: any = Object.keys(ctx.utils.parseFields(info))
     return root.projectCurator ?
-      await EmployeesService.getEmployee(root.projectCurator) : null
+      await EmployeesService.getEmployee(fields, root.projectCurator) : null
   },
   kind: async (root: any, args: any, ctx: any, info: any) => {
     const fields: any = Object.keys(ctx.utils.parseFields(info))
@@ -123,7 +125,7 @@ const getProjectMember = async (root: any, args: { id: number }) => {
 const ProjectMember = {
   person: async (root: any, args: any, ctx: any, info: any) => {
     const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return await PersonsService.getPerson(fields, root.person)
+    return await PersonsService.getPerson(fields, root.person, args)
   },
   team: async (root: { team: number }) => {
     return await ProjectsService.getProjectTeam(root.team)

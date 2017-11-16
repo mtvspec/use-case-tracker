@@ -1,17 +1,17 @@
 const Node = {
-  createdBy: async (root, args, context) => {
-    return await context.services.UsersService.getUser(root.createdBy)
+  createdBy: async (root: any, args: any, ctx: any) => {
+    return await ctx.services.UsersService.getUser(root.createdBy)
   },
-  updatedBy: async (root, args, context) => {
+  updatedBy: async (root: any, args: any, ctx: any) => {
     return root.updatedBy ?
-      await context.services.UsersService.getUser(root.updatedBy) : null
+      await ctx.services.UsersService.getUser(root.updatedBy) : null
   },
-  deletedBy: async (root, args, context) => {
+  deletedBy: async (root: any, args: any, ctx: any) => {
     return root.deletedBy ?
-      await context.services.UsersService.getUser(root.deletedBy) : null
+      await ctx.services.UsersService.getUser(root.deletedBy) : null
   },
-  modifiedBy: async (root, args, context) => {
-    return await context.services.UsersService.getUser(root.modifiedBy)
+  modifiedBy: async (root: any, args: any, ctx: any) => {
+    return await ctx.services.UsersService.getUser(root.modifiedBy)
   }
 }
 export default {

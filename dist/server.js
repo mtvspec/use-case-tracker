@@ -101,6 +101,7 @@ function requestLogger(req, res) {
     req.$id = uuid();
     res.locals.id = req.$id;
     console.log('request id: ', req.$id);
+    console.log('request ip:', req.ip);
     if (req.body.query) {
         console.log(' ');
         console.log('-------------------------------------------------------------------------------------------------------------------------------------');

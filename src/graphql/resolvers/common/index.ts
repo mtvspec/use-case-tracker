@@ -25,7 +25,7 @@ const state = async (root: { state: number }, args: any, ctx: any, info: any) =>
 }
 const getPersonByUserID = async (root: { person: number }, args: any, ctx: any, info: any) => {
   const fields: any[] = Object.keys(ctx.utils.parseFields(info))
-  return await PersonsService.getPerson(fields, root.person)
+  return await PersonsService.getPerson(fields, root.person, args)
 }
 const CommonResolvers = {
   state,
