@@ -1,11 +1,10 @@
-import queries from './queries'
 import {
   DatabaseService, QueryConfig
 } from './../database.service'
 const ORGANIZATIONS_TABLE: string = 'organizations.e_organization'
 const ORGANIZATIONAL_UNITS_TABLE: string = 'organizations.e_organizational_unit'
-const EMPLOYEES_TABLE: string = 'organizations.e_emp'
 const POSITIONAL_UNITS_TABLE: string = 'organizations.e_positional_unit'
+const EMPLOYEES_TABLE: string = 'organizations.e_emp'
 
 let organizationTableFields: string[] = []
 let organizationalUnitsTableFields: string[] = []
@@ -13,19 +12,32 @@ let positionalUnitsTableFields: string[] = []
 let employeesTableFields: string[] = []
 
 export class OrganizationsService extends DatabaseService {
-  public static getOrganizations (unfilteredFields: string[]) {
+  public static getOrganizations (
+    unfilteredFields: string[],
+    args: any
+  ) {
     return this.getNodes(
       ORGANIZATIONS_TABLE,
       organizationTableFields,
-      unfilteredFields
+      unfilteredFields,
+      (args && args.length) > 0 ? args : null
     )
   }
-  public static async getOrganizationsCount () {
+  public static async getOrganizationsCount (
+    source?: number | string,
+    args?: any
+  ) {
     return this.getNodesCount(
-      ORGANIZATIONS_TABLE
+      ORGANIZATIONS_TABLE,
+      organizationTableFields,
+      source ? source : null,
+      (args && args.length) > 0 ? args : null
     )
   }
-  public static async getOrganization (unfilteredFields: string[], id: number) {
+  public static async getOrganization (
+    unfilteredFields: string[],
+    id: number
+  ) {
     return this.getNode(
       ORGANIZATIONS_TABLE,
       organizationTableFields,
@@ -56,13 +68,16 @@ export class OrganizationsService extends DatabaseService {
       user
     )
   }
-  public static async getOrganizationalUnits (id: number) {
+  public static async getOrganizationalUnits (fields: string[], id: number) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      organizationalUnitsTableFields,
+      fields), 'ou')
     return await this.query(new QueryConfig({
       qty: '*',
       text: `
         
         SELECT
-          ou.*
+          ${requestedFields}
         FROM
           ${ORGANIZATIONAL_UNITS_TABLE} ou,
           ${ORGANIZATIONS_TABLE} o
@@ -104,24 +119,61 @@ export class OrganizationsService extends DatabaseService {
       user
     )
   }
-  public static async getSubordinades (id: number) {
+  public static async getSubordinades (fields: string[], id: number) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      employeesTableFields,
+      fields), 's')
     return await this.query(new QueryConfig({
       qty: '*',
       text: `
+
         SELECT
-          s.*
+          ${requestedFields}
         FROM
           ${EMPLOYEES_TABLE} s,
           ${EMPLOYEES_TABLE} m
         WHERE s."manager" = m.id
         AND m.id = ${id};
+
       `
     }))
   }
-  public static async getManagersByOrganizationalUnit (organizationalUnitID: number) {
+  public static async getManagersByOrganizationalUnit (fields: string[], id: number) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      employeesTableFields,
+      fields), 'e')
     return await this.query(new QueryConfig({
       qty: '*',
-      text: queries.organizations.GET_ORGANIZATIONAL_UNIT_MANAGERS_BY_ORGANIZATIONAL_UNIT_ID(organizationalUnitID)
+      text: `
+
+      SELECT
+        ${requestedFields}
+      FROM
+        ${EMPLOYEES_TABLE} e,
+        ${ORGANIZATIONAL_UNITS_TABLE} ou
+      WHERE ou."managerID" = e.id
+      AND ou.id = ${id}
+      
+      `
+    }))
+  }
+  public static async getSubordinadedOrganizationalUnitsByEmployee (fields: string[], id: number) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      organizationalUnitsTableFields,
+      fields), 'ou')
+    return await this.query(new QueryConfig({
+      qty: '*',
+      text: `
+
+      SELECT
+        ${requestedFields}
+      FROM
+        ${ORGANIZATIONAL_UNITS_TABLE} ou,
+        ${EMPLOYEES_TABLE} e
+      WHERE ou.curator = e.id
+      AND e.id = ${id}
+      
+      `
     }))
   }
   public static async getManager (unfilteredFields: string[], id: number) {
@@ -132,42 +184,58 @@ export class OrganizationsService extends DatabaseService {
       id
     )
   }
-  public static async getChildOrganizationalUnitsByOrganizationalUnit (id: number) {
+  public static async getChildOrganizationalUnitsByOrganizationalUnit (fields: string[], id: number) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      organizationalUnitsTableFields,
+      fields), 'cou')
     return await this.query(new QueryConfig({
       qty: '*',
       text: `
+
       SELECT
-        cou.*
+        ${requestedFields}
       FROM
         ${ORGANIZATIONAL_UNITS_TABLE} cou,
         ${ORGANIZATIONAL_UNITS_TABLE} pou
       WHERE cou."organizationalUnit" = pou.id
       AND pou.id = ${id}
-      ORDER BY cou.id;`
+      ORDER BY cou.idx;
+      
+      `
     }))
   }
-  public static async getEmployeesByOrganizationalUnit (id: number) {
+  public static async getEmployeesByOrganizationalUnit (fields: string[], id: number) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      employeesTableFields,
+      fields), 'e')
     return await this.query(new QueryConfig({
       qty: '*',
       text: `
+
       SELECT
-        e.*
+        ${requestedFields}
       FROM
-        ${ORGANIZATIONAL_UNITS_TABLE} ou,
-        ${EMPLOYEES_TABLE} e
+        ${EMPLOYEES_TABLE} e,
+        ${ORGANIZATIONAL_UNITS_TABLE} ou
       WHERE e."organizationalUnit" = ou.id
       --AND ou."manager" != e.id
       AND e."firedAt" IS NULL
       AND ou.id = ${id}
-      ORDER BY ou.id;`
+      ORDER BY ou.idx;
+      
+      `
     }))
   }
-  public static async getAllEmployeesByOrganizationalUnit (id: number) {
+  public static async getAllEmployeesByOrganizationalUnit (fields: string[], id: number) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      employeesTableFields,
+      fields), 'e')
     return await this.query(new QueryConfig({
       qty: '*',
       text: `
+
       SELECT
-        e.*
+        ${requestedFields}
       FROM
         ${EMPLOYEES_TABLE} e,
         persons.e_person p
@@ -190,15 +258,21 @@ export class OrganizationsService extends DatabaseService {
       FROM
         cte
       ORDER BY level
-      );`
+      );
+      
+      `
     }))
   }
-  public static async getSubordinadedOrganizationalUnitsByOrganizationalUnit (id: number) {
+  public static async getSubordinadedOrganizationalUnitsByOrganizationalUnit (fields: string[], id: number) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      organizationalUnitsTableFields,
+      fields), 'ou')
     return await this.query(new QueryConfig({
       qty: '*',
       text: `
+
       SELECT  
-        ou.*
+        ${requestedFields}
       FROM
         ${ORGANIZATIONAL_UNITS_TABLE} ou
       WHERE ou.id in (
@@ -219,15 +293,21 @@ export class OrganizationsService extends DatabaseService {
       FROM
         cte
       ORDER BY level
-      );`
+      );
+      
+      `
     }))
   }
-  public static async getSubordinadedOrganizationalUnitsManagersByOrganizationalUnit (id: number) {
+  public static async getSubordinadedOrganizationalUnitsManagersByOrganizationalUnit (fields: string[], id: number) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      employeesTableFields,
+      fields), 'm')
     return await this.query(new QueryConfig({
       qty: '*',
       text: `
+
       SELECT  
-        m.*
+        ${requestedFields}
       FROM
         ${EMPLOYEES_TABLE} m,
         ${ORGANIZATIONAL_UNITS_TABLE} ou
@@ -250,7 +330,9 @@ export class OrganizationsService extends DatabaseService {
       FROM
         cte
       ORDER BY level
-      );`
+      );
+      
+      `
     }))
   }
   public static async getPositionalUnit (unfilteredFields: string[], id: number, args?: any) {
@@ -264,22 +346,26 @@ export class OrganizationsService extends DatabaseService {
   }
 }
 
-const getOrganizationTableFields = (async () => {
+(async function getOrganizationTableFields () {
   const response: any = await <any>OrganizationsService.fields(ORGANIZATIONS_TABLE)
   if (response && response.length > 0) organizationTableFields = response
   else console.trace(response)
-})()
+})();
 
-const getOrganizationalUnitTableFields = (async () => {
+(async function getOrganizationalUnitTableFields () {
   const response: any = await <any>OrganizationsService.fields(ORGANIZATIONAL_UNITS_TABLE)
   if (response && response.length > 0) organizationalUnitsTableFields = response
   else console.trace(response)
-})()
+})();
 
-const getPositionalUnitTableFields = (async () => {
+(async function getPositionalUnitTableFields () {
   const response: any = await <any>OrganizationsService.fields(POSITIONAL_UNITS_TABLE)
-  if (response && response.length > 0) {
-    positionalUnitsTableFields = response
-  }
+  if (response && response.length > 0) positionalUnitsTableFields = response
   else console.trace(response)
-})()
+})();
+
+(async function getEmployeesTableFields () {
+  const response: any = await <any>OrganizationsService.fields(EMPLOYEES_TABLE)
+  if (response && response.length > 0) employeesTableFields = response
+  else console.trace(response)
+})();

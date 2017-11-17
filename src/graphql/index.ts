@@ -1,20 +1,15 @@
 import { makeExecutableSchema } from 'graphql-tools'
 import { resolvers } from './resolvers'
-import { DocumentNode } from 'graphql';
-
+import { DocumentNode } from 'graphql'
 import gql from 'graphql-tag'
 
 const createGraphQLLogger = require('graphql-log')
-
-const debug = require('debug')('server:resolvers')
-
 const logExecutions = createGraphQLLogger({
   prefix: 'resolvers.',
 })
-
 logExecutions(resolvers)
 
-const typeDefs = gql`
+const typeDefs: DocumentNode = gql`
 
   interface Node {
     id: ID!
@@ -469,6 +464,7 @@ const typeDefs = gql`
     person: Person
     manager: Employee
     subordinates: [Employee]
+    subordinatedOrganizationalUnits: [OrganizationalUnit]
     salary: Float
     isDeleted: Boolean
     createdBy: User
@@ -713,6 +709,7 @@ const typeDefs = gql`
     system (id: ID!): System
     component (id: ID!): Component,
     organizationalUnit (id: ID!): OrganizationalUnit
+    employee (id: ID!): Employee
   }
 
   type Mutation {

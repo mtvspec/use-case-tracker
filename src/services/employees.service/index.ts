@@ -1,8 +1,4 @@
-import {
-  DatabaseService, QueryConfig
-} from './../database.service'
-import { Organization } from './../../models/organization.model'
-import db from './../../knex'
+import { DatabaseService, QueryConfig } from './../database.service'
 const EMPLOYEES_TABLE: string = 'organizations.e_emp'
 const EMPLOYEE_PERSON_EDGES_TABLE: string = 'organizations.r_e_emp_e_person'
 let employeesTableFields: string[] = []
@@ -37,15 +33,18 @@ export class EmployeesService extends DatabaseService {
       args
     )
   }
-  public static getEmployeesCount (person: number) {
+  public static getEmployeesCount (id: number) {
     return this.getNodesCount(
-      EMPLOYEES_TABLE
+      EMPLOYEE_PERSON_EDGES_TABLE,
+      employeePersonEdgesTableFields,
+      id
     )
   }
   public static async getSubordinatesByEmployeeID (employeeID: number) {
     return await this.query(new QueryConfig({
       qty: '*',
       text: `
+
       SELECT
         s.*
       FROM
@@ -53,19 +52,21 @@ export class EmployeesService extends DatabaseService {
         ${EMPLOYEES_TABLE} s
       WHERE s."manager" = m.id
       AND m.id = ${employeeID}
-      ORDER BY s.id;`
+      ORDER BY s.id;
+      
+      `
     }))
   }
 }
 
-const getEmployeesTableFields = (async () => {
+(async function getEmployeesTableFields () {
   const response: any = await <any>EmployeesService.fields(EMPLOYEES_TABLE)
   if (response && response.length > 0) employeesTableFields = response
   else console.trace(response)
-})()
+})();
 
-const getEmployeePersonEdgesTableFields = (async () => {
+(async function getEmployeePersonEdgesTableFields () {
   const response: any = await <any>EmployeesService.fields(EMPLOYEE_PERSON_EDGES_TABLE)
   if (response && response.length > 0) employeePersonEdgesTableFields = response
   else console.trace(response)
-})()
+})();

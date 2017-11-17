@@ -1,9 +1,6 @@
+import { DatabaseService } from './../database.service'
 const PERSONS_TABLE: string = 'persons.e_person'
 const PERSON_CONTACT_EDGES_TABLE: string = 'persons.r_e_person_e_contact'
-import {
-  DatabaseService
-} from './../database.service'
-
 let personTableFields: string[] = []
 let personContactEdgesTableFields: string[] = []
 
@@ -26,7 +23,7 @@ export class PersonsService extends DatabaseService {
       personContactEdgesTableFields,
       unfilteredFiels,
       node,
-      args
+      args.length > 0 ? args : null
     )
   }
   public static getPersonsCountByArgs (args: any, source?: any, except?: any) {
@@ -115,10 +112,10 @@ export class PersonsService extends DatabaseService {
       PERSON_CONTACT_EDGES_TABLE,
       personContactEdgesTableFields,
       source,
-      args,
-      except,
-      search,
-      fields
+      (args && args.length) > 0 ? args : null,
+      (except && except.length) > 0 ? except : null,
+      search ? search : null,
+      search ? fields : null
     )
   }
   public static getPhone (unfilteredFields: string[] = ['node'], source: number, args?: any) {
@@ -132,14 +129,14 @@ export class PersonsService extends DatabaseService {
   }
 }
 
-const getPersonTableFields = (async () => {
+(async function getPersonTableFields () {
   const response: any = await <any>PersonsService.fields(PERSONS_TABLE)
   if (response && response.length > 0) personTableFields = response
   else console.trace(response)
-})()
+})();
 
-const getPersonContactEdgesTableFields = (async () => {
+(async function getPersonContactEdgesTableFields () {
   const response: any = await <any>PersonsService.fields(PERSON_CONTACT_EDGES_TABLE)
   if (response && response.length > 0) personContactEdgesTableFields = response
   else console.trace(response)
-})()
+})();

@@ -212,6 +212,7 @@ export class DatabaseService {
         console.log(response)
         console.log(screenLines.endLine)
       }
+      return response
     }
   }
   public static async getNode (
@@ -292,7 +293,7 @@ export class DatabaseService {
   public static async getNodesCount (
     table: string,
     tableFields?: string[],
-    source?: number,
+    source?: number | string,
     args?: any,
     except?: any,
     search?: any,
@@ -960,7 +961,7 @@ export class DatabaseService {
           })
         if (debug.queries.getEdges.name) {
           console.log(screenLines.endLine)
-          console.log(`DatabaseService : Get Edges : ID - ${arguments[1]}`)
+          console.log(`DatabaseService : Get Edges : ID - ${arguments[3]}`)
           console.log(screenLines.endLine)
         }
         if (debug.queries.getEdges.arguments) console.log(arguments)
@@ -985,7 +986,7 @@ export class DatabaseService {
         })
       if (debug.queries.getEdges.name) {
         console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Edges : ID - ${arguments[1]}`)
+        console.log(`DatabaseService : Get Edges : ID - ${arguments[3]}`)
         console.log(screenLines.endLine)
       }
       if (debug.queries.getEdges.arguments) console.log(arguments)
@@ -1329,7 +1330,7 @@ export class DatabaseService {
     console.log(queryConfig.text);
     console.log(screenLines.endLine);
     console.log(screenLines.errorLine);
-    console.log(err.message || err);
+    console.log(err);
     console.log(screenLines.endLine);
     console.log('error at ', Date());
     console.log(screenLines.responseSend);

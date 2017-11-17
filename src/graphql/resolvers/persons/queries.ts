@@ -7,11 +7,11 @@ import { DictService } from './../../../services'
 import { CustomersService } from './../../../services'
 
 class PersonsQueriesResolver {
-  public static getPerson = async (root: any, args: any, ctx: any, info: any) => {
+  public static getPerson = async (_: any, args: any, ctx: any, info: any) => {
     const fields: string[] = Object.keys(ctx.utils.parseFields(info))
     return await PersonsService.getPerson(fields, args.id, args)
   }
-  public static getPersons = async (root: any, args: any, ctx: any, info: any) => {
+  public static getPersons = async (root: any, _: any, ctx: any, info: any) => {
     const fields: string[] = Object.keys(ctx.utils.parseFields(info))
     const orderBy = ['lastName', 'firstName', 'middleName']
     if (root && root.args && (root.args.search && (root.args.search.length > 0 || root.args.search === ''))) return await PersonsService.searchPersons(fields, root.args.search, root.args, orderBy)
@@ -38,7 +38,7 @@ const getMobilePhone = async (root: { id: number }, _: any, ctx: any, info: any)
   return mobilePhone && mobilePhone.node > 0 ?
     await ContactsService.getContact(fields, mobilePhone.node) as any : null
 }
-const getInternalPhone = async (root: { id: number }, args: any, ctx: any, info: any):
+const getInternalPhone = async (root: { id: number }, _: any, ctx: any, info: any):
   Promise<any | null> => {
   const internalPhone: any = await PersonsService.getPhone(['node'], root.id, { isMainInternalPhone: true })
   const fields: any = Object.keys(ctx.utils.parseFields(info))
@@ -65,7 +65,7 @@ const Person = {
   projectMember: async (root: { id: number }) => {
     return await ProjectsService.getProjectMembersByPersonID(root.id)
   },
-  gender: async (root: { gender: number }, args: any, ctx: any, info: any) => {
+  gender: async (root: { gender: number }, _: any, ctx: any, info: any) => {
     const fields: string[] = Object.keys(ctx.utils.parseFields(info))
     return root.gender > 0 ?
       await DictService.getDictValue(fields, root.gender) : null

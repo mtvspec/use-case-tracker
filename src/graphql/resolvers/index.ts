@@ -13,10 +13,10 @@ import Scalars from './scalars'
 
 const resolvers = {
   Query: {
-    node: (root, args, services) => ({ root, args, services }),
+    node: (root: any, args: any, ctx: any) => ({ root, args, ctx }),
     allPersons: (root: any, args: any) => ({ root, args }),
     person: PersonsResolvers.queries.PersonsQueriesResolver.getPerson,
-    allUsers: (root, args, services) => ({ root, args, services }),
+    allUsers: (root: any, args: any, ctx: any) => ({ root, args, ctx }),
     user: UsersResolvers.queries.getUserByID,
     allIssues: (root, args, services) => ({ root, args, services }),
     issue: IssuesResolvers.queries.getIssueByID,
@@ -32,6 +32,7 @@ const resolvers = {
     session: SessionsResovers.queries.getSessionByID,
     system: SystemsResolvers.queries.getSystemByID,
     component: SystemsResolvers.queries.getComponentByID,
+    employee: OrganizationsResolvers.queries.getEmployee
   },
   Node: NodeResolvers.queries.Node,
   UsersConnection: UsersResolvers.queries.UsersConnection,
