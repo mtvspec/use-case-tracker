@@ -705,7 +705,10 @@ const typeDefs: DocumentNode = gql`
       searchPersonFields: SearchPersonFields
       filter: PersonDataFilterFields
     ): PersonsConnection
-    person (id: ID!, genderID: Int): Person
+    person (
+      id: ID!,
+      filter: PersonDataFilterFields
+    ): Person
     allUsers: UsersConnection
     user (id: ID!): User
     allIssues (input: Field, filter: Field): IssuesConnection

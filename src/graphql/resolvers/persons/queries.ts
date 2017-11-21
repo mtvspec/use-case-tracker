@@ -8,8 +8,12 @@ import { CustomersService } from './../../../services'
 
 class PersonsQueriesResolver {
   public static getPerson = async (_: any, args: any, ctx: any, info: any) => {
-    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
-    return await PersonsService.getPerson(fields, { id: args.id })
+    return await PersonsService.getPerson({
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+      args,
+      filter: args.filter && Object.keys(args.filter).length > 0 ? args.filter : null,
+      except: null
+    })
   }
   public static getPersons = async (root, _, ctx, info) => {
     const fields: string[] = Object.keys(ctx.utils.parseFields(info))

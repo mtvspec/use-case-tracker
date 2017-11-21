@@ -13,22 +13,8 @@ const pool = new Pool(config)
 pool.on('error', function (err: Error) {
   console.trace(err);
   throw new Error(ErrorMessages.db);
-});
+})
 
-(async () => {
-  const response = await db('users.e_user')
-    .where([])
-  console.log(response)
-})();
-
-
-interface NodeQueryConfig {
-  table: string
-  tableFields: string[]
-  unfilteredFields: string[]
-  args: any
-  except?: any
-}
 
 interface NodesQueryConfig {
   table: string
@@ -40,6 +26,15 @@ interface NodesQueryConfig {
   fields?: string[]
   except?: { [key: string]: any }
   orderBy?: string[]
+}
+
+interface NodeQueryConfig {
+  table: string
+  tableFields: string[]
+  unfilteredFields: string[]
+  args?: { [key: string]: any }
+  filter?: { [key: string]: any }
+  except?: { [key: string]: any }
 }
 
 interface NodesCountQueryConfig {
@@ -216,9 +211,36 @@ export class DatabaseService {
     if (!DatabaseService.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
     if (!config.unfilteredFields) throw Error('requested fields is required')
     const requestedFields = DatabaseService.filterFields(config.tableFields, config.unfilteredFields)
+    let args = [], filter = [], except = [], search = []
+    if (config.args && Object.keys(config.args).length > 0) {
+      args = this.filterFieldsAndReturnValues(
+        config.tableFields,
+        Object.keys(config.args),
+        config.args
+      )
+      if (!args) args = []
+    }
+    if (config.filter && Object.keys(config.filter).length > 0) {
+      filter = this.filterFieldsAndReturnValues(
+        config.tableFields,
+        Object.keys(config.filter),
+        config.filter
+      )
+      if (!filter) filter = []
+    }
+    if (config.except && Object.keys(config.except).length > 0) {
+      except = this.filterFieldsAndReturnValues(
+        config.tableFields,
+        Object.keys(config.except),
+        config.except
+      )
+      if (!except) except = []
+    }
     const response = await db(config.table)
       .select(requestedFields)
-      .where(config.args).first()
+      .where(args)
+      .andWhere(filter)
+      .whereNot(except).first()
       .catch(err => {
         return err
       })
@@ -237,6 +259,12 @@ export class DatabaseService {
       console.log(screenLines.endLine)
       console.log('Filtered requested fields:')
       console.log(requestedFields)
+      console.log('Filtered args:')
+      console.log(args)
+      console.log('Filtered filter:')
+      console.log(filter)
+      console.log('Filtered except:')
+      console.log(except)
       console.log('Response:')
       console.log(response)
       console.log(screenLines.endLine)
@@ -246,7 +274,6 @@ export class DatabaseService {
     else return response
   }
   public static async getNodesCount (config: NodesCountQueryConfig) {
-    console.log(config)
     if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
     let args = [], filter = [], except = [], search = []
     if (config.args && Object.keys(config.args).length > 0) {

@@ -9,13 +9,20 @@ const ServiceConfig = {
   tableFields: personTableFields,
 }
 
-interface GetNodeConfig {
+interface GetNodesConfig {
   unfilteredFields: string[]
   args: { [key: string]: any }
   filter: { [key: string]: any }
   search: string
   except: { [key: string]: any }
   orderBy: string[]
+}
+
+interface GetNodeConfig {
+  unfilteredFields: string[]
+  args: { [key: string]: any }
+  filter: { [key: string]: any }
+  except: { [key: string]: any }
 }
 
 interface GetNodesCount {
@@ -28,8 +35,7 @@ interface GetNodesCount {
 export class PersonsService extends DatabaseService {
   public static getPersonsCount (config: GetNodesCount) {
     const fields = ["\"lastName\"", '\' \'', "\"firstName\"", '\' \'', "\"middleName\"", '\' \'', "\"iin\""]
-    const _config = Object.assign({}, config, ServiceConfig, { fields })
-    return this.getNodesCount(_config)
+    return this.getNodesCount(Object.assign({}, config, ServiceConfig, { fields }))
   }
   public static getPersonContactsEdges (unfilteredFiels: string[], node, args: any) {
     return this.getEdges(
@@ -40,10 +46,9 @@ export class PersonsService extends DatabaseService {
       args.length > 0 ? args : null
     )
   }
-  public static getPersons (config: GetNodeConfig) {
+  public static getPersons (config: GetNodesConfig) {
     const fields = ["\"lastName\"", '\' \'', "\"firstName\"", '\' \'', "\"middleName\"", '\' \'', "\"iin\""]
-    const _config = Object.assign({}, config, ServiceConfig, { fields })
-    return this.getNodes(_config)
+    return this.getNodes(Object.assign({}, config, ServiceConfig, { fields }))
   }
   public static restorePerson (id: number, user: number) {
     return this.restoreNode(
@@ -52,13 +57,8 @@ export class PersonsService extends DatabaseService {
       user
     )
   }
-  public static getPerson (unfilteredFields: string[], args) {
-    return this.getNode({
-      table: PERSONS_TABLE,
-      tableFields: personTableFields,
-      unfilteredFields,
-      args
-    })
+  public static getPerson (config: GetNodeConfig) {
+    return this.getNode(Object.assign({}, config, ServiceConfig))
   }
   public static async createPerson (data: any, user: number) {
     return this.createNode({
