@@ -12,12 +12,15 @@ export const queries = {
     },
     CLOSE_SESSION (sessionID: number) {
       return `
+      
       UPDATE sessions.e_session
       SET
         "closedAt" = now(),
         "stateID" = 'C'
       WHERE id = ${sessionID}
-      RETURNING *;`
+      RETURNING *;
+      
+      `
     },
     GET_USER_ID: (token: string) => {
       return `

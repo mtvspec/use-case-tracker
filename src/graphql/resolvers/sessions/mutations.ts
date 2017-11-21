@@ -1,6 +1,6 @@
 import { SessionsService } from './../../../services'
-const closeSession = async (root, args, context) => {
-  return await SessionsService.closeSession(args.id)
+const closeSession = async (root, args, ctx) => {
+  return await SessionsService.closeSession(ctx.session.id)
 }
 export default {
   closeSession

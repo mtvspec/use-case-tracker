@@ -1,10 +1,6 @@
 import { AuthService } from './../../../services'
-const authentificateUser = async (root, data, context) => {
-  const _data = {
-    username: data.username,
-    password: data.password
-  }
-  const response = await AuthService.authentificateUser(_data)
+const authentificateUser = async (root, data, ctx) => {
+  const response = await AuthService.authentificateUser(data.input)
   return Object.assign(response)
 }
 

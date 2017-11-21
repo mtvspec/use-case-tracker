@@ -40,10 +40,6 @@ const ProjectMemberRoleIssuesConnection = {
 }
 
 const Project = {
-  customer: async (root: { customer: number }) => {
-    return root.customer ?
-      await CustomersService.getCustomer(root.customer) : null
-  },
   manager: async (root: { projectManager: number }, args: any, ctx: any, info: any) => {
     const fields: any = Object.keys(ctx.utils.parseFields(info))
     return root.projectManager ?
@@ -125,7 +121,7 @@ const getProjectMember = async (root: any, args: { id: number }) => {
 const ProjectMember = {
   person: async (root: any, args: any, ctx: any, info: any) => {
     const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return await PersonsService.getPerson(fields, root.person, args)
+    return await PersonsService.getPerson(fields, { id: root.person })
   },
   team: async (root: { team: number }) => {
     return await ProjectsService.getProjectTeam(root.team)

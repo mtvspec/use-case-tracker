@@ -1,6 +1,6 @@
 const parseFields = require('graphql-parse-fields')
 // import * as graphql from 'express-graphql';
-import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
+import { graphqlExpress } from 'apollo-server-express';
 import { addErrorLoggingToSchema } from 'graphql-tools';
 const graphqlLogger = { log: (e) => console.trace(e.stack) };
 import * as bodyParser from 'body-parser';
@@ -11,9 +11,9 @@ import * as path from 'path';
 import * as uuid from 'uuid';
 import errorHandler = require('errorHandler');
 import methodOverride = require('method-override');
-import AuthService from './services/auth.service';
-import { UsersService } from './services/users.service'
-import { SessionsService } from './services/sessions.service'
+import AuthService from '../services/auth.service';
+import { UsersService } from '../services/users.service'
+import { SessionsService } from '../services/sessions.service'
 
 const debug = require('debug')
 
@@ -31,12 +31,12 @@ debug('Debug')
 // import { projects } from './routes/projects';
 // import { IndexRoute } from "./routes/index";
 
-import * as services from './services';
+import * as services from '../services';
 
-// import { schema } from './graphql/schema';
-import schema from './graphql';
+// import { schema } from './graphql/schema'
+import schema from '../graphql'
 
-import pg from './knex'
+import pg from '../knex'
 import * as knexLogger from 'knex-logger'
 
 addErrorLoggingToSchema(schema, graphqlLogger);
@@ -82,7 +82,7 @@ export class Server {
         )
       )
     )
-    this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/api/graphql' }))
+    // this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/api/graphql' }))
     this.app.use(errorHandler());
   }
   public requestInterceptor () {
@@ -146,6 +146,7 @@ export class Server {
     })
   }
   public async validateToken (req: express.Request, res: express.Response, next: express.NextFunction) {
+    if (req.headers['authentification'] === 'true' && req.body.operationName === 'AuthentificateUserMutation') return next()
     if (!req.headers['authorization']) { return res.status(401).json('Unauthorised').end() }
     if (req.headers['authorization'] && typeof req.headers['authorization'] === 'string') {
       const token: string = <string>req.headers['authorization']

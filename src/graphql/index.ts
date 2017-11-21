@@ -385,7 +385,6 @@ const typeDefs: DocumentNode = gql`
     projectName: String
     projectDescription: String
     officialProjectName: String
-    customer: Customer @deprecated
     customersConnection: ProjectCustomersConnection
     manager: Employee
     curator: Employee
@@ -459,9 +458,10 @@ const typeDefs: DocumentNode = gql`
   # Кадровая единица (КЕ)
   type Employee implements Node {
     id: ID!
+    organization: Organization
     organizationalUnit: OrganizationalUnit
     positionalUnit: PositionalUnit
-    person: Person
+    person: Person!
     manager: Employee
     subordinates: [Employee]
     subordinatedOrganizationalUnits: [OrganizationalUnit]
@@ -481,7 +481,7 @@ const typeDefs: DocumentNode = gql`
     id: ID!
     organizationalUnits: [OrganizationalUnit]
     bin: String
-    name: String
+    name: String!
     officialName: String
     address: String
     manager: Employee
@@ -507,7 +507,7 @@ const typeDefs: DocumentNode = gql`
     organization: Organization
     organizationalUnit: OrganizationalUnit
     # Наименование ОЕ
-    name: String
+    name: String!
     # Описание ОЕ
     description: String
     kind: DictValue
@@ -521,8 +521,6 @@ const typeDefs: DocumentNode = gql`
     employees: [Employee]
     # Все сотрудники подразделения и его подчиненных подразделений
     allEmployees: [Employee!]
-    kind: DictValue
-    type: DictValue
     state: DictValue
     isDeleted: Boolean
     createdBy: User
@@ -564,6 +562,15 @@ const typeDefs: DocumentNode = gql`
   type IssuesConnection {
     totalCount: Int
     issues: [Issue!]
+  }
+
+  type Session {
+    id: ID!
+    user: User!
+    token: String!
+    openedAt: String!
+    closedAt: String
+    state: String!
   }
 
   input Field {
@@ -613,15 +620,6 @@ const typeDefs: DocumentNode = gql`
     stateID: Int
   }
 
-  type Session {
-    id: ID!
-    user: User!
-    token: String!
-    openedAt: String!
-    closedAt: String
-    stateID: String!
-  }
-
   input OrganizationData {
     bin: String
     name: String!
@@ -639,6 +637,16 @@ const typeDefs: DocumentNode = gql`
     typeID: ID
     name: String!
     description: String
+  }
+
+  input PersonDataFilterFields {
+    isDeleted: Boolean
+    state: ID
+    gender: ID
+    createdBy: ID
+    updatedBy: ID
+    deletedBy: ID
+    modifiedBy: ID
   }
 
   input ProjectDataInput {
@@ -678,7 +686,12 @@ const typeDefs: DocumentNode = gql`
     kindID: ID
     typeID: ID
     name: String
-    description: String
+    description: String @validate
+  }
+
+  input UserCredentialsInput {
+    username: String!
+    password: String!
   }
 
   type Query {
@@ -690,6 +703,7 @@ const typeDefs: DocumentNode = gql`
       isDeleted: Boolean
       search: String
       searchPersonFields: SearchPersonFields
+      filter: PersonDataFilterFields
     ): PersonsConnection
     person (id: ID!, genderID: Int): Person
     allUsers: UsersConnection
@@ -714,12 +728,9 @@ const typeDefs: DocumentNode = gql`
 
   type Mutation {
     authentificateUser (
-      username: String!
-      password: String!
+      input: UserCredentialsInput!
     ): Session
-    closeSession (
-      id: ID!
-    ): Session
+    closeSession: Session
     createPerson (
       input: NewPersonData!
     ): Person

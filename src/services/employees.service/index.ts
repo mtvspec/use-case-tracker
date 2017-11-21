@@ -5,26 +5,25 @@ let employeesTableFields: string[] = []
 let employeePersonEdgesTableFields: string[] = []
 export class EmployeesService extends DatabaseService {
   public static getEmployees (unfilteredFields: string[], orderBy: string[]) {
-    return this.getNodes(
-      EMPLOYEES_TABLE,
-      employeesTableFields,
+    return this.getNodes({
+      table: EMPLOYEES_TABLE,
+      tableFields: employeesTableFields,
       unfilteredFields,
-      null,
-      null,
-      null,
+      args: null,
+      except: null,
       orderBy
-    )
+    })
   }
-  public static getEmployee (unfilteredFields: string[], id: number) {
-    return this.getNode(
-      EMPLOYEES_TABLE,
-      employeesTableFields,
+  public static getEmployee (unfilteredFields: string[], args) {
+    return this.getNode({
+      table: EMPLOYEES_TABLE,
+      tableFields: employeesTableFields,
       unfilteredFields,
-      id
-    )
+      args
+    })
   }
 
-  public static getEmployeesByPersonID (unfilteredFields: string[], source: number, args?: any) {
+  public static getEmployeesByPerson (unfilteredFields: string[], source, args?: any) {
     return this.getEdges(
       EMPLOYEE_PERSON_EDGES_TABLE,
       employeePersonEdgesTableFields,
@@ -33,14 +32,14 @@ export class EmployeesService extends DatabaseService {
       args
     )
   }
-  public static getEmployeesCount (id: number) {
-    return this.getNodesCount(
-      EMPLOYEE_PERSON_EDGES_TABLE,
-      employeePersonEdgesTableFields,
-      id
-    )
+  public static getEmployeesCount (args?) {
+    return this.getNodesCount({
+      table: EMPLOYEE_PERSON_EDGES_TABLE,
+      tableFields: employeePersonEdgesTableFields,
+      args
+    })
   }
-  public static async getSubordinatesByEmployeeID (employeeID: number) {
+  public static async getSubordinatesByEmployee (employeeID: number) {
     return await this.query(new QueryConfig({
       qty: '*',
       text: `

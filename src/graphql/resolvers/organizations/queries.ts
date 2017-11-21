@@ -3,31 +3,27 @@ import { OrganizationsService } from './../../../services/organizations.service'
 import { EmployeesService } from './../../../services/employees.service'
 import { PersonsService } from './../../../services/persons.service'
 import { DictService } from '../../../services/index'
-const getOrganizationalUnit = async (_: any, args: { id: number }, ctx: any, info: any) => {
-  const fields: any = Object.keys(ctx.utils.parseFields(info))
-  return await OrganizationsService.getOrganizationalUnit(fields, args.id)
+const getOrganization = async (_, args: { id: number }, ctx, info) => {
+  const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+  return await OrganizationsService.getOrganization(fields, { id: args.id })
 }
-
-const getOrganization = async (_: any, args: any, ctx: any, info: any) => {
-  const fields: any = Object.keys(ctx.utils.parseFields(info))
-  return await OrganizationsService.getOrganization(fields, args.id)
+const getOrganizationalUnit = async (_, args: { id: number }, ctx, info) => {
+  const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+  return await OrganizationsService.getOrganizationalUnit(fields, { id: args.id })
 }
-
-const getManager = async (root: { manager: number }, _: any, ctx: any, info: any) => {
-  const fields: any = Object.keys(ctx.utils.parseFields(info))
-  return root.manager ?
-    await EmployeesService.getEmployee(fields, root.manager) : null
+const getManager = async (root: { manager: number }, _, ctx, info) => {
+  const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+  return root && root.manager ?
+    await EmployeesService.getEmployee(fields, { id: root.manager }) : null
 }
-
-const getEmployee = async (_: any, args: any, ctx: any, info: any) => {
-  const fields: any = Object.keys(ctx.utils.parseFields(info))
-  return await EmployeesService.getEmployee(fields, args.id)
+const getEmployee = async (_, args: { id: number }, ctx, info) => {
+  const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+  return await EmployeesService.getEmployee(fields, { id: args.id })
 }
-
 const Organization = {
-  organizationalUnits: async (root: { id: number }, _: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return await OrganizationsService.getOrganizationalUnits(fields, root.id)
+  organizationalUnits: async (root: { id: number }, _, ctx, info) => {
+    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+    return await OrganizationsService.getOrganizationalUnits(fields, { id: root.id })
   },
   manager: getManager,
   state: CommonResolvers.state,
@@ -36,59 +32,57 @@ const Organization = {
   deletedBy: CommonResolvers.deletedBy,
   modifiedBy: CommonResolvers.modifiedBy
 }
-
 const OrganizationsConnection = {
-  totalCount: async (_: any) => {
+  totalCount: async (_) => {
     return await OrganizationsService.getOrganizationsCount()
-      .then((data: any) => { return data.totalCount })
+      .then((data: { totalCount: number }) => { return data.totalCount })
   },
-  organizations: async (_: any, args: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return await OrganizationsService.getOrganizations(fields, args)
+  organizations: async (_, args, ctx, info) => {
+    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+    return await OrganizationsService.getOrganizations(fields, args, null, ['name'])
   }
 }
-
 const OrganizationalUnit = {
-  organization: async (root: { organization: number }, _: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return root.organization > 0 ?
-      await OrganizationsService.getOrganization(fields, root.organization) : null
+  organization: async (root: { organization: number }, _, ctx, info) => {
+    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+    return root && root.organization > 0 ?
+      await OrganizationsService.getOrganization(fields, { id: root.organization }) : null
   },
-  organizationalUnit: async (root: { organizationalUnit: number }, _: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return root.organizationalUnit > 0 ?
-      await OrganizationsService.getOrganizationalUnit(fields, root.organizationalUnit) : null
+  organizationalUnit: async (root: { organizationalUnit: number }, _, ctx, info) => {
+    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+    return root && root.organizationalUnit > 0 ?
+      await OrganizationsService.getOrganizationalUnit(fields, { id: root.organizationalUnit }) : null
   },
-  kind: async (root: { kind: number }, _: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return root.kind > 0 ?
-      await DictService.getDictValue(fields, root.kind) : null
+  kind: async (root: { kind: number }, _, ctx, info) => {
+    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+    return root && root.kind > 0 ?
+      await DictService.getDictValue(fields, { id: root.kind }) : null
   },
-  type: async (root: { type: number }, _: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return root.type > 0 ?
-      await DictService.getDictValue(fields, root.type) : null
+  type: async (root: { type: number }, _, ctx, info) => {
+    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+    return root && root.type > 0 ?
+      await DictService.getDictValue(fields, { id: root.type }) : null
   },
-  manager: async (root: { manager: number }, _: any, ctx: any, info: any) => {
+  manager: async (root: { manager: number }, _, ctx, info) => {
     const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return root.manager > 0 ?
-      await EmployeesService.getEmployee(fields, root.manager) : null
+    return root && root.manager > 0 ?
+      await EmployeesService.getEmployee(fields, { id: root.manager }) : null
   },
-  managers: async (root: { id: number }, _: any, ctx: any, info: any) => {
+  managers: async (root: { id: number }, _, ctx, info) => {
     const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return OrganizationsService.getManagersByOrganizationalUnit(fields, root.id)
+    return OrganizationsService.getManagersByOrganizationalUnit(fields, { id: root.id })
   },
-  childOrganizationalUnits: async (root: { id: number }, _: any, ctx: any, info: any) => {
+  childOrganizationalUnits: async (root: { id: number }, _, ctx, info) => {
     const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return await OrganizationsService.getChildOrganizationalUnitsByOrganizationalUnit(fields, root.id)
+    return await OrganizationsService.getChildOrganizationalUnitsByOrganizationalUnit(fields, { id: root.id })
   },
-  employees: async (root: { id: number }, _: any, ctx: any, info: any) => {
+  employees: async (root: { id: number }, _, ctx, info) => {
     const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return await OrganizationsService.getEmployeesByOrganizationalUnit(fields, root.id)
+    return await OrganizationsService.getEmployeesByOrganizationalUnit(fields, { id: root.id })
   },
-  allEmployees: async (root: { id: number }, _: any, ctx: any, info: any) => {
+  allEmployees: async (root: { id: number }, _, ctx, info) => {
     const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return await OrganizationsService.getAllEmployeesByOrganizationalUnit(fields, root.id)
+    return await OrganizationsService.getAllEmployeesByOrganizationalUnit(fields, { id: root.id })
   },
   state: CommonResolvers.state,
   createdBy: CommonResolvers.createdBy,
@@ -96,61 +90,62 @@ const OrganizationalUnit = {
   deletedBy: CommonResolvers.deletedBy,
   modifiedBy: CommonResolvers.modifiedBy
 }
-
 const PositionalUnit = {
   createdBy: CommonResolvers.createdBy,
   updatedBy: CommonResolvers.updatedBy,
   deletedBy: CommonResolvers.deletedBy,
   modifiedBy: CommonResolvers.modifiedBy
 }
-
 const EmployeesConnection = {
   totalCount: async (root: { id: number }) => {
-    return root.id ?
+    return root && root.id ?
       await EmployeesService.getEmployeesCount(root.id)
-        .then((data: any) => { return data.totalCount }) : null
+        .then((data: { totalCount: number }) => { return data.totalCount }) : null
   },
-  edges: async (root: any, _: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return root.id ?
-      await EmployeesService.getEmployeesByPersonID(fields, root.id) : null
+  edges: async (root: { id: number }, _, ctx, info) => {
+    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+    return root && root.id ?
+      await EmployeesService.getEmployeesByPerson(fields, { source: root.id }) : null
   }
 }
-
 const PersonEmployeeEdge = {
-  node: async (root: { node: number }, _: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return await EmployeesService.getEmployee(fields, root.node)
+  node: async (root: { node: number }, _, ctx, info) => {
+    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+    return await EmployeesService.getEmployee(fields, { id: root.node })
   }
 }
-
 const Employee = {
-  person: async (root: any, _: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return await PersonsService.getPerson(fields, root.person, root.args)
-  },
-  organizationalUnit: async (root: { organizationalUnit: number }, _: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return root.organizationalUnit ?
-      await OrganizationsService.getOrganizationalUnit(fields, root.organizationalUnit) : null
-  },
-  positionalUnit: async (root: any, _: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return root.positionalUnit ?
-      await OrganizationsService.getPositionalUnit(fields, root.positionalUnit) : null
-  },
-  manager: async (root: { manager: number }, _: any, ctx: any, info: any) => {
+  person: async (root: { person: number, args: { [key: string]: any } }, _, ctx, info) => {
     const fields: string[] = Object.keys(ctx.utils.parseFields(info))
-    return root.manager ?
-      await EmployeesService.getEmployee(fields, root.manager) : null
+    return await PersonsService.getPerson(fields, { id: root.person })
   },
-  subordinates: async (root: any, _: any, ctx: any, info: any) => {
+  organization: async (root: { organization: number }, _, ctx, info) => {
     const fields: string[] = Object.keys(ctx.utils.parseFields(info))
-    return await OrganizationsService.getSubordinades(fields, root.id)
+    return root && root.organization > 0 ?
+      await OrganizationsService.getOrganization(fields, { id: root.organization }) : null
   },
-  subordinatedOrganizationalUnits: async (root: any, _: any, ctx: any, info: any) => {
+  organizationalUnit: async (root: { organizationalUnit: number }, _, ctx, info) => {
     const fields: string[] = Object.keys(ctx.utils.parseFields(info))
-    return await OrganizationsService.getSubordinadedOrganizationalUnitsByEmployee(fields, root.id)
+    return root && root.organizationalUnit ?
+      await OrganizationsService.getOrganizationalUnit(fields, { id: root.organizationalUnit }) : null
+  },
+  positionalUnit: async (root: { positionalUnit: number }, _, ctx, info) => {
+    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+    return root && root.positionalUnit ?
+      await OrganizationsService.getPositionalUnit(fields, { id: root.positionalUnit }) : null
+  },
+  manager: async (root: { manager: number }, _, ctx, info) => {
+    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+    return root && root.manager ?
+      await EmployeesService.getEmployee(fields, { id: root.manager }) : null
+  },
+  subordinates: async (root, _, ctx, info) => {
+    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+    return await OrganizationsService.getSubordinades(fields, { id: root.id })
+  },
+  subordinatedOrganizationalUnits: async (root: { id: number }, _, ctx, info) => {
+    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+    return await OrganizationsService.getSubordinatedOrganizationalUnitsByEmployee(fields, { id: root.id })
   },
   createdBy: CommonResolvers.createdBy,
   updatedBy: CommonResolvers.updatedBy,
@@ -159,14 +154,14 @@ const Employee = {
 }
 
 export default {
-  OrganizationsConnection,
-  Organization,
-  getOrganizationalUnit,
   getOrganization,
+  Organization,
+  OrganizationsConnection,
+  getOrganizationalUnit,
   OrganizationalUnit,
   PositionalUnit,
+  getEmployee,
+  Employee,
   EmployeesConnection,
   PersonEmployeeEdge,
-  Employee,
-  getEmployee
 }

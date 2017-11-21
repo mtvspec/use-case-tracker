@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "NODE_ENV=development && nodemon ./bin/www",
     "grunt": "grunt",
-    "start": "nodemon ./bin/www"
+    "start": "nodemon ./dist/bin/www"
   },
   "dependencies": {
     "@types/knex": "0.0.64",

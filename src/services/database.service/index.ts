@@ -1,5 +1,4 @@
 import { debug } from './debug.config'
-console.log(debug)
 const totalCount: string = 'id as totalCount'
 const { Pool } = require('pg')
 import { config } from './connector.config'
@@ -14,7 +13,51 @@ const pool = new Pool(config)
 pool.on('error', function (err: Error) {
   console.trace(err);
   throw new Error(ErrorMessages.db);
-})
+});
+
+(async () => {
+  const response = await db('users.e_user')
+    .where([])
+  console.log(response)
+})();
+
+
+interface NodeQueryConfig {
+  table: string
+  tableFields: string[]
+  unfilteredFields: string[]
+  args: any
+  except?: any
+}
+
+interface NodesQueryConfig {
+  table: string
+  tableFields: string[]
+  unfilteredFields: string[]
+  args?: { [key: string]: any }
+  filter?: { [key: string]: any }
+  search?: string
+  fields?: string[]
+  except?: { [key: string]: any }
+  orderBy?: string[]
+}
+
+interface NodesCountQueryConfig {
+  table: string
+  tableFields: string[]
+  args?: { [key: string]: any }
+  filter?: { [key: string]: any }
+  except?: { [key: string]: any }
+  search?: string,
+  fields?: string[]
+}
+
+interface NodeMutationConfig {
+  table: string,
+  tableFields: string[],
+  data: { [key: string]: any },
+  user: number
+}
 
 export class DatabaseService {
   public static buildFieldSet = (fields: string[], prefix: string) => {
@@ -27,7 +70,6 @@ export class DatabaseService {
     return `${_fields}`
   }
   public static async query (queryConfig: QueryConfig) {
-    if (debug.queries.query) console.log(arguments)
     if (!(queryConfig instanceof QueryConfig)) {
       console.trace(queryConfig)
       throw new Error(ErrorMessages.queryConfig)
@@ -51,6 +93,7 @@ export class DatabaseService {
             } else {
               done()
               await result
+              // if (debug.queries.query) console.log(arguments[0].text)
               const rowCount: number = Number(result.rowCount), rows: any = result.rows
               this.dataLogger(queryConfig, rows)
               console.log(`rowCount: ${result.rowCount}`)
@@ -87,471 +130,203 @@ export class DatabaseService {
     if (table && typeof table === 'string') return true
     else return false
   }
-  public static async getNodes (
-    table: string,
-    tableFields: string[],
-    unfilteredFiels: string[],
-    id?: number | string,
-    args?: any,
-    except?: any,
-    orderBy: any[] = ['id']
-  ) {
-    if (!this.validateTable(table)) throw Error(`invalid table name: ${table}`)
-    if (id) {
-      const filteredFields = this.filterFields(tableFields, unfilteredFiels)
-      const response = await db(table)
-        .select(filteredFields)
-        .where(id)
-        .orderBy(this.filterFields(tableFields, orderBy))
-        .catch((err: Error) => {
-          console.trace(err)
-          return err
-        })
-      if (debug.queries.getNodes.name) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Nodes : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-      }
-      if (debug.queries.getNode.arguments) arguments[0].text ? console.log(arguments[0].length === 1) :
-        console.log(arguments)
-      if (debug.queries.getNodes.response) {
-        console.log(screenLines.successDatabaseResponse)
-        console.log(`DatabaseService : Get Nodes Response : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-        console.log('Filtered fields:')
-        console.log(filteredFields)
-        console.log('response:')
-        console.log(response)
-        console.log(screenLines.endLine)
-      }
-      return response
-    }
-    else if (args) {
-      const _args: string[] = Object.keys(args)
-      const filteredFields = this.filterFields(tableFields, unfilteredFiels)
-      const filteredFieldsWithValues = this.filterFieldsAndReturnValues(tableFields, _args, args)
-      const response = await db(table)
-        .select(filteredFields)
-        .where(filteredFieldsWithValues)
-        .orderBy(this.filterFields(tableFields, orderBy))
-        .catch((err: Error) => {
-          console.trace(err)
-          return err
-        })
-      if (debug.queries.getNodes.name) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Nodes : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-      }
-      if (debug.queries.getNode.arguments) arguments[0].text ? console.log(arguments[0].length === 1) :
-        console.log(arguments)
-      if (debug.queries.getNodes.response) {
-        console.log(screenLines.successDatabaseResponse)
-        console.log(`DatabaseService : Get Nodes Response : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-        console.log('Filtered fields:')
-        console.log(filteredFields)
-        console.log('response:')
-        console.log(response)
-        console.log(screenLines.endLine)
-      }
-      return response
-    }
-    else if (except) {
-      const filteredFields = this.filterFields(tableFields, unfilteredFiels)
-      const response = await db(table)
-        .select(filteredFields)
-        .whereNot(except)
-        .orderBy(this.filterFields(tableFields, orderBy))
-        .catch((err: Error) => {
-          console.trace(err)
-          return err
-        })
-      if (debug.queries.getNodes.name) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Nodes : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-      }
-      if (debug.queries.getNode.arguments) arguments[0].text ? console.log(arguments[0].length === 1) :
-        console.log(arguments)
-      if (debug.queries.getNodes.response) {
-        console.log(screenLines.successDatabaseResponse)
-        console.log(`DatabaseService : Get Nodes Response : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-        console.log('Filtered fields:')
-        console.log(filteredFields)
-        console.log('response:')
-        console.log(response)
-        console.log(screenLines.endLine)
-      }
-      return response
-    }
-    else {
-      const filteredFields = this.filterFields(tableFields, unfilteredFiels)
-      const response = await db(table)
-        .select(filteredFields)
-        .orderBy(this.filterFields(tableFields, orderBy))
-        .catch((err: Error) => {
-          console.trace(err)
-          return err
-        })
-      if (debug.queries.getNode.name) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Node : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-      }
-      if (debug.queries.getNode.arguments) arguments[0].text ? console.log(arguments[0].length === 1) :
-        console.log(arguments)
-      if (debug.queries.getNodes.response) {
-        console.log(screenLines.successDatabaseResponse)
-        console.log(`DatabaseService : Get Nodes Response : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-        console.log('Filtered fields:')
-        console.log(filteredFields)
-        console.log('response:')
-        console.log(response)
-        console.log(screenLines.endLine)
-      }
-      return response
-    }
-  }
-  public static async getNode (
-    table: string,
-    tableFields: string[],
-    unfilteredFiels: string[],
-    id: number | string,
-    args?: any
-  ) {
-    const filteredFields = DatabaseService.filterFields(tableFields, unfilteredFiels)
-    if (!DatabaseService.validateTable(table)) throw Error(`invalid table name: ${table}`)
-    let response: any
-    if (args) {
-      const _args: string[] = Object.keys(args)
-      const filteredFieldsWithValues = DatabaseService.filterFieldsAndReturnValues(
-        tableFields,
-        _args,
-        args
+  public static async getNodes (config: NodesQueryConfig) {
+    if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
+    if (!config.tableFields) throw Error('table fields is required')
+    if (!config.unfilteredFields) throw Error('requested fields is required')
+    const requestedFields = DatabaseService.filterFields(config.tableFields, config.unfilteredFields)
+    let args = [], filter = [], except = [], search = [], orderBy = ['id']
+    if (config.args && Object.keys(config.args).length > 0) {
+      args = this.filterFieldsAndReturnValues(
+        config.tableFields,
+        Object.keys(config.args),
+        config.args
       )
-      response = await db(table)
-        .select(filteredFields)
-        .where(filteredFieldsWithValues).first()
-        .catch((err: Error) => {
-          console.trace(err)
-          return err
-        })
-      if (debug.queries.getNode.name) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Node : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-      }
-      if (debug.queries.getNode.arguments) arguments[0].text ? console.log(arguments[0].length === 1) :
-        console.log(arguments)
-      if (debug.queries.getNode.response) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Node Response : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-        console.log('Filtered fields:')
-        console.log(filteredFields)
-        console.log('Filtered args:')
-        console.log(filteredFieldsWithValues)
-        console.log('response:')
-        console.log(response)
-      }
-      if (response && response.id > 0) return response
-      else if (response === undefined) return null
-      else return response
+      if (!args) args = []
     }
-    else {
-      response = await db(table)
-        .select(filteredFields)
-        .where({ id }).first()
-        .catch((err: Error) => {
-          console.trace(err)
-          return err
-        })
-      if (debug.queries.getNode.name) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Node : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-      }
-      if (debug.queries.getNode.arguments) arguments[0].text ? console.log(arguments[0].length === 1) :
-        console.log(arguments)
-      if (debug.queries.getNode.response) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Node Response : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-        console.log('Filtered fields:')
-        console.log(filteredFields)
-        console.log('response:')
-        console.log(response)
-      }
-      if (response && response.id > 0) return response
-      else if (response === undefined) return null
-      else return response
+    if (config.search && config.search.length > 0) {
+      if (!config.fields) throw Error('search fields required')
+      search.push(`lower(concat(${config.fields})) ~ lower('\\m${config.search}')`)
     }
-  }
-  public static async getNodesCount (
-    table: string,
-    tableFields?: string[],
-    source?: number | string,
-    args?: any,
-    except?: any,
-    search?: any,
-    fields?: string[]
-  ) {
-    if (!this.validateTable(table)) throw Error(`invalid table name: ${table}`)
-    if (source) {
-      const response = await db(table)
-        .count(totalCount).first()
-        .where({ source })
-        .catch((err: Error) => {
-          console.trace(err)
-          return err
-        })
-      if (debug.queries.getNodesCount.name) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Nodes Count : ID - ${arguments[2]}`)
-        console.log(screenLines.endLine)
-      }
-      if (debug.queries.getNode.arguments) arguments[0].text ? console.log(arguments[0].length === 1) :
-        console.log(arguments)
-      if (debug.queries.getNodesCount.response) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Nodes Count Response : ID - ${arguments[2]}`)
-        console.log(screenLines.endLine)
-        console.log('response:')
-        console.log(response)
-      }
-      if (response === undefined) return { totalCount: 0 }
-      else return response
-    }
-    else if (args && search) {
-      const _args: string[] = Object.keys(args)
-      const filteredFieldsWithValues = this.filterFieldsAndReturnValues(
-        tableFields,
-        _args,
-        args
+    if (config.except && Object.keys(config.except).length > 0) {
+      except = this.filterFieldsAndReturnValues(
+        config.tableFields,
+        Object.keys(config.except),
+        config.except
       )
-      const response = await db(table)
-        .count(totalCount)
-        .whereRaw(`lower(concat(${fields})) ~ lower('\\m${search}')`)
-        .andWhere(filteredFieldsWithValues).first()
-        .catch((err: Error) => {
-          console.trace(err)
-          return err
-        })
-      if (debug.queries.getNodesCount.name) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Nodes Count : ID - ${arguments[2]}`)
-        console.log(screenLines.endLine)
-      }
-      if (debug.queries.getNodesCount.arguments) console.log(arguments)
-      if (debug.queries.getNodesCount.response) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Nodes Count Response : ID - ${arguments[2]}`)
-        console.log(screenLines.endLine)
-        console.log('Filtered args:')
-        console.log(filteredFieldsWithValues)
-        console.log('response:')
-        console.log(response)
-      }
-      if (response === undefined) return { totalCount: 0 }
-      else return response
+      if (!except) except = []
     }
-    else if (args) {
-      const _args: string[] = Object.keys(args)
-      const filteredFieldsWithValues = this.filterFieldsAndReturnValues(
-        tableFields,
-        _args,
-        args
+    if (config.filter && Object.keys(config.filter).length > 0) {
+      filter = this.filterFieldsAndReturnValues(
+        config.tableFields,
+        Object.keys(config.filter),
+        config.filter
       )
-      const response = await db(table)
-        .where(filteredFieldsWithValues)
-        .count(totalCount).first()
-        .catch((err: Error) => {
-          console.trace(err)
-          return err
-        })
-      if (debug.queries.getNodesCount.name) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Nodes Count : ID - ${arguments[2]}`)
-        console.log(screenLines.endLine)
-      }
-      if (debug.queries.getNodesCount.arguments) console.log(arguments)
-      if (debug.queries.getNodesCount.response) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Nodes Count Response : ID - ${arguments[2]}`)
-        console.log(screenLines.endLine)
-        console.log('Filtered args:')
-        console.log(filteredFieldsWithValues)
-        console.log('response:')
-        console.log(response)
-      }
-      if (response === undefined) return { totalCount: 0 }
-      else return response
+      if (!filter) filter = []
     }
-    else if (except) {
-      const response = await db(table)
-        .whereNot(except)
-        .count(totalCount).first()
-        .catch((err: Error) => {
-          console.trace(err)
-          return err
-        })
-      if (debug.queries.getNodes.name) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Nodes : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-      }
-      if (debug.queries.getNodesCount.arguments) console.log(arguments)
-      if (debug.queries.getNode.response) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Nodes Count Response : ID - ${arguments[2]}`)
-        console.log(screenLines.endLine)
-        console.log('response:')
-        console.log(response)
-      }
-      if (response === undefined) return { totalCount: 0 }
-      else return response
+    if (config.orderBy && Object.keys(config.orderBy).length > 0) {
+      orderBy = this.filterFields(
+        config.tableFields,
+        config.orderBy
+      )
+      if (!orderBy) orderBy = ['id']
     }
-    else {
-      const response = await db(table)
-        .count(totalCount).first()
-        .catch((err: Error) => {
-          console.trace(err)
-          return err
-        })
-      if (debug.queries.getNodes.name) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Nodes : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-      }
-      if (debug.queries.getNodesCount.arguments) console.log(arguments)
-      if (debug.queries.getNodesCount.response) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Get Nodes Count Response : ID - ${arguments[2]}`)
-        console.log(screenLines.endLine)
-        console.log('response:')
-        console.log(response)
-      }
-      if (response === undefined) return { totalCount: 0 }
-      else return response
-    }
-  }
-  public static async filterNodes (table: string, tableFields: string[], unfilteredFiels: string[], args: any, orderBy: any[] = ['id']) {
-    if (!this.validateTable(table)) throw Error(`invalid table name: ${table}`)
-    const _args: string[] = Object.keys(args)
-    const filteredFields = this.filterFields(tableFields, unfilteredFiels)
-    const filteredFieldsWithValues = this.filterFieldsAndReturnValues(tableFields, _args, args)
-    const response = await db(table)
-      .select(filteredFields)
-      .where(filteredFieldsWithValues)
-      .orderBy(this.filterFields(tableFields, orderBy))
+    const response = await db(config.table)
+      .select(requestedFields)
+      .where(args)
+      .where(filter)
+      .whereNot(except)
+      .whereRaw(search)
+      .orderBy(orderBy)
       .catch((err: Error) => {
         console.trace(err)
         return err
       })
-    if (debug.queries.filterNodes.name) {
+    if (debug.queries.getNodes.name) {
       console.log(screenLines.endLine)
-      console.log(`DatabaseService : Filter Nodes : ID - ${arguments[3]}`)
+      console.log(`DatabaseService : Get Nodes`)
       console.log(screenLines.endLine)
     }
-    if (debug.queries.filterNodes.arguments) console.log(arguments)
-    if (debug.queries.filterNodes.response) {
+    if (debug.queries.getNodesCount.arguments) console.log(arguments)
+    if (debug.queries.getNodesCount.response) {
       console.log(screenLines.endLine)
-      console.log(`DatabaseService : Filter Nodes Response : ID - ${arguments[2]}`)
+      console.log(`DatabaseService : Get Nodes Count Response`)
       console.log(screenLines.endLine)
+      console.log('Filtered requested fields:')
+      console.log(requestedFields)
       console.log('Filtered args:')
-      console.log(filteredFieldsWithValues)
-      console.log('Response:')
+      console.log(args)
+      console.log('Filtered filter:')
+      console.log(filter)
+      console.log('Filtered except:')
+      console.log(except)
+      console.log('Filtered search:')
+      console.log(search)
+      console.log('Search fields:')
+      console.log(config.fields)
+      console.log('Filtered orderBy:')
+      console.log(orderBy)
+      console.log('response:')
       console.log(response)
     }
-    return response
+    if (response === undefined) return null
+    else return response
   }
-  public static async searchNode (table: string, tableFields: string[], unfilteredFiels: string[], search: string, args?: any, fields?: any, orderBy: any = ['id']) {
-    if (!this.validateTable(table)) throw Error(`invalid table name: ${table}`)
-    if (args) {
-      const _args: string[] = Object.keys(args)
-      const requestedFields = this.filterFields(tableFields, unfilteredFiels)
-      const filteredArgs = this.filterFieldsAndReturnValues(tableFields, _args, args)
-      const response = await db(table)
-        .select(requestedFields)
-        .whereRaw(`lower(concat(${fields})) ~ lower('\\m${search}')`)
-        .andWhere(filteredArgs)
-        .orderBy(this.filterFields(tableFields, orderBy))
-        .catch((err: Error) => {
-          console.trace(err)
-          return err
-        })
-      if (debug.queries.searchNode.name) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Search Node : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-      }
-      if (debug.queries.searchNode.arguments) console.log(arguments)
-      if (debug.queries.searchNode.response) {
-        console.log(screenLines.successDatabaseResponse)
-        console.log(`DatabaseService : Search Node Response : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-        console.log('Filtered fields:')
-        console.log(requestedFields)
-        console.log('Response:')
-        console.log(response)
-        console.log(screenLines.endLine)
-      }
-      return response
+  public static async getNode (config: NodeQueryConfig) {
+    if (!DatabaseService.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
+    if (!config.unfilteredFields) throw Error('requested fields is required')
+    const requestedFields = DatabaseService.filterFields(config.tableFields, config.unfilteredFields)
+    const response = await db(config.table)
+      .select(requestedFields)
+      .where(config.args).first()
+      .catch(err => {
+        return err
+      })
+    if (debug.queries.getNode.name) {
+      console.log(screenLines.endLine)
+      console.log(`DatabaseService : Get Node`)
+      console.log(screenLines.endLine)
+      console.log(arguments)
+      console.log(screenLines.endLine)
     }
-    else {
-      const requestedFields = this.filterFields(tableFields, unfilteredFiels)
-      const response = await db(table)
-        .select(requestedFields)
-        .whereRaw(`lower(concat(${fields})) ~ lower('\\m${search}')`)
-        .orderBy(this.filterFields(tableFields, orderBy))
-        .catch((err: Error) => {
-          console.trace(err)
-          return err
-        })
-      if (debug.queries.searchNode.name) {
-        console.log(screenLines.endLine)
-        console.log(`DatabaseService : Search Node : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-      }
-      if (debug.queries.searchNode.arguments) console.log(arguments)
-      if (debug.queries.searchNode.response) {
-        console.log(screenLines.successDatabaseResponse)
-        console.log(`DatabaseService : Search Node Response : ID - ${arguments[3]}`)
-        console.log(screenLines.endLine)
-        console.log('Filtered fields:')
-        console.log(requestedFields)
-        console.log('response:')
-        console.log(response)
-        console.log(screenLines.endLine)
-      }
-      return response
+    if (debug.queries.getNode.response) {
+      console.log(screenLines.endLine)
+      console.log(`DatabaseService : Get Node Response`)
+      console.log(screenLines.endLine)
+      console.log(arguments)
+      console.log(screenLines.endLine)
+      console.log('Filtered requested fields:')
+      console.log(requestedFields)
+      console.log('Response:')
+      console.log(response)
+      console.log(screenLines.endLine)
     }
+    if (response && response.id > 0) return response
+    else if (response === undefined) return null
+    else return response
   }
-  public static async createNode (
-    table: string,
-    tableFields: string[],
-    data: any,
-    user: number
-  ) {
-    if (!this.validateTable(table)) throw Error(`invalid table name: ${table}`)
-    const fields: string[] = Object.keys(data.input)
-    const _user = {
-      createdBy: user,
-      createdAt: 'now()',
-      modifiedBy: user
+  public static async getNodesCount (config: NodesCountQueryConfig) {
+    console.log(config)
+    if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
+    let args = [], filter = [], except = [], search = []
+    if (config.args && Object.keys(config.args).length > 0) {
+      args = this.filterFieldsAndReturnValues(
+        config.tableFields,
+        Object.keys(config.args),
+        config.args
+      )
+      if (!args) args = []
     }
-    const filteredFieldsWithValues = this.filterFieldsAndReturnValues(
-      tableFields,
+    if (config.filter && Object.keys(config.filter).length > 0) {
+      filter = this.filterFieldsAndReturnValues(
+        config.tableFields,
+        Object.keys(config.filter),
+        config.filter
+      )
+      if (!filter) filter = []
+    }
+    if (config.search && config.search.length > 0) {
+      if (!config.fields) throw Error('search fields required')
+      search.push(`lower(concat(${config.fields})) ~ lower('\\m${config.search}')`)
+    }
+    if (config.except && Object.keys(config.except).length > 0) {
+      except = this.filterFieldsAndReturnValues(
+        config.tableFields,
+        Object.keys(config.except),
+        config.except
+      )
+      if (!except) except = []
+    }
+    const response = await db(config.table)
+      .where(args)
+      .andWhere(filter)
+      .whereNot(except)
+      .whereRaw(search)
+      .count(totalCount).first()
+      .catch((err: Error) => {
+        console.trace(err)
+        return err
+      })
+    if (debug.queries.getNodes.name) {
+      console.log(screenLines.endLine)
+      console.log(`DatabaseService : Get Nodes : ID - ${arguments[3]}`)
+      console.log(screenLines.endLine)
+    }
+    if (debug.queries.getNodesCount.arguments) console.log(arguments)
+    if (debug.queries.getNodesCount.response) {
+      console.log(screenLines.endLine)
+      console.log(`DatabaseService : Get Nodes Count Response : ID - ${arguments[2]}`)
+      console.log(screenLines.endLine)
+      console.log('Filtered args:')
+      console.log(args)
+      console.log('Filtered filter:')
+      console.log(filter)
+      console.log('Filtered except:')
+      console.log(except)
+      console.log('Filtered search:')
+      console.log(search)
+      console.log('response:')
+      console.log(response)
+    }
+    if (response === undefined) return { totalCount: 0 }
+    else return response
+  }
+  public static async createNode (config: NodeMutationConfig) {
+    if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
+    const fields: string[] = Object.keys(config.data.input)
+    const filteredUserInput = this.filterFieldsAndReturnValues(
+      config.tableFields,
       fields,
-      data.input
+      config.data.input
     )
-    let _data = Object.assign({}, filteredFieldsWithValues, _user)
-    const response = await db(table)
-      .where({ id: _data.id })
-      .insert(_data)
+    const USER = {
+      createdBy: config.user,
+      modifiedBy: config.user
+    }
+    const DATA = Object.assign({}, filteredUserInput, USER)
+    const response = await db(config.table)
+      .insert(DATA)
+      .where({ id: DATA.id })
       .returning('*')
       .catch((err: Error) => {
         console.trace(err)
@@ -559,14 +334,14 @@ export class DatabaseService {
       })
     if (debug.mutations.createNode.name) {
       console.log(screenLines.endLine)
-      console.log(`DatabaseService : Create Node : ID - ${arguments[2]}`)
+      console.log(`DatabaseService : Create Node`)
       console.log(screenLines.endLine)
     }
     if (debug.mutations.createNode.arguments) console.log(arguments)
     if (debug.mutations.createNode.response) {
-      console.log(`DatabaseService :Create Node Response : ID - ${arguments[2]}`)
+      console.log(`DatabaseService :Create Node Response`)
       console.log('Filtered data fields:')
-      console.log(filteredFieldsWithValues)
+      console.log(filteredUserInput)
       console.log('response:')
       console.log(response)
     }
@@ -601,12 +376,12 @@ export class DatabaseService {
       })
     if (debug.mutations.updateNode.name) {
       console.log(screenLines.endLine)
-      console.log(`DatabaseService : Update Node : ID - ${arguments[2]}`)
+      console.log(`DatabaseService : Update Node`)
       console.log(screenLines.endLine)
     }
     if (debug.mutations.updateNode.arguments) console.log(arguments)
     if (debug.mutations.updateNode.response) {
-      console.log(`DatabaseService : Update Node Response : ID - ${arguments[2]}`)
+      console.log(`DatabaseService : Update Node Response`)
       console.log('Filtered data fields:')
       console.log(filteredFieldsWithValues)
       console.log('response:')
@@ -632,12 +407,12 @@ export class DatabaseService {
       })
     if (debug.mutations.deleteNode.name) {
       console.log(screenLines.endLine)
-      console.log(`DatabaseService : Delete Node : ID - ${arguments[1]}`)
+      console.log(`DatabaseService : Delete Node`)
       console.log(screenLines.endLine)
     }
     if (debug.mutations.deleteNode.arguments) console.log(arguments)
     if (debug.mutations.deleteNode.response) {
-      console.log(`DatabaseService : Delete Node Response : ID - ${arguments[1]}`)
+      console.log(`DatabaseService : Delete Node Response`)
       console.log('response:')
       console.log(response)
     }
@@ -680,8 +455,8 @@ export class DatabaseService {
     table: string,
     tableFields: string[],
     unfilteredFiels: string[],
-    source: number,
-    args?: any
+    source,
+    args?
   ) {
     if (!this.validateTable(table)) throw Error(`invalid table name: ${table}`)
     const field: string[] = Object.keys(args)
@@ -694,7 +469,7 @@ export class DatabaseService {
             const response = await db(table)
               .select(requestedFields)
               .whereBetween(`${field}`, [range.start, range.end])
-              .andWhere({ source }).first()
+              .andWhere(source).first()
               .catch((err: Error) => console.trace(err))
             if (debug.queries.getEdge.name) {
               console.log(screenLines.endLine)
@@ -715,7 +490,7 @@ export class DatabaseService {
             const response = await db(table)
               .select(requestedFields)
               .whereBetween(`${field}`, [range.start, range.end])
-              .andWhere({ source }).first()
+              .andWhere(source).first()
               .catch((err: Error) => {
                 console.trace(err)
                 return err
@@ -739,7 +514,7 @@ export class DatabaseService {
             const response = await db(table)
               .select(requestedFields)
               .whereBetween(`${field}`, [range.start, range.end])
-              .andWhere({ source }).first()
+              .andWhere(source).first()
               .catch((err: Error) => {
                 console.trace(err)
                 return err
@@ -763,7 +538,7 @@ export class DatabaseService {
             const response = await db(table)
               .select(requestedFields)
               .whereBetween(`${field}`, [range.start, range.end])
-              .andWhere({ source }).first()
+              .andWhere(source).first()
               .catch((err: Error) => {
                 console.trace(err)
                 return err
@@ -789,7 +564,7 @@ export class DatabaseService {
         const _args = Object.keys(args)
         const filteredArgs = this.filterFieldsAndReturnValues(tableFields, _args, args)
         const response = await db(table)
-          .where({ source })
+          .where(source)
           .andWhere(filteredArgs).first()
           .catch((err: Error) => {
             console.trace(err)
@@ -815,7 +590,7 @@ export class DatabaseService {
     } else {
       const response = await db(table)
         .select(requestedFields)
-        .where({ source }).first()
+        .where(source).first()
         .catch((err: Error) => {
           console.trace(err)
           return err
@@ -840,7 +615,7 @@ export class DatabaseService {
     table: string,
     tableFields: string[],
     unfilteredFiels: string[],
-    source: number,
+    source: any,
     args?: any
   ) {
     if (!this.validateTable(table)) throw Error(`invalid table name: ${table}`)
@@ -854,7 +629,7 @@ export class DatabaseService {
             const response = await db(table)
               .select(requestedFields)
               .whereBetween(`${field}`, [range.start, range.end])
-              .andWhere({ source })
+              .andWhere(source)
               .catch((err: Error) => {
                 console.trace(err)
                 return err
@@ -878,7 +653,7 @@ export class DatabaseService {
             const response = await db(table)
               .select(requestedFields)
               .whereBetween(`${field}`, [range.start, range.end])
-              .andWhere({ source })
+              .andWhere(source)
               .catch((err: Error) => {
                 console.trace(err)
                 return err
@@ -902,7 +677,7 @@ export class DatabaseService {
             const response = await db(table)
               .select(requestedFields)
               .whereBetween(`${field}`, [range.start, range.end])
-              .andWhere({ source })
+              .andWhere(source)
               .catch((err: Error) => {
                 console.trace(err)
                 return err
@@ -926,7 +701,7 @@ export class DatabaseService {
             const response = await db(table)
               .select(requestedFields)
               .whereBetween(`${field}`, [range.start, range.end])
-              .andWhere({ source })
+              .andWhere(source)
               .catch((err: Error) => {
                 console.trace(err)
                 return err
@@ -953,7 +728,7 @@ export class DatabaseService {
         const filteredArgs = this.filterFieldsAndReturnValues(tableFields, _args, args)
         const response = await db(table)
           .select(requestedFields)
-          .where({ source })
+          .where(source)
           .andWhere(filteredArgs)
           .catch((err: Error) => {
             console.trace(err)
@@ -979,7 +754,7 @@ export class DatabaseService {
     } else {
       const response = await db(table)
         .select(requestedFields)
-        .where({ source })
+        .where(source)
         .catch((err: Error) => {
           console.trace(err)
           return err
@@ -1176,127 +951,6 @@ export class DatabaseService {
         }
       })
     })
-  }
-  public static selectAllRecords (queryConfig: QueryConfig):
-    Promise<SuccessDatabaseResponse | ErrorDatabaseResponse> {
-    if (!(queryConfig instanceof QueryConfig)) {
-      console.trace(queryConfig)
-      throw new Error('Query config required')
-    };
-    this.queryConfigLogger(queryConfig)
-    return new Promise((resolve, reject) => {
-      pool.connect(async (err: any, client: any, done: any) => {
-        if (err) {
-          done(err)
-          console.trace(err)
-          this.errorHadler(queryConfig, err)
-          return await reject(this.createResponse(500, null))
-        } else {
-          await client.query(queryConfig.text, async (err: any, result: any) => {
-            if (err) {
-              done(err)
-              this.errorHadler(queryConfig, err)
-              return await reject(this.createResponse(500, null))
-            } else {
-              done()
-              await result
-              const rowCount: number = result.rowCount, rows: any = result.rows
-              this.dataLogger(queryConfig, rows)
-              if (rowCount > 0) return await resolve(this.createResponse(200, rows));
-              else if (rowCount === 0) return await resolve(this.createResponse(204, []));
-              else return await reject(this.createResponse(500, null));
-            }
-          });
-        }
-      });
-    });
-  }
-  public static selectRecord (queryConfig: QueryConfig):
-    Promise<DatabaseResponse> {
-    this.queryConfigLogger(queryConfig);
-    return new Promise((resolve, reject) => {
-      pool.connect((err: any, client: any, done: any) => {
-        if (err) {
-          done(err);
-          console.trace(err);
-          this.errorHadler(queryConfig, err);
-          return reject(this.createResponse(500, null));
-        } else {
-          client.query(queryConfig.text, (err: any, result: any) => {
-            if (err) {
-              done(err);
-              console.trace(err);
-              this.errorHadler(queryConfig, err);
-              return reject(this.createResponse(500, null));
-            } else {
-              done();
-              const rowCount: number = result.rowCount, rows: any = result.rows;
-              this.dataLogger(queryConfig, rows)
-              if (rowCount === 1) return resolve(this.createResponse(200, rows[0]));
-              else if (rowCount === 0) return resolve(this.createResponse(204, []));
-              else return reject(this.createResponse(500, null));
-            }
-          });
-        }
-      });
-    });
-  }
-  public static insertRecord (queryConfig: QueryConfig): Promise<SuccessDatabaseResponse | ErrorDatabaseResponse> {
-    this.queryConfigLogger(queryConfig)
-    return new Promise((resolve, reject) => {
-      pool.connect((err: any, client: any, done: any) => {
-        if (err) {
-          done(err)
-          console.trace(err)
-          this.errorHadler(queryConfig, err)
-          return reject(this.createResponse(500, null))
-        } else {
-          client.query(queryConfig.text, (err: any, result: any) => {
-            if (err) {
-              done(err)
-              console.trace(err)
-              this.errorHadler(queryConfig, err)
-              return reject(this.createResponse(500, null))
-            } else {
-              done()
-              const rowCount: number = result.rowCount, rows: any = result.rows
-              this.dataLogger(queryConfig, rows)
-              if (rowCount === 1) return resolve(this.createResponse(201, rows[0]))
-              else return reject(this.createResponse(500, null))
-            }
-          })
-        }
-      })
-    })
-  }
-  public static updateRecord (queryConfig: QueryConfig): Promise<SuccessDatabaseResponse | ErrorDatabaseResponse> {
-    this.queryConfigLogger(queryConfig);
-    return new Promise((resolve, reject) => {
-      pool.connect((err: any, client: any, done: any) => {
-        if (err) {
-          done(err);
-          console.trace(err);
-          this.errorHadler(queryConfig, err);
-          return reject(this.createResponse(500, null));
-        } else {
-          client.query(queryConfig.text, (err: any, result: any) => {
-            if (err) {
-              done(err);
-              console.trace(err);
-              this.errorHadler(queryConfig, err);
-              return reject(this.createResponse(500, null));
-            } else {
-              done();
-              const rowCount: number = result.rowCount, rows: any = result.rows;
-              this.dataLogger(queryConfig, rows);
-              if (rowCount === 1) return resolve(this.createResponse(200, rows[0]));
-              else if (rowCount === 0) return resolve(this.createResponse(204, []));
-              else return reject(this.createResponse(500, null));
-            }
-          });
-        }
-      });
-    });
   }
   public static createResponse (status: number, data: any):
     SuccessDatabaseResponse | ErrorDatabaseResponse {

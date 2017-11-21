@@ -4,20 +4,34 @@ const PERSON_CONTACT_EDGES_TABLE: string = 'persons.r_e_person_e_contact'
 let personTableFields: string[] = []
 let personContactEdgesTableFields: string[] = []
 
+const ServiceConfig = {
+  table: PERSONS_TABLE,
+  tableFields: personTableFields,
+}
+
+interface GetNodeConfig {
+  unfilteredFields: string[]
+  args: { [key: string]: any }
+  filter: { [key: string]: any }
+  search: string
+  except: { [key: string]: any }
+  orderBy: string[]
+}
+
+interface GetNodesCount {
+  args: { [key: string]: any }
+  filter: { [key: string]: any }
+  search: string
+  except: { [key: string]: any }
+}
+
 export class PersonsService extends DatabaseService {
-  public static getPersonsCount (source: any, args: any, except: any, search: any) {
+  public static getPersonsCount (config: GetNodesCount) {
     const fields = ["\"lastName\"", '\' \'', "\"firstName\"", '\' \'', "\"middleName\"", '\' \'', "\"iin\""]
-    return this.getNodesCount(
-      PERSONS_TABLE,
-      personTableFields,
-      source,
-      args,
-      except,
-      search,
-      fields
-    )
+    const _config = Object.assign({}, config, ServiceConfig, { fields })
+    return this.getNodesCount(_config)
   }
-  public static getPersonContactsEdges (unfilteredFiels: string[], node: number, args: any) {
+  public static getPersonContactsEdges (unfilteredFiels: string[], node, args: any) {
     return this.getEdges(
       PERSON_CONTACT_EDGES_TABLE,
       personContactEdgesTableFields,
@@ -26,25 +40,10 @@ export class PersonsService extends DatabaseService {
       args.length > 0 ? args : null
     )
   }
-  public static getPersonsCountByArgs (args: any, source?: any, except?: any) {
-    return this.getNodesCount(
-      PERSONS_TABLE,
-      personTableFields,
-      source,
-      args,
-      except
-    )
-  }
-  public static getPersons (unfilteredFiels: string[], id?: number | string, args?: any, except?: any, orderBy?: string[]) {
-    return this.getNodes(
-      PERSONS_TABLE,
-      personTableFields,
-      unfilteredFiels,
-      id || null,
-      args || null,
-      except || null,
-      orderBy || null
-    )
+  public static getPersons (config: GetNodeConfig) {
+    const fields = ["\"lastName\"", '\' \'', "\"firstName\"", '\' \'', "\"middleName\"", '\' \'', "\"iin\""]
+    const _config = Object.assign({}, config, ServiceConfig, { fields })
+    return this.getNodes(_config)
   }
   public static restorePerson (id: number, user: number) {
     return this.restoreNode(
@@ -53,43 +52,21 @@ export class PersonsService extends DatabaseService {
       user
     )
   }
-  public static async searchPersons (unfilteredFiels: string[], search: string, args: any, orderBy?: any) {
-    const fields = ["\"lastName\"", '\' \'', "\"firstName\"", '\' \'', "\"middleName\"", '\' \'', "\"iin\""]
-    return this.searchNode(
-      PERSONS_TABLE,
-      personTableFields,
-      unfilteredFiels,
-      search,
-      args,
-      fields,
-      orderBy
-    )
-  }
-  public static async filterPersons (unfilteredFiels: string[], args: any, orderBy?: any) {
-    return this.filterNodes(
-      PERSONS_TABLE,
-      personTableFields,
-      unfilteredFiels,
-      args,
-      orderBy
-    )
-  }
-  public static getPerson (unfilteredFiels: string[], id: number, args: any) {
-    return this.getNode(
-      PERSONS_TABLE,
-      personTableFields,
-      unfilteredFiels,
-      id,
+  public static getPerson (unfilteredFields: string[], args) {
+    return this.getNode({
+      table: PERSONS_TABLE,
+      tableFields: personTableFields,
+      unfilteredFields,
       args
-    )
+    })
   }
   public static async createPerson (data: any, user: number) {
-    return this.createNode(
-      PERSONS_TABLE,
-      personTableFields,
+    return this.createNode({
+      table: PERSONS_TABLE,
+      tableFields: personTableFields,
       data,
       user
-    )
+    })
   }
   public static updatePerson (data: any, user: number) {
     return this.updateNode(
@@ -106,19 +83,18 @@ export class PersonsService extends DatabaseService {
       user
     )
   }
-  public static async getPersonContactsCount (source: number, args?: any, except?: any, search?: string) {
+  public static async getPersonContactsCount (args?: any, except?: any, search?: string) {
     const fields = ["\"lastName\"", '\' \'', "\"firstName\"", '\' \'', "\"middleName\"", '\' \'', "\"iin\""]
-    return this.getNodesCount(
-      PERSON_CONTACT_EDGES_TABLE,
-      personContactEdgesTableFields,
-      source,
-      (args && args.length) > 0 ? args : null,
-      (except && except.length) > 0 ? except : null,
-      search ? search : null,
-      search ? fields : null
-    )
+    return this.getNodesCount({
+      table: PERSON_CONTACT_EDGES_TABLE,
+      tableFields: personContactEdgesTableFields,
+      args,
+      except,
+      search,
+      fields
+    })
   }
-  public static getPhone (unfilteredFields: string[] = ['node'], source: number, args?: any) {
+  public static getPhone (unfilteredFields: string[] = ['node'], source: any, args?: any) {
     return this.getEdge(
       PERSON_CONTACT_EDGES_TABLE,
       personContactEdgesTableFields,
@@ -131,7 +107,7 @@ export class PersonsService extends DatabaseService {
 
 (async function getPersonTableFields () {
   const response: any = await <any>PersonsService.fields(PERSONS_TABLE)
-  if (response && response.length > 0) personTableFields = response
+  if (response && response.length > 0) ServiceConfig.tableFields = response
   else console.trace(response)
 })();
 

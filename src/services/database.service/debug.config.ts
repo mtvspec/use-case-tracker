@@ -103,8 +103,8 @@ interface debug {
 
 export const debug: debug = {
   tables: {
-    name: debugEnabled || false,
-    fields: debugEnabled || false
+    name: false,
+    fields: false
   },
   validateTable: {
     arguments: false

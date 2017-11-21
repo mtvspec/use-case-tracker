@@ -8,28 +8,31 @@ let contactsTableFields: string[] = []
 let personContactEdgesTableFields: string[] = []
 
 export default class ContactsService extends DatabaseService {
-  public static async getContact (fields: string[], id: number) {
-    return this.getNode(
-      CONTACTS_TABLE,
-      contactsTableFields,
-      fields,
-      id
-    )
+  public static async getContact (unfilteredFields: string[], args) {
+    return this.getNode({
+      table: CONTACTS_TABLE,
+      tableFields: contactsTableFields,
+      unfilteredFields,
+      args
+    })
   }
-  public static async getContacts (fields: string[]) {
-    this.getNodes(
-      CONTACTS_TABLE,
-      contactsTableFields,
-      fields
-    )
+  public static async getContacts (unfilteredFields) {
+    this.getNodes({
+      table: CONTACTS_TABLE,
+      tableFields: contactsTableFields,
+      unfilteredFields,
+      args: null,
+      except: null,
+      orderBy: null
+    })
   }
   public static async createContact (data: any, user: number) {
-    const createContactResponse: any = await this.createNode(
-      CONTACTS_TABLE,
-      contactsTableFields,
+    const createContactResponse: any = await this.createNode({
+      table: CONTACTS_TABLE,
+      tableFields: contactsTableFields,
       data,
       user
-    )
+    })
     if (createContactResponse && createContactResponse.id > 0) {
       const personContactEdgeData = Object.assign({},
         { source: data.input.person },

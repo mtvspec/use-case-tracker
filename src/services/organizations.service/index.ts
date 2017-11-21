@@ -14,44 +14,44 @@ let employeesTableFields: string[] = []
 export class OrganizationsService extends DatabaseService {
   public static getOrganizations (
     unfilteredFields: string[],
-    args: any
+    args?,
+    except?: { [key: string]: any },
+    orderBy?: string[]
   ) {
-    return this.getNodes(
-      ORGANIZATIONS_TABLE,
-      organizationTableFields,
+    return this.getNodes({
+      table: ORGANIZATIONS_TABLE,
+      tableFields: organizationTableFields,
       unfilteredFields,
-      (args && args.length) > 0 ? args : null
-    )
+      args,
+      except,
+      orderBy
+    })
   }
-  public static async getOrganizationsCount (
-    source?: number | string,
-    args?: any
-  ) {
-    return this.getNodesCount(
-      ORGANIZATIONS_TABLE,
-      organizationTableFields,
-      source ? source : null,
-      (args && args.length) > 0 ? args : null
-    )
+  public static async getOrganizationsCount (args?) {
+    return this.getNodesCount({
+      table: ORGANIZATIONS_TABLE,
+      tableFields: organizationTableFields,
+      args
+    })
   }
   public static async getOrganization (
     unfilteredFields: string[],
-    id: number
+    args
   ) {
-    return this.getNode(
-      ORGANIZATIONS_TABLE,
-      organizationTableFields,
+    return this.getNode({
+      table: ORGANIZATIONS_TABLE,
+      tableFields: organizationTableFields,
       unfilteredFields,
-      id
-    )
+      args
+    })
   }
   public static createOrganization (data: any, user: number) {
-    return this.createNode(
-      ORGANIZATIONS_TABLE,
-      organizationTableFields,
+    return this.createNode({
+      table: ORGANIZATIONS_TABLE,
+      tableFields: organizationTableFields,
       data,
       user
-    )
+    })
   }
   public static updateOrganization (data: any, user: number) {
     return this.updateNode(
@@ -68,7 +68,7 @@ export class OrganizationsService extends DatabaseService {
       user
     )
   }
-  public static async getOrganizationalUnits (fields: string[], id: number) {
+  public static async getOrganizationalUnits (fields: string[], id) {
     const requestedFields = this.buildFieldSet(this.filterFields(
       organizationalUnitsTableFields,
       fields), 'ou')
@@ -82,29 +82,29 @@ export class OrganizationsService extends DatabaseService {
           ${ORGANIZATIONAL_UNITS_TABLE} ou,
           ${ORGANIZATIONS_TABLE} o
         WHERE ou."organization" = o.id
-        AND o.id = ${id}
-        ORDER BY idx ASC;
+        AND o.id = ${id['id']}
+        ORDER BY ou.idx ASC, ou."createdAt";
 
       `
     }))
   }
-  public static async getOrganizationalUnit (unfilteredFields: string[], id: number) {
-    return this.getNode(
-      ORGANIZATIONAL_UNITS_TABLE,
-      organizationalUnitsTableFields,
+  public static async getOrganizationalUnit (unfilteredFields: string[], args) {
+    return this.getNode({
+      table: ORGANIZATIONAL_UNITS_TABLE,
+      tableFields: organizationalUnitsTableFields,
       unfilteredFields,
-      id
-    )
+      args
+    })
   }
-  public static async createOrganizationalUnit (data: any, user: number) {
-    return this.createNode(
-      ORGANIZATIONAL_UNITS_TABLE,
-      organizationalUnitsTableFields,
+  public static async createOrganizationalUnit (data, user: number) {
+    return this.createNode({
+      table: ORGANIZATIONAL_UNITS_TABLE,
+      tableFields: organizationalUnitsTableFields,
       data,
       user
-    )
+    })
   }
-  public static updateOrganizationalUnit (data: any, user: number) {
+  public static updateOrganizationalUnit (data, user: number) {
     return this.updateNode(
       ORGANIZATIONAL_UNITS_TABLE,
       organizationalUnitsTableFields,
@@ -119,7 +119,7 @@ export class OrganizationsService extends DatabaseService {
       user
     )
   }
-  public static async getSubordinades (fields: string[], id: number) {
+  public static async getSubordinades (fields: string[], id) {
     const requestedFields = this.buildFieldSet(this.filterFields(
       employeesTableFields,
       fields), 's')
@@ -133,12 +133,13 @@ export class OrganizationsService extends DatabaseService {
           ${EMPLOYEES_TABLE} s,
           ${EMPLOYEES_TABLE} m
         WHERE s."manager" = m.id
-        AND m.id = ${id};
+        AND m.id = ${id['id']}
+        ORDER BY s.idx ASC, s."createdAt";
 
       `
     }))
   }
-  public static async getManagersByOrganizationalUnit (fields: string[], id: number) {
+  public static async getManagersByOrganizationalUnit (fields: string[], id) {
     const requestedFields = this.buildFieldSet(this.filterFields(
       employeesTableFields,
       fields), 'e')
@@ -152,12 +153,13 @@ export class OrganizationsService extends DatabaseService {
         ${EMPLOYEES_TABLE} e,
         ${ORGANIZATIONAL_UNITS_TABLE} ou
       WHERE ou."managerID" = e.id
-      AND ou.id = ${id}
+      AND ou.id = ${id['id']}
+      ORDER BY e.idx, e."createdAt";
       
       `
     }))
   }
-  public static async getSubordinadedOrganizationalUnitsByEmployee (fields: string[], id: number) {
+  public static async getSubordinatedOrganizationalUnitsByEmployee (fields: string[], id) {
     const requestedFields = this.buildFieldSet(this.filterFields(
       organizationalUnitsTableFields,
       fields), 'ou')
@@ -171,20 +173,24 @@ export class OrganizationsService extends DatabaseService {
         ${ORGANIZATIONAL_UNITS_TABLE} ou,
         ${EMPLOYEES_TABLE} e
       WHERE ou.curator = e.id
-      AND e.id = ${id}
+      AND e.id = ${id['id']}
+      ORDER BY ou.idx ASC, ou."createdAt";
       
       `
     }))
   }
-  public static async getManager (unfilteredFields: string[], id: number) {
-    return this.getNode(
-      EMPLOYEES_TABLE,
-      employeesTableFields,
+  public static async getManager (unfilteredFields: string[], args) {
+    return this.getNode({
+      table: EMPLOYEES_TABLE,
+      tableFields: employeesTableFields,
       unfilteredFields,
-      id
-    )
+      args
+    })
   }
-  public static async getChildOrganizationalUnitsByOrganizationalUnit (fields: string[], id: number) {
+  public static async getChildOrganizationalUnitsByOrganizationalUnit (
+    fields: string[],
+    id
+  ) {
     const requestedFields = this.buildFieldSet(this.filterFields(
       organizationalUnitsTableFields,
       fields), 'cou')
@@ -198,13 +204,13 @@ export class OrganizationsService extends DatabaseService {
         ${ORGANIZATIONAL_UNITS_TABLE} cou,
         ${ORGANIZATIONAL_UNITS_TABLE} pou
       WHERE cou."organizationalUnit" = pou.id
-      AND pou.id = ${id}
-      ORDER BY cou.idx;
+      AND pou.id = ${id['id']}
+      ORDER BY cou.idx , cou."createdAt";
       
       `
     }))
   }
-  public static async getEmployeesByOrganizationalUnit (fields: string[], id: number) {
+  public static async getEmployeesByOrganizationalUnit (fields: string[], id) {
     const requestedFields = this.buildFieldSet(this.filterFields(
       employeesTableFields,
       fields), 'e')
@@ -218,15 +224,15 @@ export class OrganizationsService extends DatabaseService {
         ${EMPLOYEES_TABLE} e,
         ${ORGANIZATIONAL_UNITS_TABLE} ou
       WHERE e."organizationalUnit" = ou.id
-      --AND ou."manager" != e.id
+      AND ou."manager" != e.id
       AND e."firedAt" IS NULL
-      AND ou.id = ${id}
-      ORDER BY ou.idx;
+      AND ou.id = ${id['id']}
+      ORDER BY e.idx, e."createdAt";
       
       `
     }))
   }
-  public static async getAllEmployeesByOrganizationalUnit (fields: string[], id: number) {
+  public static async getAllEmployeesByOrganizationalUnit (fields: string[], id) {
     const requestedFields = this.buildFieldSet(this.filterFields(
       employeesTableFields,
       fields), 'e')
@@ -246,7 +252,7 @@ export class OrganizationsService extends DatabaseService {
           id, 1 AS level
         FROM
           ${ORGANIZATIONAL_UNITS_TABLE}
-        WHERE id = ${id}
+        WHERE id = ${id['id']}
         UNION ALL
         SELECT
           cou.id, pou.level + 1
@@ -263,7 +269,7 @@ export class OrganizationsService extends DatabaseService {
       `
     }))
   }
-  public static async getSubordinadedOrganizationalUnitsByOrganizationalUnit (fields: string[], id: number) {
+  public static async getSubordinadedOrganizationalUnitsByOrganizationalUnit (fields: string[], id) {
     const requestedFields = this.buildFieldSet(this.filterFields(
       organizationalUnitsTableFields,
       fields), 'ou')
@@ -281,7 +287,7 @@ export class OrganizationsService extends DatabaseService {
           id, 1 AS level
         FROM
           ${ORGANIZATIONAL_UNITS_TABLE}
-        WHERE "organizationalUnit" = ${id}
+        WHERE "organizationalUnit" = ${id['id']}
         UNION ALL
         SELECT
           cou.id, pou.level + 1
@@ -298,7 +304,7 @@ export class OrganizationsService extends DatabaseService {
       `
     }))
   }
-  public static async getSubordinadedOrganizationalUnitsManagersByOrganizationalUnit (fields: string[], id: number) {
+  public static async getSubordinadedOrganizationalUnitsManagersByOrganizationalUnit (fields: string[], id) {
     const requestedFields = this.buildFieldSet(this.filterFields(
       employeesTableFields,
       fields), 'm')
@@ -318,7 +324,7 @@ export class OrganizationsService extends DatabaseService {
           id, 1 AS level
         FROM
           ${ORGANIZATIONAL_UNITS_TABLE}
-        WHERE "organizationalUnit" = ${id}
+        WHERE "organizationalUnit" = ${id['id']}
         UNION ALL
         SELECT
           cou.id, pou.level + 1
@@ -335,14 +341,13 @@ export class OrganizationsService extends DatabaseService {
       `
     }))
   }
-  public static async getPositionalUnit (unfilteredFields: string[], id: number, args?: any) {
-    return this.getNode(
-      POSITIONAL_UNITS_TABLE,
-      positionalUnitsTableFields,
+  public static async getPositionalUnit (unfilteredFields: string[], args) {
+    return this.getNode({
+      table: POSITIONAL_UNITS_TABLE,
+      tableFields: positionalUnitsTableFields,
       unfilteredFields,
-      id,
       args
-    )
+    })
   }
 }
 

@@ -9,48 +9,50 @@ import { CustomersService } from './../../../services'
 class PersonsQueriesResolver {
   public static getPerson = async (_: any, args: any, ctx: any, info: any) => {
     const fields: string[] = Object.keys(ctx.utils.parseFields(info))
-    return await PersonsService.getPerson(fields, args.id, args)
+    return await PersonsService.getPerson(fields, { id: args.id })
   }
-  public static getPersons = async (root: any, _: any, ctx: any, info: any) => {
+  public static getPersons = async (root, _, ctx, info) => {
     const fields: string[] = Object.keys(ctx.utils.parseFields(info))
     const orderBy = ['lastName', 'firstName', 'middleName']
-    if (root && root.args && (root.args.search && (root.args.search.length > 0 || root.args.search === ''))) return await PersonsService.searchPersons(fields, root.args.search, root.args, orderBy)
-    else if (root && root.args && (root.args.isDeleted === true || root.args.isDeleted === false)) return await PersonsService.filterPersons(fields, root.args, orderBy)
-    else return await PersonsService.getPersons(
-      fields,
-      null,
-      { isDeleted: false },
-      null,
+    return await PersonsService.getPersons({
+      unfilteredFields: fields,
+      args: root.args && Object.keys(root.args).length > 0 ? root.args : null,
+      filter: root.args.filter && Object.keys(root.args.filter).length > 0 ? root.args.filter : null,
+      search: root.args.search && root.args.search.length > 0 ? root.args.search : null,
+      except: null,
       orderBy
-    )
+    })
   }
   public static getPersonsTotalCount = async (root: any) => {
-    PersonsService.getPersonsCount(null, root.args, null, root.args.search ? root.args.search : null)
-      .then((data: { totalCount: number }) => {
-        return data.totalCount
-      })
+    PersonsService.getPersonsCount({
+      args: root.args && Object.keys(root.args).length > 0 ? root.args : null,
+      filter: root.args.filter && Object.keys(root.args.filter).length > 0 ? root.args.filter : null,
+      search: root.args.search ? root.args.search : null,
+      except: null
+    })
+      .then((data: { totalCount: number }) => { return data.totalCount })
   }
 }
-const getMobilePhone = async (root: { id: number }, _: any, ctx: any, info: any):
+const getMobilePhone = async (root: { id: number }, _, ctx, info):
   Promise<any | null> => {
-  const mobilePhone: any = await PersonsService.getPhone(['node'], root.id, { isMainMobilePhone: true })
+  const mobilePhone: any = await PersonsService.getPhone(['node'], { source: root.id }, { isMainMobilePhone: true })
   const fields: any = Object.keys(ctx.utils.parseFields(info))
   return mobilePhone && mobilePhone.node > 0 ?
-    await ContactsService.getContact(fields, mobilePhone.node) as any : null
+    await ContactsService.getContact(fields, { id: mobilePhone.node }) as any : null
 }
 const getInternalPhone = async (root: { id: number }, _: any, ctx: any, info: any):
   Promise<any | null> => {
-  const internalPhone: any = await PersonsService.getPhone(['node'], root.id, { isMainInternalPhone: true })
+  const internalPhone: any = await PersonsService.getPhone(['node'], { source: root.id }, { isMainInternalPhone: true })
   const fields: any = Object.keys(ctx.utils.parseFields(info))
   return internalPhone && internalPhone.node > 0 ?
-    await ContactsService.getContact(fields, internalPhone.node) as any : null
+    await ContactsService.getContact(fields, { id: internalPhone.node }) as any : null
 }
 const getWorkPhone = async (root: { id: number }, _: any, ctx: any, info: any):
   Promise<any | null> => {
-  const workPhone: any = await PersonsService.getPhone(['node'], root.id, { isMainWorkPhone: true })
+  const workPhone: any = await PersonsService.getPhone(['node'], { source: root.id }, { isMainWorkPhone: true })
   const fields: string[] = Object.keys(ctx.utils.parseFields(info))
   return workPhone && workPhone.node > 0 ?
-    await ContactsService.getContact(fields, workPhone.node) as any : null
+    await ContactsService.getContact(fields, { id: workPhone.node }) as any : null
 }
 const Person = {
   // TODO: Redesign to one boolean value main contact (type + main: true | false)
@@ -78,10 +80,13 @@ const Person = {
 }
 const PersonsConnection = {
   totalCount: async (root: any) => {
-    return await PersonsService.getPersonsCount(null, Object.keys(root.args).length > 0 ? root.args : { isDeleted: false }, null, root.args.search ? root.args.search : null)
-      .then((data: { totalCount: number }) => {
-        return data.totalCount
-      })
+    return await PersonsService.getPersonsCount({
+      args: root.args && Object.keys(root.args).length > 0 ? root.args : null,
+      filter: root.args.filter && Object.keys(root.args.filter).length > 0 ? root.args.filter : null,
+      search: root.args.search ? root.args.search : null,
+      except: null
+    })
+      .then((data: { totalCount: number }) => { return data.totalCount })
   },
   persons: PersonsQueriesResolver.getPersons
 }
@@ -100,7 +105,7 @@ const PersonContactsConnection = {
   },
   edges: async (root: { id: number }, args: any, ctx: any, info: any) => {
     const fields: string[] = Object.keys(ctx.utils.parseFields(info))
-    return await PersonsService.getPersonContactsEdges(fields, root.id, args)
+    return await PersonsService.getPersonContactsEdges(fields, { source: root.id }, args)
   }
 }
 

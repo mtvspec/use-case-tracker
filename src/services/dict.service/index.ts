@@ -4,13 +4,13 @@ const DICT_VALUES_TABLE: string = 'dict.e_dict_value'
 let dictValueTableFields: string[] = []
 
 export class DictService extends DatabaseService {
-  public static async getDictValue (fields: string[], id: number) {
-    return this.getNode(
-      DICT_VALUES_TABLE,
-      dictValueTableFields,
-      fields,
-      id
-    )
+  public static async getDictValue (unfilteredFields: string[], args) {
+    return this.getNode({
+      table: DICT_VALUES_TABLE,
+      tableFields: dictValueTableFields,
+      unfilteredFields,
+      args
+    })
   }
   public static async getAllDictValues (fields: string[], dictName: string) {
     const requestedFields: string = this.buildFieldSet(this.filterFields(dictValueTableFields, fields), 'v')
