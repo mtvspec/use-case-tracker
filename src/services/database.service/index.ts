@@ -1,3 +1,13 @@
+import {
+  NodeQueryConfig,
+  NodesQueryConfig,
+  NodesCountQueryConfig,
+  NodeMutationConfig,
+  NodeConfig,
+  EdgeQueryConfig,
+  EdgesQueryConfig,
+  EdgesCountQueryConfig
+} from './interfaces';
 import { debug } from './debug.config'
 const totalCount: string = 'id as totalCount'
 const { Pool } = require('pg')
@@ -11,7 +21,7 @@ pool.on('error', function (err: Error) {
   throw new Error(ErrorMessages.db);
 })
 import { nodes } from './methods/nodes'
-import { NodeQueryConfig, NodesQueryConfig } from './interfaces';
+import { edges } from './methods/edges/index';
 
 export interface ServiceConfig {
   table: string
@@ -19,6 +29,48 @@ export interface ServiceConfig {
 }
 
 export class DatabaseService {
+  public static getNodes (config: NodesQueryConfig) {
+    return nodes.getNodes.bind(this)(config)
+  }
+  public static getNodesCount (config: NodesCountQueryConfig) {
+    return nodes.getNodesCount.bind(this)(config)
+  }
+  public static getNode (config: NodeQueryConfig) {
+    return nodes.getNode.bind(this)(config)
+  }
+  public static createNode (config: NodeMutationConfig) {
+    return nodes.createNode.bind(this)(config)
+  }
+  public static updateNode (config: NodeMutationConfig) {
+    return nodes.updateNode.bind(this)(config)
+  }
+  public static deleteNode (config: NodeConfig) {
+    return nodes.deleteNode.bind(this)(config)
+  }
+  public static restoreNode (config: NodeConfig) {
+    return nodes.restoreNode.bind(this)(config)
+  }
+  public static getEdge (config: EdgeQueryConfig) {
+    return edges.getEdge.bind(this)(config)
+  }
+  public static getEdges (config: EdgesQueryConfig) {
+    return edges.getEdges.bind(this)(config)
+  }
+  public static getEdgesCount (config: EdgesCountQueryConfig) {
+    return edges.getEdgesCount.bind(this)(config)
+  }
+  public static createEdge (config) {
+    return edges.createEdge.bind(this)(config)
+  }
+  public static updateEdge (config) {
+    return edges.updateEdge.bind(this)(config)
+  }
+  public static deleteEdge (config) {
+    return edges.deleteEdge.bind(this)(config)
+  }
+  public static restoreEdge (config) {
+    return edges.restoreEdge.bind(this)(config)
+  }
   public static buildFieldSet = (fields: string[], prefix: string) => {
     if (!fields) throw Error('Table fields is required')
     if (!prefix) throw Error('Column prefix is required')
@@ -95,470 +147,6 @@ export class DatabaseService {
     if (debug.argumentsCount) console.log(`received arguments count: ${this.validateTable.length}`)
     if (table && typeof table === 'string') return true
     else return false
-  }
-  public static getNodes (config: NodesQueryConfig) {
-    return nodes.getNodes.bind(this)(config)
-  }
-  public static async getNode (config: NodeQueryConfig) {
-    return nodes.getNode.bind(this)(config)
-  }
-  public static async getNodesCount (config: NodesCountQueryConfig) {
-    if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
-    let args = [], filter = [], except = [], search = []
-    if (config.args && Object.keys(config.args).length > 0) {
-      args = this.filterFieldsAndReturnValues(
-        config.tableFields,
-        Object.keys(config.args),
-        config.args
-      )
-      if (!args) args = []
-    }
-    if (config.filter && Object.keys(config.filter).length > 0) {
-      filter = this.filterFieldsAndReturnValues(
-        config.tableFields,
-        Object.keys(config.filter),
-        config.filter
-      )
-      if (!filter) filter = []
-    }
-    if (config.search && config.search.length > 0) {
-      if (!config.fields) throw Error('search fields required')
-      search.push(`lower(concat(${config.fields})) ~ lower('\\m${config.search}')`)
-    }
-    if (config.except && Object.keys(config.except).length > 0) {
-      except = this.filterFieldsAndReturnValues(
-        config.tableFields,
-        Object.keys(config.except),
-        config.except
-      )
-      if (!except) except = []
-    }
-    const response = await db(config.table)
-      .where(args)
-      .andWhere(filter)
-      .whereNot(except)
-      .whereRaw(search)
-      .count(totalCount).first()
-      .catch((err: Error) => {
-        console.trace(err)
-        return err
-      })
-    if (debug.queries.getNodes.name) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Get Nodes Count`)
-      console.log(screenLines.endLine)
-    }
-    if (debug.queries.getNodesCount.arguments) console.log(arguments)
-    if (debug.queries.getNodesCount.response) {
-      console.log(screenLines.dashedLine)
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Get Nodes Count Response`)
-      console.log(screenLines.endLine)
-      console.log('Filtered args:')
-      console.log(args)
-      console.log('Filtered filter:')
-      console.log(filter)
-      console.log('Filtered except:')
-      console.log(except)
-      console.log('Filtered search:')
-      console.log(search)
-      console.log('response:')
-      console.log(response)
-    }
-    if (response === undefined) return { totalCount: 0 }
-    else return response
-  }
-  public static async createNode (config: NodeMutationConfig) {
-    if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
-    const fields: string[] = Object.keys(config.data.input)
-    const filteredUserInput = this.filterFieldsAndReturnValues(
-      config.tableFields,
-      fields,
-      config.data.input
-    )
-    const USER = {
-      createdBy: config.user,
-      modifiedBy: config.user
-    }
-    const DATA = Object.assign({}, filteredUserInput, USER)
-    const response = await db(config.table)
-      .insert(DATA)
-      .where({ id: DATA.id })
-      .returning('*')
-      .catch((err: Error) => {
-        console.trace(err)
-        return err
-      })
-    if (debug.mutations.createNode.name) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Create Node`)
-      console.log(screenLines.endLine)
-    }
-    if (debug.mutations.createNode.arguments) console.log(arguments)
-    if (debug.mutations.createNode.response) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService :Create Node Response`)
-      console.log(screenLines.endLine)
-      console.log('Filtered data fields:')
-      console.log(filteredUserInput)
-      console.log('response:')
-      console.log(response)
-    }
-    if (response && response.id > 0) return response[0]
-    else if (response === undefined) return null
-    return response[0]
-  }
-  public static async updateNode (config: NodeMutationConfig) {
-    if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
-    const fields: string[] = Object.keys(config.data.input)
-    const user = {
-      updatedBy: config.user,
-      updatedAt: 'now()',
-      modifiedBy: config.user
-    }
-    const filteredFieldsWithValues = this.filterFieldsAndReturnValues(
-      config.tableFields,
-      fields,
-      config.data.input
-    )
-    let data = Object.assign({}, filteredFieldsWithValues, user)
-    const response = await db(config.table)
-      .where({ id: data.id })
-      .update(data)
-      .returning('*')
-      .catch((err: Error) => {
-        console.trace(err)
-        return err
-      })
-    if (debug.mutations.updateNode.name) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Update Node`)
-      console.log(screenLines.endLine)
-    }
-    if (debug.mutations.updateNode.arguments) console.log(arguments)
-    if (debug.mutations.updateNode.response) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Update Node Response`)
-      console.log(screenLines.endLine)
-      console.log('Filtered data fields:')
-      console.log(filteredFieldsWithValues)
-      console.log('response:')
-      console.log(response)
-    }
-    if (response && response.id > 0) return response[0]
-    else if (response === undefined) return null
-    return response[0]
-  }
-  public static async deleteNode (config: NodeConfig) {
-    if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
-    if (!config.id) throw Error('id required')
-    const user = {
-      deletedBy: config.user,
-      deletedAt: 'now()',
-      modifiedBy: config.user
-    }
-    const data = Object.assign({}, { isDeleted: true }, user)
-    const response = await db(config.table)
-      .where({ id: config.id })
-      .update(data)
-      .returning('*')
-      .catch((err: Error) => {
-        console.trace(err)
-        return err
-      })
-    if (debug.mutations.deleteNode.name) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Delete Node`)
-      console.log(screenLines.endLine)
-    }
-    if (debug.mutations.deleteNode.arguments) console.log(arguments)
-    if (debug.mutations.deleteNode.response) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Delete Node Response`)
-      console.log(screenLines.endLine)
-      console.log('response:')
-      console.log(response)
-    }
-    if (response && response.id > 0) return response[0]
-    else if (response === undefined) return null
-    return response[0]
-  }
-  public static async restoreNode (config: NodeConfig) {
-    if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
-    if (!config.id) throw Error('id required')
-    const user = {
-      restoredBy: config.user,
-      restoredAt: 'now()',
-      modifiedBy: config.user
-    }
-    const data = Object.assign({}, { isDeleted: false }, user)
-    const response = await db(config.table)
-      .where({ id: config.id })
-      .update(data)
-      .returning('*')
-      .catch((err: Error) => {
-        console.trace(err)
-        return err
-      })
-    if (debug.mutations.restoreNode.name) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Restore Node`)
-      console.log(screenLines.endLine)
-    }
-    if (debug.mutations.restoreNode.arguments) console.log(arguments)
-    if (debug.mutations.restoreNode.response) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Restore Node Response`)
-      console.log(screenLines.endLine)
-      console.log('response:')
-      console.log(response)
-    }
-    if (response && response.id > 0) return response
-    else if (response === undefined) return null
-    return response[0]
-  }
-  public static async getEdge (config: EdgeQueryConfig) {
-    // source
-    // args?
-    // filter?
-    // except?
-    if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
-    let args = []
-    if (config.args && Object.keys(config.args).length > 0) {
-      args = this.filterFieldsAndReturnValues(
-        config.tableFields,
-        Object.keys(config.args),
-        config.args
-      )
-      if (!args) args = []
-    }
-    const requestedFields: string[] = this.filterFields(config.tableFields, config.unfilteredFields)
-    const filteredSource = this.filterFieldsAndReturnValues(config.tableFields, Object.keys(config.source), config.source)
-    const response = await db(config.table)
-      .select(requestedFields)
-      .where(filteredSource)
-      .andWhere(args).first()
-      .catch(err => {
-        console.error(err)
-        return err
-      })
-    if (debug.queries.getEdge.name) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Get Edge`)
-      console.log(screenLines.endLine)
-    }
-    if (debug.queries.getEdge.arguments) console.log(arguments)
-    if (debug.queries.getEdge.response) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Get Edge Response`)
-      console.log(screenLines.endLine)
-      console.log('Filtered requested fields:')
-      console.log(requestedFields)
-      console.log(screenLines.endLine)
-      console.log('response:')
-      console.log(screenLines.endLine)
-      console.log(response)
-      console.log(screenLines.endLine)
-    }
-    if (response && response.id > 0) return response
-    else if (response === undefined) return null
-    return response
-  }
-  public static async getEdges (config: EdgesQueryConfig) {
-    if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
-    const requestedFields = this.filterFields(config.tableFields, config.unfilteredFields)
-    const response = await db(config.table)
-      .select(requestedFields)
-      .where(config.source)
-      .catch((err: Error) => {
-        console.trace(err)
-        return err
-      })
-    if (debug.queries.getEdges.name) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Get Edges`)
-      console.log(screenLines.endLine)
-    }
-    if (debug.queries.getEdges.arguments) console.log(arguments)
-    if (debug.queries.getEdges.response) {
-      console.log(`DatabaseService : Get Edges Response`)
-      console.log('Filtered requested fields:')
-      console.log(requestedFields)
-      console.log('response:')
-      console.log(response)
-    }
-    if (response && response.id > 0) return response
-    else if (response === undefined) return []
-    return response
-  }
-  public static async getEdgesCount (config: EdgesCountQueryConfig) {
-    console.log(config)
-    if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
-    const filteredSource = this.filterFieldsAndReturnValues(config.tableFields, Object.keys(config.source), config.source)
-    const response = await db(config.table)
-      .where(filteredSource)
-      .count(totalCount).first()
-      .catch(err => {
-        console.error(err)
-        return err
-      })
-    console.log(response)
-    if (debug.queries.getEdgesCount.name) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Get Edges Count`)
-      console.log(screenLines.endLine)
-    }
-    if (debug.queries.getEdgesCount.arguments) console.log(arguments)
-    if (debug.queries.getEdgesCount.response) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Get Edges Count Response`)
-      console.log(screenLines.endLine)
-      console.log('response:')
-      console.log(response)
-    }
-    return response
-  }
-  public static async createEdge (
-    table: string,
-    tableFields: string[],
-    data: any,
-    user: number
-  ) {
-    if (!this.validateTable(table)) throw Error(`invalid table name: ${table}`)
-    const fields: string[] = Object.keys(data)
-    const _user = {
-      createdBy: user,
-      createdAt: 'now()',
-      modifiedBy: user
-    }
-    const filteredFieldsWithValues = this.filterFieldsAndReturnValues(
-      tableFields,
-      fields,
-      data
-    )
-    const _data = Object.assign({}, filteredFieldsWithValues, _user)
-    const response = await db(table)
-      .where({ id: _data.id })
-      .insert(_data)
-      .returning('*')
-      .catch((err: Error) => {
-        console.trace(err)
-        return err
-      })
-    if (debug.mutations.createEdge.name) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Create Edge : ID - ${arguments[3]}`)
-      console.log(screenLines.endLine)
-    }
-    if (debug.mutations.createEdge.arguments) console.log(arguments)
-    if (debug.mutations.createEdge.response) {
-      console.log(`DatabaseService : Create Edge Response : ID - ${arguments[3]}`)
-      console.log('Filtered fields with values:')
-      console.log(filteredFieldsWithValues)
-      console.log('response:')
-      console.log(response)
-    }
-    return response[0]
-  }
-  public static async updateEdge (
-    table: string,
-    tableFields: string[],
-    data: any,
-    user: number
-  ) {
-    if (!this.validateTable(table)) throw Error(`invalid table name: ${table}`)
-    const fields: string[] = Object.keys(data.input)
-    const _user = {
-      updatedBy: user,
-      updatedAt: 'now()',
-      modifiedBy: user
-    }
-    const filteredFieldsWithValues = this.filterFieldsAndReturnValues(
-      tableFields,
-      fields,
-      data.input
-    )
-    let _data = Object.assign({}, filteredFieldsWithValues, _user)
-    const response = await db(table)
-      .where({ id: _data.id })
-      .update(_data)
-      .returning('*')
-      .catch((err: Error) => {
-        console.trace(err)
-        return err
-      })
-    if (debug.mutations.updateEdge.name) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Update Edge : ID - ${arguments[3]}`)
-      console.log(screenLines.endLine)
-    }
-    if (debug.mutations.updateEdge.arguments) console.log(arguments)
-    if (debug.mutations.updateEdge.response) {
-      console.log(`DatabaseService : Update Edge Response : ID - ${arguments[3]}`)
-      console.log('Filtered fields with values:')
-      console.log(filteredFieldsWithValues)
-      console.log('response:')
-      console.log(response)
-    }
-    return response[0]
-  }
-  public static async deleteEdge (table: string, id: any, user: number) {
-    if (!this.validateTable(table)) throw Error(`invalid table name: ${table}`)
-    const _user = {
-      deletedBy: user,
-      deletedAt: 'now()',
-      modifiedBy: user
-    }
-    let _data = Object.assign({}, { isDeleted: true }, _user)
-    const response = await db(table)
-      .where({ id })
-      .update(_data)
-      .returning('*')
-      .catch((err: Error) => {
-        console.trace(err)
-        return err
-      })
-    if (debug.mutations.deleteEdge.name) {
-      console.log(screenLines.endLine)
-      console.log(`DatabaseService : Delete Node : ID - ${arguments[1]}`)
-      console.log(screenLines.endLine)
-    }
-    if (debug.mutations.deleteEdge.arguments) console.log(arguments)
-    if (debug.mutations.deleteEdge.response) {
-      console.log(`DatabaseService : Delete Edge Response : ID - ${arguments[1]}`)
-      console.log('response:')
-      console.log(response)
-    }
-    return response[0]
-  }
-  public static async restoreEdge (
-    table: string,
-    id: number,
-    user: number
-  ) {
-    if (!this.validateTable(table)) throw Error(`invalid table name: ${table}`)
-    const _user = {
-      restoredBy: user,
-      restoredAt: 'now()',
-      modifiedBy: user
-    }
-    let _data = Object.assign({}, { isDeleted: false }, _user)
-    const response = await db(table)
-      .where({ id })
-      .update(_data)
-      .returning('*')
-      .catch((err: Error) => {
-        console.trace(err)
-        return err
-      })
-    if (debug.mutations.restoreEdge.name) console.log(`DatabaseService : Restore Edge : ID - ${arguments[1]}`)
-    if (debug.mutations.restoreEdge.arguments) console.log(arguments)
-    if (debug.mutations.restoreEdge.name) {
-      console.log(`DatabaseService : Restore Edge Response : ID - ${arguments[1]}`)
-      console.log('response:')
-      console.log(response)
-    }
-    return response[0]
   }
   public static async fields (table: string) {
     if (!this.validateTable(table)) throw Error(`invalid table name: ${table}`)

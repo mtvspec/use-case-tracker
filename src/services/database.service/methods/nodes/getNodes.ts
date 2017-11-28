@@ -1,6 +1,7 @@
 import { debug } from './../../debug.config'
 import db from './../../../../knex'
 import { screenLines } from './../../messages'
+import { NodesQueryConfig } from '../../interfaces';
 
 export async function getNodes (config: NodesQueryConfig) {
   if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)

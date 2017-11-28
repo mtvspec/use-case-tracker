@@ -10,7 +10,7 @@ export interface NodesQueryConfig {
   orderBy?: string[]
 }
 
-interface EdgesQueryConfig {
+export interface EdgesQueryConfig {
   table: string
   tableFields: string[]
   unfilteredFields: string[]
@@ -18,7 +18,7 @@ interface EdgesQueryConfig {
   args?: any
 }
 
-interface EdgeQueryConfig {
+export interface EdgeQueryConfig {
   table: string
   tableFields: string[]
   unfilteredFields: string[]
@@ -26,7 +26,7 @@ interface EdgeQueryConfig {
   args?: any
 }
 
-interface EdgesCountQueryConfig {
+export interface EdgesCountQueryConfig {
   table: string
   tableFields: string[]
   source: { [key: string]: any }
@@ -44,24 +44,24 @@ export interface NodeQueryConfig {
   except?: { [key: string]: any }
 }
 
-interface NodesCountQueryConfig {
+export interface NodesCountQueryConfig {
   table: string
   tableFields: string[]
   args?: { [key: string]: any }
   filter?: { [key: string]: any }
-  except?: { [key: string]: any }
   search?: string
   fields?: string[]
+  except?: { [key: string]: any }
 }
 
-interface NodeMutationConfig {
+export interface NodeMutationConfig {
   table: string
   tableFields: string[]
   data: { [key: string]: any }
   user: number
 }
 
-interface NodeConfig {
+export interface NodeConfig {
   table: string
   tableFields: string[]
   id: number

@@ -1,41 +1,41 @@
 import { NodeMutationConfig } from "../../interfaces"
-import { screenLines } from "../../messages"
 import { debug } from "../../debug.config"
+import { screenLines } from "../../messages"
 import db from './../../../../knex'
-
-export async function createNode (config: NodeMutationConfig) {
+export async function updateNode (config: NodeMutationConfig) {
   if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
   const fields: string[] = Object.keys(config.data.input)
-  const filteredUserInput = this.filterFieldsAndReturnValues(
+  const user = {
+    updatedBy: config.user,
+    updatedAt: 'now()',
+    modifiedBy: config.user
+  }
+  const filteredFieldsWithValues = this.filterFieldsAndReturnValues(
     config.tableFields,
     fields,
     config.data.input
   )
-  const USER = {
-    createdBy: config.user,
-    modifiedBy: config.user
-  }
-  const DATA = Object.assign({}, filteredUserInput, USER)
+  let data = Object.assign({}, filteredFieldsWithValues, user)
   const response = await db(config.table)
-    .insert(DATA)
-    .where({ id: DATA.id })
+    .where({ id: data.id })
+    .update(data)
     .returning('*')
     .catch((err: Error) => {
       console.trace(err)
       return err
     })
-  if (debug.mutations.createNode.name) {
+  if (debug.mutations.updateNode.name) {
     console.log(screenLines.endLine)
-    console.log(`DatabaseService : Create Node`)
+    console.log(`DatabaseService : Update Node`)
     console.log(screenLines.endLine)
   }
-  if (debug.mutations.createNode.arguments) console.log(arguments)
-  if (debug.mutations.createNode.response) {
+  if (debug.mutations.updateNode.arguments) console.log(arguments)
+  if (debug.mutations.updateNode.response) {
     console.log(screenLines.endLine)
-    console.log(`DatabaseService :Create Node Response`)
+    console.log(`DatabaseService : Update Node Response`)
     console.log(screenLines.endLine)
     console.log('Filtered data fields:')
-    console.log(filteredUserInput)
+    console.log(filteredFieldsWithValues)
     console.log('response:')
     console.log(response)
   }
