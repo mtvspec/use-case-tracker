@@ -9,6 +9,10 @@ const logExecutions = createGraphQLLogger({
 })
 logExecutions(resolvers)
 
+import { types as PersonTypes } from './schema/PersonType'
+import { types as OrganizationTypes } from './schema/OrganizationType'
+import { RootQuery } from './schema/RootQuery'
+
 const typeDefs: DocumentNode = gql`
 
   interface Node {
@@ -74,76 +78,6 @@ const typeDefs: DocumentNode = gql`
   type CustomerProjectEdge implements Edge {
     id: ID!
     node: Project!
-    isDeleted: Boolean
-    createdBy: User
-    createdAt: DateTime
-    updatedBy: User
-    updatedAt: DateTime
-    deletedBy: User
-    deletedAt: DateTime
-    modifiedBy: User
-    modifiedAt: DateTime
-  }
-
-  type PersonsConnection {
-    totalCount: Int
-    persons: [Person!]
-  }
-
-  # Физическое лицо
-  type Person implements Node {
-    id: ID!
-    # ИИН
-    iin: String
-    # Имя
-    firstName: String
-    # Отчество
-    middleName: String
-    # Фамилия
-    lastName: String
-    # Дата рождения
-    dob: DateTime
-    address: String
-    photo: String
-    # Заказчики
-    customers: [Customer]
-    internalPhone: Contact
-    workPhone: Contact
-    mobilePhone: Contact
-    # Контакты
-    contacts: PersonContactsConnection
-    # Пол
-    gender: DictValue
-    employee: EmployeesConnection
-    projectMember: [ProjectMember]
-    state: DictValue
-    isDeleted: Boolean
-    createdBy: User
-    createdAt: DateTime
-    updatedBy: User
-    updatedAt: DateTime
-    deletedBy: User
-    deletedAt: DateTime
-    modifiedBy: User
-    modifiedAt: DateTime
-  }
-
-  # Контакты ФЛ
-  type PersonContactsConnection {
-    totalCount: Int
-    edges (
-      createdAt: DateTimeFilter
-      updatedAt: DateTimeFilter
-      deletedAt: DateTimeFilter
-      modifiedAt: DateTimeFilter
-    ): [PersonContactEdge]
-  }
-
-  # Контакт ФЛ
-  type PersonContactEdge implements Edge {
-    id: ID!
-    node: Contact!
-    state: DictValue
     isDeleted: Boolean
     createdBy: User
     createdAt: DateTime
@@ -478,114 +412,8 @@ const typeDefs: DocumentNode = gql`
     modifiedAt: DateTime
   }
 
-  type Organization implements Node {
-    id: ID!
-    organizationalUnits: [OrganizationalUnit]
-    bin: String
-    name: String!
-    officialName: String
-    address: String
-    manager: Employee
-    contacts: OrganizationContactsConnection
-    mainPhone: Contact
-    state: DictValue
-    isDeleted: Boolean
-    createdBy: User
-    createdAt: DateTime
-    updatedBy: User
-    updatedAt: DateTime
-    deletedBy: User
-    deletedAt: DateTime
-    modifiedBy: User
-    modifiedAt: DateTime
-  }
-
-  type OrganizationContactsConnection {
-    totalCount: Int
-    edges (
-      createdAt: DateTimeFilter
-      updatedAt: DateTimeFilter
-      deletedAt: DateTimeFilter
-      modifiedAt: DateTimeFilter
-    ): [OrganizationContactEdge]
-  }
-
-  type OrganizationContactEdge implements Edge {
-    id: ID!
-    node: Contact!
-    state: DictValue
-    isDeleted: Boolean
-    createdBy: User
-    createdAt: DateTime
-    updatedBy: User
-    updatedAt: DateTime
-    deletedBy: User
-    deletedAt: DateTime
-    modifiedBy: User
-    modifiedAt: DateTime
-  }
-
   type DictConnection {
     dictValues: [DictValue!]
-  }
-
-  # Организационная единица (ОЕ)
-  type OrganizationalUnit implements Node {
-    id: ID!
-    organization: Organization
-    organizationalUnit: OrganizationalUnit
-    curator: Employee
-    # Наименование ОЕ
-    name: String!
-    # Описание ОЕ
-    description: String
-    kind: DictValue
-    type: DictValue
-    manager: Employee
-    # Руководители подразделения
-    managers: [Employee]
-    # Подчиненные подразделения
-    childOrganizationalUnits: [OrganizationalUnit!]
-    # Сотрудники подразделения
-    employees: [Employee]
-    # Все сотрудники подразделения и его подчиненных подразделений
-    allEmployees: [Employee!]
-    state: DictValue
-    isDeleted: Boolean
-    createdBy: User
-    createdAt: DateTime
-    updatedBy: User
-    updatedAt: DateTime
-    deletedBy: User
-    deletedAt: DateTime
-    modifiedBy: User
-    modifiedAt: DateTime
-  }
-  # Штатная единица (ШЕ)
-  type PositionalUnit implements Node {
-    id: ID!
-    name: String
-    description: String
-    state: DictValue
-    isDeleted: Boolean
-    createdBy: User
-    createdAt: DateTime
-    updatedBy: User
-    updatedAt: DateTime
-    deletedBy: User
-    deletedAt: DateTime
-    modifiedBy: User
-    modifiedAt: DateTime
-  }
-
-  type OrganizationalUnitsConnection {
-    totalCount: Int
-    organizationalUnits: [OrganizationalUnit!]
-  }
-
-  type OrganizationsConnection {
-    totalCount: Int
-    organizations: [Organization!]
   }
 
   type UsersConnection {
@@ -727,42 +555,6 @@ const typeDefs: DocumentNode = gql`
     password: String!
   }
 
-  type Query {
-    node: Node
-    edge: Edge
-    allPersons (
-      search: String
-      searchPersonFields: SearchPersonFields
-      filter: PersonDataFilterFields
-    ): PersonsConnection
-    person (
-      id: ID!,
-      filter: PersonDataFilterFields
-    ): Person
-    allUsers: UsersConnection
-    user (id: ID!): User
-    allIssues (input: Field, filter: Field): IssuesConnection
-    issue (id: ID!): Issue
-    projectMember(id: ID!): ProjectMember
-    allCustomers: CustomersConnection
-    customer (id: ID!): Customer
-    allProjects (projectName: String): ProjectsConnection
-    project (id: ID!): Project
-    allOrganizations: OrganizationsConnection
-    organization (id: ID!): Organization
-    dictValues(dictName: String!): DictConnection
-    allOrganizationalUnits (
-      organization: ID
-      search: String
-    ): OrganizationalUnitsConnection
-    organizationalUnit (id: ID!): OrganizationalUnit
-    session (id: ID!): Session!,
-    system (id: ID!): System
-    component (id: ID!): Component,
-    organizationalUnit (id: ID!): OrganizationalUnit
-    employee (id: ID!): Employee
-  }
-
   type Mutation {
     authentificateUser (
       input: UserCredentialsInput!
@@ -843,4 +635,20 @@ const typeDefs: DocumentNode = gql`
   scalar DateTime
 
 `
-export default makeExecutableSchema({ typeDefs, resolvers });
+export default makeExecutableSchema({
+  typeDefs: [
+    RootQuery,
+    typeDefs,
+    PersonTypes['PersonType'],
+    PersonTypes['PersonsConnectionType'],
+    PersonTypes['PersonContactsConnectionType'],
+    PersonTypes['PersonContactEdgeType'],
+    OrganizationTypes['OrganizationType'],
+    OrganizationTypes['PositionalUnitType'],
+    OrganizationTypes['OrganizationsConnectionType'],
+    OrganizationTypes['OrganizationalUnitType'],
+    OrganizationTypes['OrganizationalUnitsConnectionType'],
+    OrganizationTypes['OrganizationContactsConnectionType'],
+    OrganizationTypes['OrganizationContactEdgeType']
+  ], resolvers
+});

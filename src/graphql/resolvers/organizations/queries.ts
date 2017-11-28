@@ -65,8 +65,8 @@ const OrganizationsConnection = {
     return await OrganizationsService.getOrganizations({
       unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
       args: root.args && Object.keys(root.args).length > 0 ? root.args : null,
-      filter: root.args.filter && Object.keys(root.args.filter).length > 0 ? root.args.filter : null,
-      search: root.args.search && root.args.search.length > 0 ? root.args.search : null,
+      filter: root.args && root.args.filter && Object.keys(root.args.filter).length > 0 ? root.args.filter : null,
+      search: root.args && root.args.search && root.args.search.length > 0 ? root.args.search : null,
       except: null,
       orderBy: ['name']
     })

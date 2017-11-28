@@ -7,6 +7,7 @@ export async function getNodes (config: NodesQueryConfig) {
   if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
   if (!config.tableFields) throw Error('table fields is required')
   if (!config.unfilteredFields) throw Error('requested fields is required')
+  if (!config.fields) config.fields = []
   const requestedFields = this.filterFields(config.tableFields, config.unfilteredFields)
   let args = [], filter = [], except = [], search = [], orderBy = ['id']
   if (config.args && Object.keys(config.args).length > 0) {
