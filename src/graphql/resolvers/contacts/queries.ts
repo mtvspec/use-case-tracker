@@ -3,9 +3,11 @@ import { DictService } from './../../../services'
 import { ContactsService } from './../../../services'
 
 const Contact = {
-  contactType: async (root: { contactType: number }, args: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return await DictService.getDictValue(fields, { id: root.contactType })
+  contactType: async (root: { contactType: number }, _, ctx, info) => {
+    return await DictService.getDictValue({
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+      source: { id: root.contactType }
+    })
   },
   contact: (root: { contact: any | number }) => {
     if (root.contact) { return root.contact }
@@ -16,12 +18,10 @@ const Contact = {
   modifiedBy: CommonResolvers.modifiedBy
 }
 const getContact = async (root: { node: number }, _, ctx, info) => {
-  console.log('root');
-
-  console.log(root);
-
-  const fields: string[] = Object.keys(ctx.utils.parseFields(info))
-  return await ContactsService.getContact(fields, { id: root.node })
+  return await ContactsService.getContact({
+    unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+    source: { id: root.node }
+  })
 }
 const queries = {
   Contact,

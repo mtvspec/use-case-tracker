@@ -1,9 +1,12 @@
 import CommonResovers from './../common'
 import { UsersService } from './../../../services'
 
-const getUserByID = async (root: any, args: { id: any }, ctx: any, info: any) => {
-  const fields: any = Object.keys(ctx.utils.parseFields(info))
-  return await UsersService.getUser(fields, args.id)
+const getUserByID = async (_, args: { id: number }, ctx, info) => {
+  return await UsersService.getUser({
+    unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+    source: { id: args.id },
+    except: { id: 0 }
+  })
 }
 
 const User = {
@@ -17,12 +20,14 @@ const User = {
 
 const UsersConnection = {
   totalCount: async () => {
-    return await UsersService.getUsersCount()
-      .then(data => { return data.totalCount })
+    return await UsersService.getUsersCount({
+      except: { id: 0 }
+    }).then(data => { return data.totalCount })
   },
   users: async (root: any, args: any, ctx: any, info: any) => {
-    const fields = Object.keys(ctx.utils.parseFields(info))
-    return await UsersService.getAllUsers(fields)
+    return await UsersService.getAllUsers({
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info))
+    })
   }
 }
 

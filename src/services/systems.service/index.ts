@@ -4,7 +4,7 @@ import {
 import db from './../../knex'
 import queries from './queries'
 const systemsTable: string = 'systems.e_system'
-const componentsTable: string = 'components.e_component'
+const componentsTable: string = 'systems.e_component'
 export class SystemsService extends DatabaseService {
   public static async getSystemByID (id: number) {
     return await db
@@ -23,9 +23,9 @@ export class SystemsService extends DatabaseService {
       SELECT
         cc.*
       FROM
-        components.e_component cc,
-        components.e_component pc
-      WHERE cc."componentID" = pc.id
+        systems.e_component cc,
+        systems.e_component pc
+      WHERE cc."component" = pc.id
       AND pc.id = ${componentID}
       ORDER BY cc.name ASC;`
     }))
@@ -37,11 +37,11 @@ export class SystemsService extends DatabaseService {
       SELECT
         c.*
       FROM
-        components.e_component c,
+        systems.e_component c,
         systems.e_system s,
         systems.r_e_system_e_component sc
-      WHERE sc."systemID" = s.id
-      AND sc."componentID" = c.id
+      WHERE sc."system" = s.id
+      AND sc."component" = c.id
       AND s.id = ${systemID}
       ORDER BY c.name ASC;`
     }))
@@ -53,9 +53,9 @@ export class SystemsService extends DatabaseService {
       SELECT
         p.*
       FROM
-        components.e_component c,
-        components.e_component p
-      WHERE c."componentID" = p.id
+        systems.e_component c,
+        systems.e_component p
+      WHERE c."component" = p.id
       AND c.id = ${componentID};`
     }))
   }
@@ -66,8 +66,8 @@ export class SystemsService extends DatabaseService {
       SELECT
         count(cc.id) "totalCount"
       FROM
-        components.e_component cc
-      INNER JOIN components.e_component pc ON cc."componentID" = pc.id
+        systems.e_component cc
+      INNER JOIN systems.e_component pc ON cc."component" = pc.id
       AND pc.id = ${componentID};`
     }))
   }
@@ -78,8 +78,8 @@ export class SystemsService extends DatabaseService {
       SELECT
         count(ci.id) "totalCount"
       FROM
-        components.r_e_component_e_issue ci
-      INNER JOIN components.e_component c ON ci."componentID" = c.id
+        systems.r_e_component_e_issue ci
+      INNER JOIN systems.e_component c ON ci."component" = c.id
       WHERE c.id = ${componentID};`
     }))
   }
@@ -90,8 +90,8 @@ export class SystemsService extends DatabaseService {
       SELECT
         ci.*
       FROM
-        components.r_e_component_e_issue ci
-      INNER JOIN components.e_component c ON ci."componentID" = c.id
+        systems.r_e_component_e_issue ci
+      INNER JOIN systems.e_component c ON ci."component" = c.id
       WHERE c.id = ${componentID};`
     }))
   }
@@ -103,7 +103,7 @@ export class SystemsService extends DatabaseService {
         i.*
       FROM
         issues.e_issue i
-      INNER JOIN components.r_e_component_e_issue ci ON ci."issueID" = i.id
+      INNER JOIN systems.r_e_component_e_issue ci ON ci."issue" = i.id
       WHERE ci.id = ${edgeID};`
     }))
   }
@@ -114,11 +114,11 @@ export class SystemsService extends DatabaseService {
       SELECT
         count(c.id) "totalCount"
       FROM
-        components.e_component c,
+        systems.e_component c,
         systems.e_system s,
         systems.r_e_system_e_component sc
-      WHERE sc."systemID" = s.id
-      AND sc."componentID" = c.id
+      WHERE sc."system" = s.id
+      AND sc."component" = c.id
       AND s.id = ${systemID}`
     }))
   }

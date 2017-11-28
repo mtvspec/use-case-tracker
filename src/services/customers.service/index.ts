@@ -1,9 +1,8 @@
 import {
   DatabaseService, QueryConfig
 } from './../database.service';
-import { Organization } from './../../models/organization.model';
-import { Profiler } from 'inspector';
-import { Customer } from '../../models/customer.model';
+import { Organization } from './../../models/organization.model'
+import { Customer } from '../../models/customer.model'
 export class CustomersService extends DatabaseService {
   public static async getCustomersCount () {
     return await this.query(new QueryConfig({

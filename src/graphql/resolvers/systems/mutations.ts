@@ -1,12 +1,12 @@
 import { SystemsService } from './../../../services/systems.service'
 
-const createComponent = async (root, data, context) => {
+const createComponent = async (root, data, ctx) => {
   const _data = {
-    componentID: data.componentID,
+    component: data.component,
     name: data.input.name,
     description: data.input.description,
     user: {
-      id: context.session.userID
+      id: ctx.session.user
     }
   }
   const response = await SystemsService.createComponent(_data)
@@ -14,14 +14,14 @@ const createComponent = async (root, data, context) => {
   else return Object.assign(response)
 }
 
-const updateComponent = async (root, data, context) => {
+const updateComponent = async (root, data, ctx) => {
   const _data = {
     id: data.id,
-    typeID: data.input.typeID,
+    type: data.input.type,
     name: data.input.name,
     description: data.input.description,
     user: {
-      id: context.session.userID
+      id: ctx.session.user
     }
   }
   const response = await SystemsService.updateComponent(_data)

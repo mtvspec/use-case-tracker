@@ -43,6 +43,11 @@ interface debug {
       name: boolean
       arguments: boolean
       response: boolean
+    },
+    getEdgesCount: {
+      name: boolean
+      arguments: boolean
+      response: boolean
     }
   }
   mutations: {
@@ -146,6 +151,11 @@ export const debug: debug = {
       arguments: debugEnabled || false,
       response: debugEnabled || false
     },
+    getEdgesCount: {
+      name: debugEnabled || false,
+      arguments: debugEnabled || false,
+      response: debugEnabled || false
+    },
   },
   mutations: {
     createNode: {
@@ -192,7 +202,7 @@ export const debug: debug = {
   filters: {
     fieldFilter: {
       arguments: false,
-      result: false
+      result: true
     },
     fieldFilterWithValues: {
       arguments: false,

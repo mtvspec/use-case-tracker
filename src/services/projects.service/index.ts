@@ -7,11 +7,11 @@ import {
   DatabaseService, QueryConfig
 } from './../database.service'
 
-import pg from './../../knex'
+import db from './../../knex'
 
 export class ProjectsService extends DatabaseService {
   public static async getProjectsCount () {
-    return await pg
+    return await db
       .from(projectsTable)
       .count(totalCount).first()
   }
@@ -23,7 +23,7 @@ export class ProjectsService extends DatabaseService {
         count(pt.id) "totalCount"
       FROM
         projects.e_project_team pt
-      INNER JOIN projects.e_project p ON pt."projectID" = p.id
+      INNER JOIN projects.e_project p ON pt."project" = p.id
       AND p.id = ${projectID};`
     }))
   }
@@ -35,8 +35,8 @@ export class ProjectsService extends DatabaseService {
         count(s.id) "totalCount"
       FROM
         systems.e_system s
-      INNER JOIN systems.r_e_project_e_system ps ON ps."systemID" = s.id
-      INNER JOIN projects.e_project p ON ps."projectID" = p.id
+      INNER JOIN systems.r_e_project_e_system ps ON ps."system" = s.id
+      INNER JOIN projects.e_project p ON ps."project" = p.id
       AND p.id = ${projectID};`
     }))
   }
@@ -49,7 +49,7 @@ export class ProjectsService extends DatabaseService {
       FROM
         projects.e_project_team pt,
         projects.e_project_member pm
-      WHERE pm."teamID" = pt.id
+      WHERE pm."team" = pt.id
       AND pt.id = ${teamID};`
     }))
   }
@@ -62,7 +62,7 @@ export class ProjectsService extends DatabaseService {
       FROM
         projects.e_project_member_role pmr,
         projects.e_project_member pm
-      WHERE pmr."projectMemberID" = pm.id
+      WHERE pmr."projectMember" = pm.id
       AND pm.id = ${projectMemberID};`
     }))
   }
@@ -77,9 +77,9 @@ export class ProjectsService extends DatabaseService {
         projects.e_project_member_role pmr,
         issues.e_issue i,
         projects.e_project_member pm
-      WHERE pmr."projectMemberID" = pm.id
-      AND i."authorID" = pm.id
-      AND i."projectMemberRoleID" = pmr.id
+      WHERE pmr."projectMember" = pm.id
+      AND i."author" = pm.id
+      AND i."projectMemberRole" = pmr.id
       AND pmr.id = ${projectMemberRoleID};`
     }))
   }
@@ -93,10 +93,10 @@ export class ProjectsService extends DatabaseService {
         projects.e_project_member_role pmr,
         issues.e_issue i,
         projects.e_project_member pm
-      WHERE pmr."projectMemberID" = pm.id
-      AND i."authorID" = pm.id
-      AND i."projectMemberRoleID" = pmr.id
-      AND i."stateID" = 136
+      WHERE pmr."projectMember" = pm.id
+      AND i."author" = pm.id
+      AND i."projectMemberRole" = pmr.id
+      AND i."state" = 136
       AND pmr.id = ${projectMemberRoleID}
       ORDER BY i.title ASC;`
     }))
@@ -111,8 +111,8 @@ export class ProjectsService extends DatabaseService {
         projects.e_project_member_role pmr,
         projects.e_project_member pm,
         dict.e_dict_value v
-      WHERE pmr."projectMemberID" = pm.id
-      AND pmr."projectMemberRoleID" = v.id
+      WHERE pmr."projectMember" = pm.id
+      AND pmr."projectMemberRole" = v.id
       AND pm.id = ${projectMemberID}
       ORDER BY v."nameRu" ASC;`
     }))
@@ -125,39 +125,28 @@ export class ProjectsService extends DatabaseService {
         s.*
       FROM
         systems.e_system s
-      INNER JOIN systems.r_e_project_e_system ps ON ps."systemID" = s.id
-      INNER JOIN projects.e_project p ON ps."projectID" = p.id
+      INNER JOIN systems.r_e_project_e_system ps ON ps."system" = s.id
+      INNER JOIN projects.e_project p ON ps."project" = p.id
       AND p.id = ${projectID};`
     }))
   }
   public static async getProjects () {
-    return await pg
+    return await db
       .from(projectsTable).orderBy('id')
   }
   public static async getProject (id: number) {
-    return await pg
+    return await db
       .from(projectsTable)
       .where({ id }).first()
   }
   public static async getProjectTeams (id: number) {
-    // return await this.query(new QueryConfig({
-    //   qty: '*',
-    //   text: `
-    //   SELECT
-    //     pt.*
-    //   FROM
-    //     projects.e_project_team pt,
-    //     projects.e_project p
-    //   WHERE pt."projectID" = p.id
-    //   AND p.id = ${id};`
-    // }))
-    return await pg
+    return await db
       .from(projectsTable)
-      .leftOuterJoin(projectTeamsTable, `${projectTeamsTable}.projectID`, `${projectsTable}.id`)
+      .leftOuterJoin(projectTeamsTable, `${projectTeamsTable}.project`, `${projectsTable}.id`)
       .where(`${projectsTable}.id`, id)
   }
   public static async getProjectTeam (id: number) {
-    return await pg
+    return await db
       .from(projectTeamsTable)
       .where({ id }).first()
   }
@@ -171,8 +160,8 @@ export class ProjectsService extends DatabaseService {
         projects.e_project_team pt,
         projects.e_project_member pm,
         persons.e_person p
-      WHERE pm."teamID" = pt.id
-      AND pm."personID" = p.id
+      WHERE pm."team" = pt.id
+      AND pm."person" = p.id
       AND pt.id = ${teamID}
       ORDER BY p."lastName" ASC;`
     }))
@@ -186,13 +175,13 @@ export class ProjectsService extends DatabaseService {
       FROM
         projects.e_project_team pt,
         projects.e_project_member pm
-      WHERE pm."teamID" = pt.id
-      AND pm."personID" = ${personID}
+      WHERE pm."team" = pt.id
+      AND pm."person" = ${personID}
       ORDER BY pm.id;`
     }))
   }
   public static async getProjectMember (id: number) {
-    return await pg
+    return await db
       .from(projectMembersTable)
       .where({ id }).first()
   }
@@ -215,13 +204,13 @@ export class ProjectsService extends DatabaseService {
       createdBy: userID,
       modifiedBy: userID
     }
-    return await pg
+    return await db
       .insert(_data).into(projectsTable)
       .returning('*').first()
       .catch(err => { return new Error(err.detail) })
   }
   public static async getProjectByProjectName (projectName: string) {
-    return await pg
+    return await db
       .from(projectsTable)
       .where('projectName', 'like', `%${projectName}%`)
   }
@@ -240,7 +229,7 @@ export class ProjectsService extends DatabaseService {
       updatedAt: 'now()',
       modifiedBy: userID
     }
-    return await pg(projectsTable)
+    return await db(projectsTable)
       .update(_data)
       .where({ id: data.id })
       .returning('*').then(rows => { return rows[0] })
@@ -257,7 +246,7 @@ export class ProjectsService extends DatabaseService {
       deletedAt: 'now()',
       modifiedBy: userID
     }
-    return await pg(projectsTable)
+    return await db(projectsTable)
       .update(_data).where({ id: _data.id })
       .returning('*').then(rows => { return rows[0] })
       .catch(err => { return new Error(err.detail) })

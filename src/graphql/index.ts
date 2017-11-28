@@ -104,6 +104,7 @@ const typeDefs: DocumentNode = gql`
     # Дата рождения
     dob: DateTime
     address: String
+    photo: String
     # Заказчики
     customers: [Customer]
     internalPhone: Contact
@@ -485,6 +486,33 @@ const typeDefs: DocumentNode = gql`
     officialName: String
     address: String
     manager: Employee
+    contacts: OrganizationContactsConnection
+    mainPhone: Contact
+    state: DictValue
+    isDeleted: Boolean
+    createdBy: User
+    createdAt: DateTime
+    updatedBy: User
+    updatedAt: DateTime
+    deletedBy: User
+    deletedAt: DateTime
+    modifiedBy: User
+    modifiedAt: DateTime
+  }
+
+  type OrganizationContactsConnection {
+    totalCount: Int
+    edges (
+      createdAt: DateTimeFilter
+      updatedAt: DateTimeFilter
+      deletedAt: DateTimeFilter
+      modifiedAt: DateTimeFilter
+    ): [OrganizationContactEdge]
+  }
+
+  type OrganizationContactEdge implements Edge {
+    id: ID!
+    node: Contact!
     state: DictValue
     isDeleted: Boolean
     createdBy: User
@@ -506,6 +534,7 @@ const typeDefs: DocumentNode = gql`
     id: ID!
     organization: Organization
     organizationalUnit: OrganizationalUnit
+    curator: Employee
     # Наименование ОЕ
     name: String!
     # Описание ОЕ
@@ -547,6 +576,11 @@ const typeDefs: DocumentNode = gql`
     deletedAt: DateTime
     modifiedBy: User
     modifiedAt: DateTime
+  }
+
+  type OrganizationalUnitsConnection {
+    totalCount: Int
+    organizationalUnits: [OrganizationalUnit!]
   }
 
   type OrganizationsConnection {
@@ -609,15 +643,14 @@ const typeDefs: DocumentNode = gql`
     middleName: String
     lastName: String
     dob: String
-    genderID: Int
+    gender: ID
   }
 
   input IssueData {
-    authorID: Int
-    issueState: Int
+    author: Int
     title: String!
     description: String
-    stateID: Int
+    state: Int
   }
 
   input OrganizationData {
@@ -634,7 +667,7 @@ const typeDefs: DocumentNode = gql`
   }
 
   input ComponentDataInput {
-    typeID: ID
+    type: ID
     name: String!
     description: String
   }
@@ -680,11 +713,11 @@ const typeDefs: DocumentNode = gql`
 
   input UpdatedOrganizationalUnitInputData {
     id: ID
-    organizationID: ID
-    managerID: ID
-    organizationalUnitID: ID
-    kindID: ID
-    typeID: ID
+    organization: ID
+    manager: ID
+    organizationalUnit: ID
+    kind: ID
+    type: ID
     name: String
     description: String @validate
   }
@@ -698,9 +731,6 @@ const typeDefs: DocumentNode = gql`
     node: Node
     edge: Edge
     allPersons (
-      gender: Int
-      filter: String
-      isDeleted: Boolean
       search: String
       searchPersonFields: SearchPersonFields
       filter: PersonDataFilterFields
@@ -721,6 +751,10 @@ const typeDefs: DocumentNode = gql`
     allOrganizations: OrganizationsConnection
     organization (id: ID!): Organization
     dictValues(dictName: String!): DictConnection
+    allOrganizationalUnits (
+      organization: ID
+      search: String
+    ): OrganizationalUnitsConnection
     organizationalUnit (id: ID!): OrganizationalUnit
     session (id: ID!): Session!,
     system (id: ID!): System
@@ -788,7 +822,7 @@ const typeDefs: DocumentNode = gql`
       id: ID!
     ): Issue
     createComponent (
-      componentID: ID!
+      component: ID!
       input: ComponentDataInput!
     ): Component
     updateComponent (

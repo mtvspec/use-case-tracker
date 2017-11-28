@@ -8,10 +8,12 @@ const getIssueByID = async (root: any, args: any) => {
   return await IssuesService.getIssue(args.id)
 }
 
-const closedBy = async (root: any, args: any, ctx: any, info: any) => {
-  const fields: any = Object.keys(ctx.utils.parseFields(info))
+const closedBy = async (root: { closedBy: number }, _, ctx, info) => {
   return root.closedBy ?
-    await UsersService.getUser(fields, root.closedBy) : null
+    await UsersService.getUser({
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+      source: { id: root.closedBy }
+    }) : null
 }
 
 const IssuesConnection = {
@@ -32,15 +34,19 @@ const Issue = {
     return root.author ?
       await ProjectsService.getProjectMember(root.author) : null
   },
-  issueType: async (root: any, args: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
+  issueType: async (root: { type: number }, _, ctx, info) => {
     return root.type ?
-      await DictService.getDictValue(fields, root.type) : null
+      await DictService.getDictValue({
+        unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+        source: { id: root.type }
+      }) : null
   },
-  state: async (root: any, args: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
+  state: async (root: { state: number }, _, ctx, info) => {
     return root.state ?
-      await DictService.getDictValue(fields, root.state) : null
+      await DictService.getDictValue({
+        unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+        source: { id: root.state }
+      }) : null
   },
   closedBy: closedBy,
   createdBy: CommonResolvers.createdBy,

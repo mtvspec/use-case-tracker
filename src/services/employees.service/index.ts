@@ -1,56 +1,200 @@
-import { DatabaseService, QueryConfig } from './../database.service'
-const EMPLOYEES_TABLE: string = 'organizations.e_emp'
-const EMPLOYEE_PERSON_EDGES_TABLE: string = 'organizations.r_e_emp_e_person'
-let employeesTableFields: string[] = []
-let employeePersonEdgesTableFields: string[] = []
+import { DatabaseService, QueryConfig, ServiceConfig } from './../database.service'
+import { EdgesConfig, NodesConfig, NodeConfig, EdgesCountConfig } from '../interfaces'
+import { OrganizationsService } from '../index'
+
 export class EmployeesService extends DatabaseService {
-  public static getEmployees (unfilteredFields: string[], orderBy: string[]) {
-    return this.getNodes({
-      table: EMPLOYEES_TABLE,
-      tableFields: employeesTableFields,
-      unfilteredFields,
-      args: null,
-      except: null,
-      orderBy
-    })
+  private static EmployeeConfig: ServiceConfig = {
+    table: '',
+    tableFields: []
   }
-  public static getEmployee (unfilteredFields: string[], args) {
-    return this.getNode({
-      table: EMPLOYEES_TABLE,
-      tableFields: employeesTableFields,
-      unfilteredFields,
-      args
-    })
+  private static PersonEmployeeConfig: ServiceConfig = {
+    table: '',
+    tableFields: []
+  }
+  constructor() {
+    super()
+    async function getEmployeesTableFields (table: string) {
+      EmployeesService.EmployeeConfig.table = table
+      const response: string[] = await DatabaseService.fields(table) as string[]
+      if (response && response.length > 0) EmployeesService.EmployeeConfig.tableFields = response
+      else console.trace(response)
+    }
+    getEmployeesTableFields('organizations.e_emp')
+    async function getEmployeePersonEdgesTableFields (table: string) {
+      EmployeesService.PersonEmployeeConfig.table = table
+      const response: string[] = await DatabaseService.fields(table) as string[]
+      if (response && response.length > 0) EmployeesService.PersonEmployeeConfig.tableFields = response
+      else console.trace(response)
+    }
+    getEmployeePersonEdgesTableFields('organizations.r_e_emp_e_person')
+  }
+  public static async getManager (config: NodeConfig) {
+    return this.getNode(Object.assign({}, EmployeesService.EmployeeConfig, config))
+  }
+  public static getEmployees (config: NodesConfig) {
+    return this.getNodes(Object.assign({}, EmployeesService.PersonEmployeeConfig, config))
+  }
+  public static getEmployee (config: NodeConfig) {
+    return this.getNode(Object.assign({}, EmployeesService.EmployeeConfig, config))
   }
 
-  public static getEmployeesByPerson (unfilteredFields: string[], source, args?: any) {
-    return this.getEdges(
-      EMPLOYEE_PERSON_EDGES_TABLE,
-      employeePersonEdgesTableFields,
-      unfilteredFields,
-      source,
-      args
-    )
+  public static getEmployeesByPerson (config: EdgesConfig) {
+    return this.getEdges(Object.assign({}, EmployeesService.PersonEmployeeConfig, config))
   }
-  public static getEmployeesCount (args?) {
-    return this.getNodesCount({
-      table: EMPLOYEE_PERSON_EDGES_TABLE,
-      tableFields: employeePersonEdgesTableFields,
-      args
-    })
+  public static getEmployeesCount (config: EdgesCountConfig) {
+    return this.getNodesCount(Object.assign({}, EmployeesService.PersonEmployeeConfig, config))
   }
-  public static async getSubordinatesByEmployee (employeeID: number) {
+  public static async getSubordinades (config) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      EmployeesService.EmployeeConfig.tableFields,
+      config.unfilteredFields), 's')
+    return await this.query(new QueryConfig({
+      qty: '*',
+      text: `
+
+        SELECT
+          ${requestedFields}
+        FROM
+          ${EmployeesService.EmployeeConfig.table} s,
+          ${EmployeesService.EmployeeConfig.table} m
+        WHERE s."manager" = m.id
+        AND m.id = ${config.source['id']}
+        ORDER BY s.idx ASC, s."createdAt";
+
+      `
+    }))
+  }
+  public static async getEmployeesByOrganizationalUnit (config) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      EmployeesService.EmployeeConfig.tableFields,
+      config.unfilteredFields), 'e')
     return await this.query(new QueryConfig({
       qty: '*',
       text: `
 
       SELECT
-        s.*
+        ${requestedFields}
       FROM
-        ${EMPLOYEES_TABLE} m,
-        ${EMPLOYEES_TABLE} s
+        ${EmployeesService.EmployeeConfig.table} e,
+        ${OrganizationsService.OrganizationalUnitConfig.table} ou
+      WHERE e."organizationalUnit" = ou.id
+      AND ou."manager" != e.id
+      AND e."firedAt" IS NULL
+      AND ou.id = ${config.source['id']}
+      ORDER BY e.idx, e."createdAt";
+      
+      `
+    }))
+  }
+  public static async getSubordinadedOrganizationalUnitsManagersByOrganizationalUnit (config) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      EmployeesService.EmployeeConfig.tableFields,
+      config.unfilteredFields), 'm')
+    return await this.query(new QueryConfig({
+      qty: '*',
+      text: `
+
+      SELECT  
+        ${requestedFields}
+      FROM
+        ${EmployeesService.EmployeeConfig.table} m,
+        ${OrganizationsService.OrganizationalUnitConfig.table} ou
+      WHERE ou."manager" = m.id
+      AND ou.id in (
+      WITH RECURSIVE cte AS (
+        SELECT
+          id, 1 AS level
+        FROM
+          ${OrganizationsService.OrganizationalUnitConfig.table}
+        WHERE "organizationalUnit" = ${config.source['id']}
+        UNION ALL
+        SELECT
+          cou.id, pou.level + 1
+        FROM cte pou
+        JOIN ${OrganizationsService.OrganizationalUnitConfig.table} cou ON cou."organizationalUnit" = pou.id
+      )
+      SELECT
+        id
+      FROM
+        cte
+      ORDER BY level
+      );
+      
+      `
+    }))
+  }
+  public static async getAllEmployeesByOrganizationalUnit (config) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      EmployeesService.EmployeeConfig.tableFields,
+      config.unfilteredFields), 'e')
+    return await this.query(new QueryConfig({
+      qty: '*',
+      text: `
+
+      SELECT
+        ${requestedFields}
+      FROM
+        ${EmployeesService.EmployeeConfig.table} e,
+        persons.e_person p
+      WHERE e."person" = p.id
+      AND e."organizationalUnit" in (
+      WITH RECURSIVE cte AS (
+        SELECT
+          id, 1 AS level
+        FROM
+          ${OrganizationsService.OrganizationalUnitConfig.table}
+        WHERE id = ${config.source['id']}
+        UNION ALL
+        SELECT
+          cou.id, pou.level + 1
+        FROM cte pou
+        JOIN ${OrganizationsService.OrganizationalUnitConfig.table} cou ON cou."organizationalUnit" = pou.id
+      )
+      SELECT
+        id
+      FROM
+        cte
+      ORDER BY level
+      );
+      
+      `
+    }))
+  }
+  public static async getManagersByOrganizationalUnit (config) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      EmployeesService.EmployeeConfig.tableFields,
+      config.unfilteredFields), 'e')
+    return await this.query(new QueryConfig({
+      qty: '*',
+      text: `
+
+      SELECT
+        ${requestedFields}
+      FROM
+        ${EmployeesService.EmployeeConfig.table} e,
+        ${OrganizationsService.OrganizationalUnitConfig.table} ou
+      WHERE ou."managerID" = e.id
+      AND ou.id = ${config.sourse['id']}
+      ORDER BY e.idx, e."createdAt";
+      
+      `
+    }))
+  }
+  public static async getSubordinatesByEmployee (config) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      EmployeesService.EmployeeConfig.tableFields,
+      config.unfilteredFields), 'e')
+    return await this.query(new QueryConfig({
+      qty: '*',
+      text: `
+
+      SELECT
+        ${requestedFields}
+      FROM
+        ${EmployeesService.EmployeeConfig.table} m,
+        ${EmployeesService.EmployeeConfig.table} s
       WHERE s."manager" = m.id
-      AND m.id = ${employeeID}
+      AND m.id = ${config.source['id']}
       ORDER BY s.id;
       
       `
@@ -58,14 +202,4 @@ export class EmployeesService extends DatabaseService {
   }
 }
 
-(async function getEmployeesTableFields () {
-  const response: any = await <any>EmployeesService.fields(EMPLOYEES_TABLE)
-  if (response && response.length > 0) employeesTableFields = response
-  else console.trace(response)
-})();
-
-(async function getEmployeePersonEdgesTableFields () {
-  const response: any = await <any>EmployeesService.fields(EMPLOYEE_PERSON_EDGES_TABLE)
-  if (response && response.length > 0) employeePersonEdgesTableFields = response
-  else console.trace(response)
-})();
+const es = new EmployeesService()

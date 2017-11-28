@@ -7,24 +7,23 @@ import { DictService } from './../../../services'
 import { CustomersService } from './../../../services'
 
 class PersonsQueriesResolver {
-  public static getPerson = async (_: any, args: any, ctx: any, info: any) => {
+  public static getPerson = async (_, args, ctx, info) => {
     return await PersonsService.getPerson({
       unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
-      args,
+      source: { id: args.id },
+      args: args && Object.keys(args).length > 0 ? args : null,
       filter: args.filter && Object.keys(args.filter).length > 0 ? args.filter : null,
       except: null
     })
   }
   public static getPersons = async (root, _, ctx, info) => {
-    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
-    const orderBy = ['lastName', 'firstName', 'middleName']
     return await PersonsService.getPersons({
-      unfilteredFields: fields,
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
       args: root.args && Object.keys(root.args).length > 0 ? root.args : null,
       filter: root.args.filter && Object.keys(root.args.filter).length > 0 ? root.args.filter : null,
       search: root.args.search && root.args.search.length > 0 ? root.args.search : null,
       except: null,
-      orderBy
+      orderBy: ['lastName', 'firstName', 'middleName']
     })
   }
   public static getPersonsTotalCount = async (root: any) => {
@@ -37,44 +36,61 @@ class PersonsQueriesResolver {
       .then((data: { totalCount: number }) => { return data.totalCount })
   }
 }
-const getMobilePhone = async (root: { id: number }, _, ctx, info):
-  Promise<any | null> => {
-  const mobilePhone: any = await PersonsService.getPhone(['node'], { source: root.id }, { isMainMobilePhone: true })
-  const fields: any = Object.keys(ctx.utils.parseFields(info))
-  return mobilePhone && mobilePhone.node > 0 ?
-    await ContactsService.getContact(fields, { id: mobilePhone.node }) as any : null
+const getMobilePhone = async (root: { id: number }, _, ctx, info) => {
+  const response = await PersonsService.getPhone({
+    unfilteredFields: ['node'],
+    source: { source: root.id },
+    args: { isMainMobilePhone: true }
+  })
+  return response && response.node > 0 ?
+    await ContactsService.getContact({
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+      source: { id: response.node }
+    }) : null
 }
-const getInternalPhone = async (root: { id: number }, _: any, ctx: any, info: any):
-  Promise<any | null> => {
-  const internalPhone: any = await PersonsService.getPhone(['node'], { source: root.id }, { isMainInternalPhone: true })
-  const fields: any = Object.keys(ctx.utils.parseFields(info))
-  return internalPhone && internalPhone.node > 0 ?
-    await ContactsService.getContact(fields, { id: internalPhone.node }) as any : null
+const getInternalPhone = async (root: { id: number }, _, ctx, info) => {
+  const response = await PersonsService.getPhone({
+    unfilteredFields: ['node'],
+    source: { source: root.id },
+    args: { isMainInternalPhone: true }
+  })
+  return response && response.node > 0 ?
+    await ContactsService.getContact({
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+      source: { id: response.node }
+    }) : null
 }
-const getWorkPhone = async (root: { id: number }, _: any, ctx: any, info: any):
-  Promise<any | null> => {
-  const workPhone: any = await PersonsService.getPhone(['node'], { source: root.id }, { isMainWorkPhone: true })
+const getWorkPhone = async (root: { id: number }, _, ctx, info) => {
+  const response = await PersonsService.getPhone({
+    unfilteredFields: ['node'],
+    source: { source: root.id },
+    args: { isMainWorkPhone: true }
+  })
   const fields: string[] = Object.keys(ctx.utils.parseFields(info))
-  return workPhone && workPhone.node > 0 ?
-    await ContactsService.getContact(fields, { id: workPhone.node }) as any : null
+  return response && response.node > 0 ?
+    await ContactsService.getContact({
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+      source: { id: response.node }
+    }) : null
 }
 const Person = {
-  // TODO: Redesign to one boolean value main contact (type + main: true | false)
   internalPhone: getInternalPhone,
   workPhone: getWorkPhone,
   mobilePhone: getMobilePhone,
-  contacts: (root: any) => (root),
-  employee: (root: any) => (root.id ? root : null),
+  contacts: (root) => (root),
+  employee: (root) => (root.id ? root : null),
   customers: async (root: { id: number }) => {
     return await CustomersService.getCustomersByPersonID(root.id)
   },
   projectMember: async (root: { id: number }) => {
     return await ProjectsService.getProjectMembersByPersonID(root.id)
   },
-  gender: async (root: { gender: number }, _: any, ctx: any, info: any) => {
-    const fields: string[] = Object.keys(ctx.utils.parseFields(info))
+  gender: async (root: { gender: number }, _, ctx, info) => {
     return root.gender > 0 ?
-      await DictService.getDictValue(fields, root.gender) : null
+      await DictService.getDictValue({
+        unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+        source: { id: root.gender }
+      }) : null
   },
   state: CommonResolvers.state,
   createdBy: CommonResolvers.createdBy,
@@ -103,13 +119,20 @@ const PersonContactEdge = {
   modifiedBy: CommonResolvers.modifiedBy
 }
 const PersonContactsConnection = {
-  totalCount: async (root: { id: number }) => {
-    return await PersonsService.getPersonContactsCount(root.id)
-      .then((data: { totalCount: number }) => { return data.totalCount })
+  totalCount: async (root: { id: number, args: { [key: string]: any } }) => {
+    return await PersonsService.getPersonContactsCount({
+      args: root.args && Object.keys(root.args).length > 0 ? root.args : null,
+      source: { source: root.id },
+      except: null
+    }).then((data: { totalCount: number }) => { return data.totalCount })
   },
-  edges: async (root: { id: number }, args: any, ctx: any, info: any) => {
+  edges: async (root: { id: number, args: { [key: string]: any } }, _, ctx, info) => {
     const fields: string[] = Object.keys(ctx.utils.parseFields(info))
-    return await PersonsService.getPersonContactsEdges(fields, { source: root.id }, args)
+    return await PersonsService.getPersonContactsEdges({
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+      source: { source: root.id },
+      args: root.args && Object.keys(root.args).length > 0 ? root.args : null,
+    })
   }
 }
 

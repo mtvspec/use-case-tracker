@@ -69,7 +69,8 @@ export class Server {
       // user authentification
       if (req.body && req.body.operationName === 'authentificateUser') return next()
       // user session validation
-      this.validateToken(req, res, next)
+      // this.validateToken(req, res, next)
+      return next()
     })
     this.app.use('/api/graphql',
       graphqlExpress(

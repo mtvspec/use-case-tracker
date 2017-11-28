@@ -1,22 +1,46 @@
 import { OrganizationsService } from './../../../services'
 
-const createOrganization = async (_: any, data: any, ctx: any) => {
-  return Object.assign(OrganizationsService.createOrganization(data, ctx.session.user))
+const createOrganization = async (_, data, ctx, info) => {
+  return Object.assign(OrganizationsService.createOrganization({
+    unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+    data,
+    user: ctx.session.user
+  }))
 }
-const updateOrganization = async (_: any, data: any, ctx: any) => {
-  return Object.assign(OrganizationsService.updateOrganization(data, ctx.session.user))
+const updateOrganization = async (_, data, ctx, info) => {
+  return Object.assign(OrganizationsService.updateOrganization({
+    unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+    data,
+    user: ctx.session.user
+  }))
 }
-const deleteOrganization = async (_: any, data: any, ctx: any) => {
-  return Object.assign(OrganizationsService.deleteOrganization(data.id, ctx.session.user))
+const deleteOrganization = async (_, data, ctx, info) => {
+  return Object.assign(OrganizationsService.deleteOrganization({
+    unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+    id: data.id,
+    user: ctx.session.user
+  }))
 }
-const createOrganizationalUnit = async (_: any, data: any, ctx: any) => {
-  return Object.assign(OrganizationsService.createOrganizationalUnit(data, ctx.session.user))
+const createOrganizationalUnit = async (_, data, ctx, info) => {
+  return Object.assign(OrganizationsService.createOrganizationalUnit({
+    unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+    data,
+    user: ctx.session.user
+  }))
 }
-const updateOrganizationalUnit = async (_: any, data: any, ctx: any) => {
-  return Object.assign(OrganizationsService.updateOrganizationalUnit(data, ctx.session.user))
+const updateOrganizationalUnit = async (_, data, ctx, info) => {
+  return Object.assign(OrganizationsService.updateOrganizationalUnit({
+    unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+    data,
+    user: ctx.session.user
+  }))
 }
-const deleteOrganizationalUnit = async (_: any, data: any, ctx: any) => {
-  return Object.assign(OrganizationsService.deleteOrganizationalUnit(data.id, ctx.session.user))
+const deleteOrganizationalUnit = async (_, data, ctx, info) => {
+  return Object.assign(OrganizationsService.deleteOrganizationalUnit({
+    unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+    id: data.id,
+    user: ctx.session.user
+  }))
 }
 
 export default {

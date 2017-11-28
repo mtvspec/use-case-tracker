@@ -38,15 +38,14 @@ const Component = {
   },
   issuesConnection: (root: any) => (root),
   childComponentsConnection: (root: any) => (root),
-  type: async (root: any, args: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
+  type: async (root: { type: number }, _, ctx, info) => {
     return root.type ?
-      await DictService.getDictValue(fields, root.typeID) : null
+      await DictService.getDictValue({
+        unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+        source: { id: root.type }
+      }) : null
   },
-  state: async (root: any, args: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return DictService.getDictValue(fields, root.stateID)
-  },
+  state: CommonResolvers.state,
   createdBy: CommonResolvers.createdBy,
   updatedBy: CommonResolvers.updatedBy,
   deletedBy: CommonResolvers.deletedBy,
@@ -62,15 +61,19 @@ const ComponentIssuesConnection = {
   }
 }
 const System = {
-  kind: async (root: any, args: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return root.kindID ?
-      await DictService.getDictValue(fields, root.kindID) : null
+  kind: async (root: { kind: number }, _, ctx, info) => {
+    return root.kind ?
+      await DictService.getDictValue({
+        unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+        source: { id: root.kind }
+      }) : null
   },
-  type: async (root: any, args: any, ctx: any, info: any) => {
-    const fields: any = Object.keys(ctx.utils.parseFields(info))
-    return root.typeID ?
-      await DictService.getDictValue(fields, root.typeID) : null
+  type: async (root: { type: number }, _, ctx, info) => {
+    return root.type ?
+      await DictService.getDictValue({
+        unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+        source: { id: root.type }
+      }) : null
   },
   state: CommonResolvers.state,
   systemComponentsConnection: (root: any) => (root),

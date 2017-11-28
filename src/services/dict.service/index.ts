@@ -1,19 +1,31 @@
-import { DatabaseService, QueryConfig } from './../database.service'
+import { DatabaseService, QueryConfig, ServiceConfig } from './../database.service'
+import { NodeConfig, NodesConfig } from '../interfaces';
 const DICT_TABLE: string = 'dict.e_dict'
 const DICT_VALUES_TABLE: string = 'dict.e_dict_value'
 let dictValueTableFields: string[] = []
 
 export class DictService extends DatabaseService {
-  public static async getDictValue (unfilteredFields: string[], args) {
-    return this.getNode({
-      table: DICT_VALUES_TABLE,
-      tableFields: dictValueTableFields,
-      unfilteredFields,
-      args
-    })
+  public static DictValuesConfig: ServiceConfig = {
+    table: '',
+    tableFields: []
   }
-  public static async getAllDictValues (fields: string[], dictName: string) {
-    const requestedFields: string = this.buildFieldSet(this.filterFields(dictValueTableFields, fields), 'v')
+  constructor() {
+    super()
+    async function getDictValuesTableFields (table) {
+      DictService.DictValuesConfig.table = table
+      const response: any = await <any>DictService.fields(table)
+      if (response && response.length > 0) DictService.DictValuesConfig.tableFields = response
+      else console.trace(response)
+    }
+    getDictValuesTableFields('dict.e_dict_value')
+  }
+  public static async getDictValue (config: NodeConfig) {
+    return this.getNode(Object.assign({}, DictService.DictValuesConfig, config))
+  }
+  public static async getAllDictValues (config: NodesConfig) {
+    console.log(config);
+
+    const requestedFields: string = this.buildFieldSet(this.filterFields(DictService.DictValuesConfig.tableFields, config.unfilteredFields), 'v')
     return await this.query(new QueryConfig({
       qty: '*',
       text: `
@@ -24,7 +36,7 @@ export class DictService extends DatabaseService {
         ${DICT_VALUES_TABLE} v,
         ${DICT_TABLE} d
       WHERE v.dict = d.id
-      AND d."systemName" = '${dictName}'
+      AND d."systemName" = '${config.source['dictName']}'
       ORDER BY v.id ASC;
       
       `
@@ -32,8 +44,4 @@ export class DictService extends DatabaseService {
   }
 }
 
-(async function getDictValuesTableFields () {
-  const response: any = await <any>DictService.fields(DICT_VALUES_TABLE)
-  if (response && response.length > 0) dictValueTableFields = response
-  else console.trace(response)
-})();
+const ds = new DictService()

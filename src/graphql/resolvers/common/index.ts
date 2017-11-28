@@ -1,31 +1,43 @@
 import { UsersService } from './../../../services'
 import { PersonsService } from './../../../services'
 import { DictService } from './../../../services'
-const createdBy = async (root: { createdBy: number }, args: any, ctx: any, info: any) => {
-  const fields = Object.keys(ctx.utils.parseFields(info))
-  return await UsersService.getUser(fields, { id: root.createdBy })
+const createdBy = async (root: { createdBy: number }, _, ctx, info) => {
+  return await UsersService.getUser({
+    unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+    source: { id: root.createdBy }
+  })
 }
-const updatedBy = async (root: { updatedBy: number }, args: any, ctx: any, info: any) => {
-  const fields = Object.keys(ctx.utils.parseFields(info))
+const updatedBy = async (root: { updatedBy: number }, _, ctx, info) => {
   return root.updatedBy > 0 ?
-    await UsersService.getUser(fields, { id: root.updatedBy }) : null
+    await UsersService.getUser({
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+      source: { id: root.updatedBy }
+    }) : null
 }
-const deletedBy = async (root: { deletedBy: number }, args: any, ctx: any, info: any) => {
-  const fields = Object.keys(ctx.utils.parseFields(info))
+const deletedBy = async (root: { deletedBy: number }, _, ctx, info) => {
   return root.deletedBy > 0 ?
-    await UsersService.getUser(fields, { id: root.deletedBy }) : null
+    await UsersService.getUser({
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+      source: { id: root.deletedBy }
+    }) : null
 }
-const modifiedBy = async (root: { modifiedBy: number }, args: any, ctx: any, info: any) => {
-  const fields = Object.keys(ctx.utils.parseFields(info))
-  return await UsersService.getUser(fields, { id: root.modifiedBy })
+const modifiedBy = async (root: { modifiedBy: number }, _, ctx, info) => {
+  return await UsersService.getUser({
+    unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+    source: { id: root.modifiedBy }
+  })
 }
-const state = async (root: { state: number }, args: any, ctx: any, info: any) => {
-  const fields: any[] = Object.keys(ctx.utils.parseFields(info))
-  return await DictService.getDictValue(fields, { id: root.state })
+const state = async (root: { state: number }, _, ctx, info) => {
+  return await DictService.getDictValue({
+    unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+    source: { id: root.state }
+  })
 }
-const getPersonByUserID = async (root: { person: number }, args: any, ctx: any, info: any) => {
-  const fields: any[] = Object.keys(ctx.utils.parseFields(info))
-  return await PersonsService.getPerson(fields, { id: root.person })
+const getPersonByUserID = async (root: { person: number }, _, ctx, info) => {
+  return await PersonsService.getPerson({
+    unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+    source: { id: root.person }
+  })
 }
 const CommonResolvers = {
   state,

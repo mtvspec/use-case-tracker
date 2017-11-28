@@ -45,15 +45,15 @@ export default {
     INSERT_ISSUE: (data: any) => {
       return `
       INSERT INTO issues.e_issue (
-        "authorID",
-        "typeID",
+        "author",
+        "type",
         "title",
         "description",
         "createdBy",
         "modifiedBy"
       ) VALUES (
-        ${convertData(data.authorID)},
-        ${convertData(data.typeID)},
+        ${convertData(data.author)},
+        ${convertData(data.type)},
         '${data.title}',
         ${convertData(data.description)},
         ${data.user.id},
@@ -64,8 +64,8 @@ export default {
       return `
       UPDATE issues.e_issue
       SET
-        "authorID" = ${convertData(data.authorID)},
-        "typeID" = ${convertData(data.typeID)},
+        "author" = ${convertData(data.author)},
+        "type" = ${convertData(data.type)},
         "title" = '${data.title}',
         "description" = ${convertData(data.description)},
         "updatedBy" = ${data.user.id},
@@ -89,7 +89,7 @@ export default {
       return `
       UPDATE issues.e_issue
       SET
-        "stateID" = 136,
+        "state" = 136,
         "openedBy" = ${data.user.id},
         "openedAt" = 'now()',
         "modifiedBy" = ${data.user.id}
@@ -100,7 +100,7 @@ export default {
       return `
       UPDATE issues.e_issue
       SET
-        "stateID" = 163,
+        "state" = 163,
         "openedBy" = ${data.user.id},
         "openedAt" = 'now()',
         "modifiedBy" = ${data.user.id}

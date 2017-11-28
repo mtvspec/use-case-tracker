@@ -4,14 +4,14 @@ const queries = {
   systems: {
     INSERT_COMPONENT: (data) => {
       return `
-      INSERT INTO components.e_component (
-        "componentID",
+      INSERT INTO systems.e_component (
+        "component",
         name,
         description,
         "createdBy",
         "modifiedBy"
       ) VALUES (
-        ${data.componentID},
+        ${data.component},
         '${data.name}',
         ${convertData(data.description)},
         ${data.user.id},
@@ -20,9 +20,9 @@ const queries = {
     },
     UPDATE_COMPONENT: (data) => {
       return `
-      UPDATE components.e_component
+      UPDATE systems.e_component
       SET
-        "typeID" = ${convertData(data.typeID)},
+        "type" = ${convertData(data.type)},
         name = '${data.name}',
         description = ${convertData(data.description)},
         "updatedBy" = ${data.user.id},

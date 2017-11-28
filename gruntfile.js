@@ -30,7 +30,7 @@ module.exports = function (grunt) {
 					module: "commonjs",
 					target: "es6",
 					sourceMap: true,
-					rootDir: "src"
+					rootDir: "src",
 				}
 			}
 		},
