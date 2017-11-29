@@ -17,6 +17,7 @@ export const RootQuery: DocumentNode = gql`
     ): Person
     allUsers: UsersConnection
     user (id: ID!): User
+    currentUser: User
     allIssues (input: Field, filter: Field): IssuesConnection
     issue (id: ID!): Issue
     projectMember(id: ID!): ProjectMember

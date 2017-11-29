@@ -28,7 +28,7 @@ export class PersonsService extends DatabaseService {
     getPersonContactEdgesTableFields('persons.r_e_person_e_contact')
   }
   public static getPersonsCount (config: NodesCountConfig) {
-    const fields = ["\"lastName\"", '\' \'', "\"firstName\"", '\' \'', "\"middleName\"", '\' \'', "\"iin\"", "\"dob\""]
+    const fields = ["\"lastName\"", '\' \'', "\"firstName\"", '\' \'', "\"middleName\"", '\' \'', "\"iin\"", '\' \'', "\"dob\""]
     return this.getNodesCount(Object.assign({}, config, this.PersonConfig, { fields }))
   }
   public static getPersons (config: NodesConfig) {

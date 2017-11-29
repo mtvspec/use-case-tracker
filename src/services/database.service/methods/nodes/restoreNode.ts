@@ -2,15 +2,16 @@ import { NodeConfig } from "../../interfaces"
 import { debug } from "../../debug.config"
 import { screenLines } from "../../messages"
 import db from './../../../../knex'
+import { DatabaseService } from "../../index"
 export async function restoreNode (config: NodeConfig) {
-  if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
+  if (!DatabaseService.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
   if (!config.id) throw Error('id required')
-  const user = {
+  const metadata = {
     restoredBy: config.user,
     restoredAt: 'now()',
     modifiedBy: config.user
   }
-  const data = Object.assign({}, { isDeleted: false }, user)
+  const data = Object.assign({}, { isDeleted: false }, metadata)
   const response = await db(config.table)
     .where({ id: config.id })
     .update(data)
@@ -24,15 +25,17 @@ export async function restoreNode (config: NodeConfig) {
     console.log(`DatabaseService : Restore Node`)
     console.log(screenLines.endLine)
   }
-  if (debug.mutations.restoreNode.arguments) console.log(arguments)
-  if (debug.mutations.restoreNode.response) {
+  if (debug.mutations.restoreNode.arguments) {
+    console.log(arguments)
     console.log(screenLines.endLine)
+  }
+  if (debug.mutations.restoreNode.response) {
     console.log(`DatabaseService : Restore Node Response`)
     console.log(screenLines.endLine)
     console.log('response:')
     console.log(response)
   }
-  if (response && response.id > 0) return response
+  if (response[0] && response[0].id > 0) return response
   else if (response === undefined) return null
-  return response[0]
+  else return response
 }

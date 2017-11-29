@@ -17,6 +17,7 @@ const resolvers = {
     person: PersonsResolvers.queries.PersonsQueriesResolver.getPerson,
     allUsers: (root, args, ctx) => ({ root, args, ctx }),
     user: UsersResolvers.queries.getUserByID,
+    currentUser: UsersResolvers.queries.currentUser,
     allIssues: (root, args, services) => ({ root, args, services }),
     issue: IssuesResolvers.queries.getIssueByID,
     projectMember: ProjectsResolvers.queries.getProjectMember,

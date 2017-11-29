@@ -2,16 +2,17 @@ import { NodeQueryConfig } from './../../interfaces'
 import { screenLines } from '../../messages'
 import { debug } from '../../debug.config'
 import db from './../../../../knex'
+import { DatabaseService } from '../../index'
 
 export async function getNode (config: NodeQueryConfig) {
-  if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
+  if (!DatabaseService.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
   if (!config.unfilteredFields) throw Error('requested fields is required')
   if (!config.source) throw Error('node id required')
-  const source = this.filterFieldsAndReturnValues(config.tableFields, Object.keys(config.source), config.source)
-  const requestedFields = this.filterFields(config.tableFields, config.unfilteredFields)
+  const source = DatabaseService.filterFieldsAndReturnValues(config.tableFields, Object.keys(config.source), config.source)
+  const requestedFields = DatabaseService.filterFields(config.tableFields, config.unfilteredFields)
   let args = [], filter = [], except = [], search = []
   if (config.args && Object.keys(config.args).length > 0) {
-    args = this.filterFieldsAndReturnValues(
+    args = DatabaseService.filterFieldsAndReturnValues(
       config.tableFields,
       Object.keys(config.args),
       config.args
@@ -19,7 +20,7 @@ export async function getNode (config: NodeQueryConfig) {
     if (!args) args = []
   }
   if (config.filter && Object.keys(config.filter).length > 0) {
-    filter = this.filterFieldsAndReturnValues(
+    filter = DatabaseService.filterFieldsAndReturnValues(
       config.tableFields,
       Object.keys(config.filter),
       config.filter
@@ -27,7 +28,7 @@ export async function getNode (config: NodeQueryConfig) {
     if (!filter) filter = []
   }
   if (config.except && Object.keys(config.except).length > 0) {
-    except = this.filterFieldsAndReturnValues(
+    except = DatabaseService.filterFieldsAndReturnValues(
       config.tableFields,
       Object.keys(config.except),
       config.except

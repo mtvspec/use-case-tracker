@@ -1,5 +1,6 @@
 import CommonResovers from './../common'
 import { UsersService } from './../../../services'
+import { SessionsService } from '../../../services/sessions.service/index';
 
 const getUserByID = async (_, args: { id: number }, ctx, info) => {
   return await UsersService.getUser({
@@ -18,6 +19,20 @@ const User = {
   modifiedBy: CommonResovers.modifiedBy
 }
 
+const currentUser = async (_, __, ctx, info) => {
+  console.log(ctx.session)
+  if (ctx.session.user > 0)
+    return await UsersService.getUser({
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+      source: { id: ctx.session.user },
+      except: { id: 0 }
+    })
+  else {
+    ctx.res.status(401)
+    return null;
+  }
+}
+
 const UsersConnection = {
   totalCount: async () => {
     return await UsersService.getUsersCount({
@@ -34,7 +49,8 @@ const UsersConnection = {
 const UsersResolvers = {
   User,
   UsersConnection,
-  getUserByID
+  getUserByID,
+  currentUser
 }
 
 export default UsersResolvers

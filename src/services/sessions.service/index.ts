@@ -10,8 +10,9 @@ export interface ISession {
   token: string
 }
 export class SessionsService extends DatabaseService {
-  public static async getSession (id: number) {
-
+  public static async getSession (token: string) {
+    return await db(SESSIONS_TABLE)
+      .where({ token }).first()
   }
   public static async openSession (data: ISession) {
     return await this.query(new QueryConfig({

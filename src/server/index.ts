@@ -64,20 +64,20 @@ export class Server {
       err.status = 404;
       next(err);
     });
-    this.requestInterceptor();
+    this.requestInterceptor()
     this.app.use('/api/graphql', bodyParser.text({ type: 'application/graphql' }), async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       // user authentification
-      if (req.body && req.body.operationName === 'authentificateUser') return next()
+      console.log(req.cookies)
+      // if (req.body && req.body.operationName === 'AuthentificateUserMutation') return next()
       // user session validation
-      // this.validateToken(req, res, next)
-      return next()
+      this.validateToken(req, res, next)
     })
     this.app.use('/api/graphql',
       graphqlExpress(
-        (req: express.Request) => (
+        (req: express.Request, res: express.Response) => (
           {
             schema,
-            context: { services, session: req.body.session, utils: { parseFields } },
+            context: { req, res, services, session: req.body.session, utils: { parseFields } },
             debug: true,
           }
         )
@@ -147,15 +147,26 @@ export class Server {
     })
   }
   public async validateToken (req: express.Request, res: express.Response, next: express.NextFunction) {
-    if (req.headers['authentification'] === 'true' && req.body.operationName === 'AuthentificateUserMutation') return next()
-    if (!req.headers['authorization']) { return res.status(401).json('Unauthorised').end() }
-    if (req.headers['authorization'] && typeof req.headers['authorization'] === 'string') {
-      const token: string = <string>req.headers['authorization']
-      const response = await <any>SessionsService.validateToken(token)
-      if (!(response && response.id > 0)) { return res.status(401).json('Invalid token').end() }
-      const session = await SessionsService.refreshToken(response.id)
-      req.body.session = session
-      return next()
+    if (req.body.operationName === 'AuthentificateUserMutation') return next()
+    if (req.cookies['session']) {
+      const response = await SessionsService.getSession(req.cookies['session'])
+      console.log(response)
+      if (response.id > 0) {
+        req.body.session = response
+        return next()
+      } else {
+        return res.status(401).json('invalid token').end()
+      }
+    } else {
+      if (!req.headers['authorization']) { return res.status(401).json('Unauthorised').end() }
+      if (req.headers['authorization'] && typeof req.headers['authorization'] === 'string') {
+        const token: string = <string>req.headers['authorization']
+        const response = await <any>SessionsService.validateToken(token)
+        if (!(response && response.id > 0)) { return res.status(401).json('Invalid token').end() }
+        const session = await SessionsService.refreshToken(response.id)
+        req.body.session = session
+        return next()
+      }
     }
   }
 }

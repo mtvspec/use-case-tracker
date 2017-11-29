@@ -2,12 +2,13 @@ import { NodesCountQueryConfig } from "../../interfaces"
 import { debug } from "../../debug.config"
 import { screenLines } from "../../messages"
 import db from './../../../../knex'
+import { DatabaseService } from "../../index"
 
 export async function getNodesCount (config: NodesCountQueryConfig) {
-  if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
+  if (!DatabaseService.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
   let args = [], filter = [], except = [], search = []
   if (config.args && Object.keys(config.args).length > 0) {
-    args = this.filterFieldsAndReturnValues(
+    args = DatabaseService.filterFieldsAndReturnValues(
       config.tableFields,
       Object.keys(config.args),
       config.args
@@ -15,7 +16,7 @@ export async function getNodesCount (config: NodesCountQueryConfig) {
     if (!args) args = []
   }
   if (config.filter && Object.keys(config.filter).length > 0) {
-    filter = this.filterFieldsAndReturnValues(
+    filter = DatabaseService.filterFieldsAndReturnValues(
       config.tableFields,
       Object.keys(config.filter),
       config.filter
@@ -27,7 +28,7 @@ export async function getNodesCount (config: NodesCountQueryConfig) {
     search.push(`lower(concat(${config.fields})) ~ lower('\\m${config.search}')`)
   }
   if (config.except && Object.keys(config.except).length > 0) {
-    except = this.filterFieldsAndReturnValues(
+    except = DatabaseService.filterFieldsAndReturnValues(
       config.tableFields,
       Object.keys(config.except),
       config.except

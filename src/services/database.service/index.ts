@@ -30,25 +30,25 @@ export interface ServiceConfig {
 
 export class DatabaseService {
   public static getNodes (config: NodesQueryConfig) {
-    return nodes.getNodes.bind(this)(config)
+    return nodes.getNodes(config)
   }
   public static getNodesCount (config: NodesCountQueryConfig) {
-    return nodes.getNodesCount.bind(this)(config)
+    return nodes.getNodesCount(config)
   }
   public static getNode (config: NodeQueryConfig) {
-    return nodes.getNode.bind(this)(config)
+    return nodes.getNode(config)
   }
   public static createNode (config: NodeMutationConfig) {
-    return nodes.createNode.bind(this)(config)
+    return nodes.createNode(config)
   }
   public static updateNode (config: NodeMutationConfig) {
-    return nodes.updateNode.bind(this)(config)
+    return nodes.updateNode(config)
   }
   public static deleteNode (config: NodeConfig) {
-    return nodes.deleteNode.bind(this)(config)
+    return nodes.deleteNode(config)
   }
   public static restoreNode (config: NodeConfig) {
-    return nodes.restoreNode.bind(this)(config)
+    return nodes.restoreNode(config)
   }
   public static getEdge (config: EdgeQueryConfig) {
     return edges.getEdge.bind(this)(config)

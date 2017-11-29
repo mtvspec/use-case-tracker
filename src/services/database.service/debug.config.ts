@@ -1,4 +1,4 @@
-const debugEnabled: boolean = true
+const debugEnabled: boolean = false
 interface debug {
   tables: {
     name: boolean
@@ -164,9 +164,9 @@ export const debug: debug = {
       response: debugEnabled || false
     },
     updateNode: {
-      name: debugEnabled || false,
-      arguments: debugEnabled || false,
-      response: debugEnabled || false
+      name: debugEnabled || true,
+      arguments: debugEnabled || true,
+      response: debugEnabled || true
     },
     deleteNode: {
       name: debugEnabled || false,
@@ -202,7 +202,7 @@ export const debug: debug = {
   filters: {
     fieldFilter: {
       arguments: false,
-      result: true
+      result: false
     },
     fieldFilterWithValues: {
       arguments: false,

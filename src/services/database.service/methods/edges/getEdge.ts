@@ -1,24 +1,22 @@
 import { EdgeQueryConfig } from "../../interfaces"
+import { DatabaseService } from "../../index"
 import { debug } from "../../debug.config"
 import { screenLines } from "../../messages"
 import db from './../../../../knex'
 export async function getEdge (config: EdgeQueryConfig) {
-  // source
-  // args?
-  // filter?
-  // except?
-  if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
+  if (!DatabaseService.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
   let args = []
   if (config.args && Object.keys(config.args).length > 0) {
-    args = this.filterFieldsAndReturnValues(
+    args = DatabaseService.filterFieldsAndReturnValues(
       config.tableFields,
       Object.keys(config.args),
       config.args
     )
-    if (!args) args = []
+    if (Object.keys(args).length === 0) args = []
   }
-  const requestedFields: string[] = this.filterFields(config.tableFields, config.unfilteredFields)
-  const filteredSource = this.filterFieldsAndReturnValues(config.tableFields, Object.keys(config.source), config.source)
+  const requestedFields: string[] = DatabaseService.filterFields(config.tableFields, config.unfilteredFields)
+  const filteredSource = DatabaseService.filterFieldsAndReturnValues(config.tableFields, Object.keys(config.source), config.source)
+  if (Object.keys(filteredSource).length === 0) throw Error('source field required')
   const response = await db(config.table)
     .select(requestedFields)
     .where(filteredSource)
@@ -32,9 +30,11 @@ export async function getEdge (config: EdgeQueryConfig) {
     console.log(`DatabaseService : Get Edge`)
     console.log(screenLines.endLine)
   }
-  if (debug.queries.getEdge.arguments) console.log(arguments)
-  if (debug.queries.getEdge.response) {
+  if (debug.queries.getEdge.arguments) {
+    console.log(arguments)
     console.log(screenLines.endLine)
+  }
+  if (debug.queries.getEdge.response) {
     console.log(`DatabaseService : Get Edge Response`)
     console.log(screenLines.endLine)
     console.log('Filtered requested fields:')
@@ -45,7 +45,7 @@ export async function getEdge (config: EdgeQueryConfig) {
     console.log(response)
     console.log(screenLines.endLine)
   }
-  if (response && response.id > 0) return response
+  if (response[0] && response[0].id > 0) return response[0]
   else if (response === undefined) return null
-  return response
+  else return response
 }

@@ -58,8 +58,8 @@ const typeDefs: DocumentNode = gql`
   }
 
   # Пользователь
-  type User implements Node {
-    id: ID!
+  type User {
+    id: ID
     person: Person
     username: String
     email: String
