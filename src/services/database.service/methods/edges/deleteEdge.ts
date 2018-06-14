@@ -1,8 +1,9 @@
 import { debug } from "../../debug.config"
 import { screenLines } from "../../messages"
 import db from './../../../../knex'
+import { DatabaseService } from "../../index"
 export async function deleteEdge (config) {
-  if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
+  if (!DatabaseService.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
   const user = {
     deletedBy: config.user,
     deletedAt: 'now()',

@@ -1,28 +1,27 @@
-import { NodeMutationConfig } from "../../interfaces"
+import { CreateNodeMutationConfig } from "../../interfaces"
 import { screenLines } from "../../messages"
 import { debug } from "../../debug.config"
 import db from './../../../../knex'
 import { DatabaseService } from "../../index"
 
-export async function createNode (config: NodeMutationConfig) {
+export async function createNode (config: CreateNodeMutationConfig) {
   if (!DatabaseService.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
-  const fields: string[] = Object.keys(config.data.input)
   const filteredUserInput = DatabaseService.filterFieldsAndReturnValues(
     config.tableFields,
-    fields,
+    Object.keys(config.data.input),
     config.data.input
   )
-  const USER = {
+  const user = {
     createdBy: config.user,
     modifiedBy: config.user
   }
-  const DATA = Object.assign({}, filteredUserInput, USER)
+  const data = Object.assign({}, filteredUserInput, user)
   const response = await db(config.table)
-    .insert(DATA)
-    .where({ id: DATA.id })
+    .insert(data)
+    .where({ id: data.id })
     .returning('*')
     .catch((err: Error) => {
-      console.trace(err)
+      console.error(err)
       return err
     })
   if (debug.mutations.createNode.name) {
@@ -32,7 +31,6 @@ export async function createNode (config: NodeMutationConfig) {
   }
   if (debug.mutations.createNode.arguments) {
     console.log(arguments)
-    console.log(screenLines.endLine)
   }
   if (debug.mutations.createNode.response) {
     console.log(screenLines.endLine)
@@ -40,8 +38,11 @@ export async function createNode (config: NodeMutationConfig) {
     console.log(screenLines.endLine)
     console.log('Filtered data fields:')
     console.log(filteredUserInput)
-    console.log('response:')
+    console.log(screenLines.endLine)
+    console.log('Response:')
+    console.log(screenLines.endLine)
     console.log(response)
+    console.log(screenLines.endLine)
   }
   if (response[0] && response[0].id > 0) return response[0]
   else if (response === undefined) return null

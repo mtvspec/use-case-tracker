@@ -17,7 +17,7 @@ export async function restoreNode (config: NodeConfig) {
     .update(data)
     .returning('*')
     .catch((err: Error) => {
-      console.trace(err)
+      console.error(err)
       return err
     })
   if (debug.mutations.restoreNode.name) {

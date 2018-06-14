@@ -1,15 +1,16 @@
 import { debug } from "../../debug.config"
 import { screenLines } from "../../messages"
 import db from './../../../../knex'
+import { DatabaseService } from "../../index";
 export async function updateEdge (config) {
-  if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
+  if (!DatabaseService.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
   const fields: string[] = Object.keys(config.data.input)
   const user = {
     updatedBy: config.user,
     updatedAt: 'now()',
     modifiedBy: config.user
   }
-  const filteredFieldsWithValues = this.filterFieldsAndReturnValues(
+  const filteredFieldsWithValues = DatabaseService.filterFieldsAndReturnValues(
     config.tableFields,
     fields,
     config.data.input

@@ -54,7 +54,7 @@ export async function getNodes (config: NodesQueryConfig) {
     .whereRaw(search)
     .orderBy(orderBy)
     .catch((err: Error) => {
-      console.trace(err)
+      console.error(err)
       return err
     })
   if (debug.queries.getNodes.name) {

@@ -2,9 +2,10 @@ import { EdgesQueryConfig } from "../../interfaces"
 import { debug } from "../../debug.config"
 import { screenLines } from "../../messages"
 import db from './../../../../knex'
+import { DatabaseService } from "../../index"
 export async function getEdges (config: EdgesQueryConfig) {
-  if (!this.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
-  const requestedFields = this.filterFields(config.tableFields, config.unfilteredFields)
+  if (!DatabaseService.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
+  const requestedFields = DatabaseService.filterFields(config.tableFields, config.unfilteredFields)
   const response = await db(config.table)
     .select(requestedFields)
     .where(config.source)

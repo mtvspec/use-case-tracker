@@ -45,7 +45,7 @@ export async function getEdge (config: EdgeQueryConfig) {
     console.log(response)
     console.log(screenLines.endLine)
   }
-  if (response[0] && response[0].id > 0) return response[0]
+  if (response && response.id > 0) return response
   else if (response === undefined) return null
   else return response
 }

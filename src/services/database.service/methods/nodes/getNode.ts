@@ -17,7 +17,7 @@ export async function getNode (config: NodeQueryConfig) {
       Object.keys(config.args),
       config.args
     )
-    if (!args) args = []
+    if (Object.keys(args).length === 0) args = []
   }
   if (config.filter && Object.keys(config.filter).length > 0) {
     filter = DatabaseService.filterFieldsAndReturnValues(
@@ -25,7 +25,7 @@ export async function getNode (config: NodeQueryConfig) {
       Object.keys(config.filter),
       config.filter
     )
-    if (!filter) filter = []
+    if (Object.keys(filter).length === 0) filter = []
   }
   if (config.except && Object.keys(config.except).length > 0) {
     except = DatabaseService.filterFieldsAndReturnValues(
@@ -33,7 +33,7 @@ export async function getNode (config: NodeQueryConfig) {
       Object.keys(config.except),
       config.except
     )
-    if (!except) except = []
+    if (Object.keys(except).length === 0) except = []
   }
   const response = await db(config.table)
     .select(requestedFields)
@@ -42,12 +42,15 @@ export async function getNode (config: NodeQueryConfig) {
     .andWhere(filter)
     .whereNot(except).first()
     .catch(err => {
+      console.error(err)
       return err
     })
   if (debug.queries.getNode.name) {
     console.log(screenLines.endLine)
     console.log(`DatabaseService : Get Node`)
     console.log(screenLines.endLine)
+  }
+  if (debug.queries.getNode.arguments) {
     console.log(arguments)
     console.log(screenLines.endLine)
   }

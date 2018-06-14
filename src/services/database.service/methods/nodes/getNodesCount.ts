@@ -42,7 +42,7 @@ export async function getNodesCount (config: NodesCountQueryConfig) {
     .whereRaw(search)
     .count('id as totalCount').first()
     .catch((err: Error) => {
-      console.trace(err)
+      console.error(err)
       return err
     })
   if (debug.queries.getNodes.name) {

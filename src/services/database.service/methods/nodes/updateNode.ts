@@ -1,11 +1,16 @@
-import { NodeMutationConfig } from "../../interfaces"
+import { UpdateNodeMutationConfig } from "../../interfaces"
 import { debug } from "../../debug.config"
 import { screenLines } from "../../messages"
 import db from './../../../../knex'
 import { DatabaseService } from "../../index"
-export async function updateNode (config: NodeMutationConfig) {
+export async function updateNode (config: UpdateNodeMutationConfig) {
+  console.log(config)
   if (!DatabaseService.validateTable(config.table)) throw Error(`invalid table name: ${config.table}`)
-  const fields: string[] = Object.keys(config.data.input)
+  const target = DatabaseService.filterFieldsAndReturnValues(
+    config.tableFields,
+    Object.keys(config.target),
+    config.target
+  )
   const user = {
     updatedBy: config.user,
     updatedAt: 'now()',
@@ -13,12 +18,12 @@ export async function updateNode (config: NodeMutationConfig) {
   }
   const filteredFieldsWithValues = DatabaseService.filterFieldsAndReturnValues(
     config.tableFields,
-    fields,
-    config.data.input
+    Object.keys(config.data),
+    config.data
   )
   const data = Object.assign({}, filteredFieldsWithValues, user)
   const response = await db(config.table)
-    .where({ id: data.id })
+    .where(target)
     .update(data)
     .returning('*')
     .catch((err: Error) => {

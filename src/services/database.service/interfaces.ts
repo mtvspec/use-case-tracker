@@ -54,9 +54,17 @@ export interface NodesCountQueryConfig {
   except?: { [key: string]: any }
 }
 
-export interface NodeMutationConfig {
+export interface CreateNodeMutationConfig {
   table: string
   tableFields: string[]
+  data: { [key: string]: any }
+  user: number
+}
+
+export interface UpdateNodeMutationConfig {
+  table: string
+  tableFields: string[]
+  target: { [key: string]: any }
   data: { [key: string]: any }
   user: number
 }

@@ -18,7 +18,7 @@ export async function deleteNode (config: NodeConfig) {
     .update(data)
     .returning('*')
     .catch((err: Error) => {
-      console.trace(err)
+      console.error(err)
       return err
     })
   if (debug.mutations.deleteNode.name) {
