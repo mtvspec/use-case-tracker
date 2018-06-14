@@ -63,6 +63,84 @@ const typeDefs: DocumentNode = gql`
     person: Person
     username: String
     email: String
+    roles: UserRolesConnection
+    state: DictValue
+    isDeleted: Boolean
+    createdBy: User
+    createdAt: DateTime
+    updatedBy: User
+    updatedAt: DateTime
+    deletedBy: User
+    deletedAt: DateTime
+    modifiedBy: User
+    modifiedAt: DateTime
+  }
+
+  type UserRole {
+    id: ID
+    name: String
+    description: String
+    state: DictValue
+    isDeleted: Boolean
+    createdBy: User
+    createdAt: DateTime
+    updatedBy: User
+    updatedAt: DateTime
+    deletedBy: User
+    deletedAt: DateTime
+    modifiedBy: User
+    modifiedAt: DateTime
+  }
+
+  type UserRoleEdge {
+    id: ID
+    node: UserRole
+    state: DictValue
+    isDeleted: Boolean
+    createdBy: User
+    createdAt: DateTime
+    updatedBy: User
+    updatedAt: DateTime
+    deletedBy: User
+    deletedAt: DateTime
+    modifiedBy: User
+    modifiedAt: DateTime
+  }
+
+  type UserRolesConnection {
+    totalCount: Int
+    edges: [UserRoleEdge!]
+  }
+
+  type RolesConnection {
+    totalCount: Int
+    roles: [UserRole!]
+  }
+
+  type RolePermissionsConnection {
+    totalCount: Int
+    edges: [RolePermissionEdge!]
+  }
+
+  type RolePermissionEdge {
+    id: ID
+    node: Permission
+    state: DictValue
+    isDeleted: Boolean
+    createdBy: User
+    createdAt: DateTime
+    updatedBy: User
+    updatedAt: DateTime
+    deletedBy: User
+    deletedAt: DateTime
+    modifiedBy: User
+    modifiedAt: DateTime
+  }
+
+  type Permission {
+    id: ID
+    name: String
+    description: String
     state: DictValue
     isDeleted: Boolean
     createdBy: User

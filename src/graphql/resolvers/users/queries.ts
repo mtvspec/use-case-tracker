@@ -10,8 +10,33 @@ const getUserByID = async (_, args: { id: number }, ctx, info) => {
   })
 }
 
+const UserRolesConnection = {
+  totalCount: async () => {
+    return await UsersService.getUsersCount({})
+      .then(data => { return data.totalCount })
+  },
+  edges: async (root: { id: number }, __, ctx, info) => {
+    return await UsersService.getUserRolesEdges({
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+      args: { source: root.id }
+    })
+  }
+}
+
+const getRole = async (root: { node: number }, _, ctx, info) => {
+  return await UsersService.getRole({
+    unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+    source: { id: root.node }
+  })
+}
+
+const UserRoleEdge = {
+  node: getRole
+}
+
 const User = {
   person: CommonResovers.getPersonByUserID,
+  roles: (root) => (root),
   state: CommonResovers.state,
   createdBy: CommonResovers.createdBy,
   updatedBy: CommonResovers.updatedBy,
@@ -20,7 +45,6 @@ const User = {
 }
 
 const currentUser = async (_, __, ctx, info) => {
-  console.log(ctx.session)
   if (ctx.session.user > 0)
     return await UsersService.getUser({
       unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
@@ -39,8 +63,20 @@ const UsersConnection = {
       except: { id: 0 }
     }).then(data => { return data.totalCount })
   },
-  users: async (root: any, args: any, ctx: any, info: any) => {
+  users: async (_, __, ctx, info) => {
     return await UsersService.getAllUsers({
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info))
+    })
+  }
+}
+
+const RolesConnection = {
+  totalCount: async () => {
+    return await UsersService.getUsersCount({})
+      .then(data => { return data.totalCount })
+  },
+  roles: async (_, __, ctx, info) => {
+    return await UsersService.getRoles({
       unfilteredFields: Object.keys(ctx.utils.parseFields(info))
     })
   }
@@ -50,7 +86,10 @@ const UsersResolvers = {
   User,
   UsersConnection,
   getUserByID,
-  currentUser
+  currentUser,
+  RolesConnection,
+  UserRolesConnection,
+  UserRoleEdge,
 }
 
 export default UsersResolvers
