@@ -4,11 +4,13 @@ import {
 import db from './../../knex'
 const SESSIONS_TABLE: string = 'sessions.e_session'
 import { queries } from './queries'
-import { token } from 'morgan';
+import { token } from 'morgan'
+
 export interface ISession {
   user: number
   token: string
 }
+
 export class SessionsService extends DatabaseService {
   public static async getSession (token: string) {
     return await db(SESSIONS_TABLE)
@@ -67,8 +69,7 @@ export class SessionsService extends DatabaseService {
     }))
   }
   public static getSessionBySessionToken = async (token: string) => {
-    return await db
-      .from(SESSIONS_TABLE)
+    return await db(SESSIONS_TABLE)
       .where({ token })
       .first()
   }
