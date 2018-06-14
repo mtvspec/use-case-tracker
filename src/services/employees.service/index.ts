@@ -1,6 +1,8 @@
 import { DatabaseService, QueryConfig, ServiceConfig } from './../database.service'
 import { EdgesConfig, NodesConfig, NodeConfig, EdgesCountConfig } from '../interfaces'
 import { OrganizationsService } from '../index'
+import { PersonsService } from '../persons.service/index'
+import db from './../../knex'
 
 export class EmployeesService extends DatabaseService {
   private static EmployeeConfig: ServiceConfig = {
@@ -121,31 +123,31 @@ export class EmployeesService extends DatabaseService {
       qty: '*',
       text: `
 
-      SELECT  
-        ${requestedFields}
-      FROM
-        ${EmployeesService.EmployeeConfig.table} m,
-        ${OrganizationsService.OrganizationalUnitConfig.table} ou
-      WHERE ou."manager" = m.id
-      AND ou.id in (
-      WITH RECURSIVE cte AS (
-        SELECT
-          id, 1 AS level
+        SELECT  
+          ${requestedFields}
         FROM
-          ${OrganizationsService.OrganizationalUnitConfig.table}
-        WHERE "organizationalUnit" = ${config.source['id']}
-        UNION ALL
+          ${EmployeesService.EmployeeConfig.table} m,
+          ${OrganizationsService.OrganizationalUnitConfig.table} ou
+        WHERE ou."manager" = m.id
+        AND ou.id in (
+        WITH RECURSIVE cte AS (
+          SELECT
+            id, 1 AS level
+          FROM
+            ${OrganizationsService.OrganizationalUnitConfig.table}
+          WHERE "organizationalUnit" = ${config.source['id']}
+          UNION ALL
+          SELECT
+            cou.id, pou.level + 1
+          FROM cte pou
+          JOIN ${OrganizationsService.OrganizationalUnitConfig.table} cou ON cou."organizationalUnit" = pou.id
+        )
         SELECT
-          cou.id, pou.level + 1
-        FROM cte pou
-        JOIN ${OrganizationsService.OrganizationalUnitConfig.table} cou ON cou."organizationalUnit" = pou.id
-      )
-      SELECT
-        id
-      FROM
-        cte
-      ORDER BY level
-      );
+          id
+        FROM
+          cte
+        ORDER BY level
+        );
       
       `
     }))
@@ -158,20 +160,25 @@ export class EmployeesService extends DatabaseService {
       qty: '*',
       text: `
 
-      SELECT
-        ${requestedFields}
-      FROM
-        ${EmployeesService.EmployeeConfig.table} e,
-        persons.e_person p
-      WHERE e."person" = p.id
-      AND e."organizationalUnit" in (
-      WITH RECURSIVE cte AS (
         SELECT
-          id, 1 AS level
+          ${requestedFields}
         FROM
-          ${OrganizationsService.OrganizationalUnitConfig.table}
-        WHERE id = ${config.source['id']}
-        UNION ALL
+          ${EmployeesService.EmployeeConfig.table} e,
+          persons.e_person p
+        WHERE e."person" = p.id
+        AND e."organizationalUnit" in (
+        WITH RECURSIVE cte AS (
+          SELECT
+            id, 1 AS level
+          FROM
+            ${OrganizationsService.OrganizationalUnitConfig.table}
+          WHERE id = ${config.source['id']}
+          UNION ALL
+          SELECT
+            cou.id, pou.level + 1
+          FROM cte pou
+          JOIN ${OrganizationsService.OrganizationalUnitConfig.table} cou ON cou."organizationalUnit" = pou.id
+        )
         SELECT
           id
         FROM

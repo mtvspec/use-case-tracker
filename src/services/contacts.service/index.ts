@@ -24,7 +24,7 @@ export default class ContactsService extends DatabaseService {
   public static createContact (config: { unfilteredFields: string[], data: any, user: number }) {
     return this.createNode(Object.assign({}, ContactsService.ContactsConfig, config))
   }
-  public static updateContact (config: { unfilteredFields: string[], data: any, user: number }) {
+  public static updateContact (config: { unfilteredFields: string[], target: { [key: string]: any }, data: any, user: number }) {
     return this.updateNode(Object.assign({}, ContactsService.ContactsConfig, config))
   }
   public static deleteContact (config: { unfilteredFields: string[], id: number, user: number }) {
