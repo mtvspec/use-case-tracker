@@ -7,11 +7,11 @@ const getCustomerByID = async (_, args: { id: number }) => {
 }
 
 const CustomersConnection = {
-  totalCount: async (root) => {
+  totalCount: async () => {
     return await CustomersService.getCustomersCount()
-      .then((data: { totalCount: number }) => { return data.totalCount })
+      .then((data: any) => { return data.totalCount })
   },
-  customers: async (root: any) => {
+  customers: async () => {
     return await CustomersService.getCustomers()
   }
 }
@@ -19,7 +19,7 @@ const CustomersConnection = {
 const CustomerProjectsConnection = {
   totalCount: async (root: { id: number }, _) => {
     return await CustomersService.getCustomersProjectsCount(root.id)
-      .then((data: { totalCount: number }) => { return data.totalCount })
+      .then((data: any) => { return data.totalCount })
   },
   projects: async (root: { id: number }) => {
     return await CustomersService.getCustomersProjects(root.id)
@@ -36,7 +36,7 @@ const Customer = {
         source: { id: root.organization }
       }) : null
   },
-  projectsConnection: (root: any) => (root),
+  projectsConnection: (root) => (root),
   createdBy: CommonResolvers.createdBy,
   updatedBy: CommonResolvers.updatedBy,
   deletedBy: CommonResolvers.deletedBy,

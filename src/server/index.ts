@@ -150,7 +150,6 @@ export class Server {
     if (req.body.operationName === 'AuthentificateUserMutation') return next()
     if (req.cookies['session']) {
       const response = await SessionsService.getSession(req.cookies['session'])
-      console.log(response)
       if (response.id > 0) {
         req.body.session = response
         return next()

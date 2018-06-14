@@ -3,20 +3,20 @@ import { DictService } from './../../../services/dict.service'
 import { SystemsService } from './../../../services/systems.service'
 
 const SystemComponentsConnection = {
-  totalCount: async (root: any) => {
+  totalCount: async (root: { id: number }) => {
     return await SystemsService.getSystemComponentsCount(root.id)
       .then((data: any) => { return data.totalCount })
   },
-  components: async (root: any) => {
+  components: async (root: { id: number }) => {
     return await SystemsService.getSystemComponents(root.id)
   }
 }
 const ChildComponentsConnection = {
-  totalCount: async (root: any) => {
+  totalCount: async (root: { id: number }) => {
     return await SystemsService.getChildComponentsCount(root.id)
       .then((data: any) => { return data.totalCount })
   },
-  components: async (root: any) => {
+  components: async (root: { id: number }) => {
     return await SystemsService.getChildComponents(root.id)
   }
 }
@@ -52,11 +52,11 @@ const Component = {
   modifiedBy: CommonResolvers.modifiedBy
 }
 const ComponentIssuesConnection = {
-  totalCount: async (root: any) => {
+  totalCount: async (root: { id: number }) => {
     return await SystemsService.getComponentIssuesEdgesCount(root.id)
       .then((data: any) => { return data.totalCount })
   },
-  edges: async (root: any) => {
+  edges: async (root: { id: number }) => {
     return await SystemsService.getComponentIssuesEdges(root.id)
   }
 }
@@ -76,7 +76,7 @@ const System = {
       }) : null
   },
   state: CommonResolvers.state,
-  systemComponentsConnection: (root: any) => (root),
+  systemComponentsConnection: (root) => (root),
   createdBy: CommonResolvers.createdBy,
   updatedBy: CommonResolvers.updatedBy,
   deletedBy: CommonResolvers.deletedBy,

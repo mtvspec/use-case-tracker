@@ -24,11 +24,7 @@ export default class AuthService {
       unfilteredFields: ['id', 'password'],
       source: { username: config.credentials.username }
     })
-    console.log(response)
     const password = bcrypt.hashSync(config.credentials.password)
-    console.log(password)
-    console.log(bcrypt.compareSync(config.credentials.password, response.password))
-
     return (response && response.id && response.id > 0) ?
       (bcrypt.compareSync(config.credentials.password, response.password) ?
         response.id : false)
@@ -38,7 +34,6 @@ export default class AuthService {
     Promise<ISession | boolean> {
     const token: string = uuid()
     const response = await <any>SessionsService.openSession({ user, token })
-    console.log(response)
     return (response.id && response.id > 0) ?
       response : false
   }

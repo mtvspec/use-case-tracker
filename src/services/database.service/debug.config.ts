@@ -164,9 +164,9 @@ export const debug: debug = {
       response: debugEnabled || false
     },
     updateNode: {
-      name: debugEnabled || true,
-      arguments: debugEnabled || true,
-      response: debugEnabled || true
+      name: true,
+      arguments: true,
+      response: true
     },
     deleteNode: {
       name: debugEnabled || false,

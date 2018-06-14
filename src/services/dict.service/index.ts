@@ -11,7 +11,7 @@ export class DictService extends DatabaseService {
   }
   constructor() {
     super()
-    async function getDictValuesTableFields (table) {
+    async function getDictValuesTableFields (table: string) {
       DictService.DictValuesConfig.table = table
       const response: any = await <any>DictService.fields(table)
       if (response && response.length > 0) DictService.DictValuesConfig.tableFields = response
@@ -23,9 +23,12 @@ export class DictService extends DatabaseService {
     return this.getNode(Object.assign({}, DictService.DictValuesConfig, config))
   }
   public static async getAllDictValues (config: NodesConfig) {
-    console.log(config);
+    console.log(config)
 
-    const requestedFields: string = this.buildFieldSet(this.filterFields(DictService.DictValuesConfig.tableFields, config.unfilteredFields), 'v')
+    const requestedFields: string = this.buildFieldSet(
+      this.filterFields(
+        DictService.DictValuesConfig.tableFields,
+        config.unfilteredFields), 'v')
     return await this.query(new QueryConfig({
       qty: '*',
       text: `

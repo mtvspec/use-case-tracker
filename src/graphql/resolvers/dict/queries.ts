@@ -2,7 +2,7 @@ import CommonResolvers from './../common'
 
 import { DictService } from './../../../services'
 
-const getDictValue = async (root, _, ctx, info) => {
+const getDictValue = async (root: { args: { dictName: string } }, _, ctx, info) => {
   return await DictService.getAllDictValues({
     unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
     source: { dictName: root.args.dictName }

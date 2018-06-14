@@ -13,7 +13,7 @@ const ProjectsConnection = {
     return await ProjectsService.getProjectsCount()
       .then(data => { return data.totalCount })
   },
-  projects: async (root: any) => {
+  projects: async (root: { args: { projectName: string } }) => {
     return root.args.projectName ? await ProjectsService.getProjectByProjectName(root.args.projectName) :
       await ProjectsService.getProjects()
   }
@@ -34,7 +34,7 @@ const ProjectMemberRoleIssuesConnection = {
     return await ProjectsService.getProjectMemberRoleIssuesCount(root.id)
       .then((data: any) => { return data.totalCount })
   },
-  issues: async (root: any) => {
+  issues: async (root: { id: number }) => {
     return await ProjectsService.getProjectMemberRoleIssues(root.id)
   }
 }
@@ -93,7 +93,7 @@ const ProjectMembersConnection = {
     return await ProjectsService.getProjectTeamMembersCount(root.id)
       .then((data: any) => { return data.totalCount })
   },
-  members: async (root) => {
+  members: async (root: { id: number }) => {
     return await ProjectsService.getProjectMembers(root.id)
   }
 }

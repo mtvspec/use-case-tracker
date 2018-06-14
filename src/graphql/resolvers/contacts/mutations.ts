@@ -1,7 +1,7 @@
 import { ContactsService } from './../../../services'
 
 const mutations = {
-  createPersonContact: async (root, data, ctx, info) => {
+  createPersonContact: async (_, data, ctx, info) => {
     return Object.assign(await ContactsService.createContact({
       unfilteredFields: ctx.utils.parseFields(info),
       data,
@@ -11,6 +11,7 @@ const mutations = {
   updatePersonContact: async (_, data, ctx, info) => {
     return Object.assign(await ContactsService.updateContact({
       unfilteredFields: ctx.utils.parseFields(info),
+      target: { id: data.id },
       data,
       user: ctx.session.user
     }))

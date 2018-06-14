@@ -1,5 +1,5 @@
-import { DocumentNode } from "graphql";
-import gql from "graphql-tag";
+import { DocumentNode } from "graphql"
+import gql from "graphql-tag"
 
 export const RootQuery: DocumentNode = gql`
 
@@ -12,11 +12,13 @@ export const RootQuery: DocumentNode = gql`
       filter: PersonDataFilterFields
     ): PersonsConnection
     person (
-      id: ID!,
+      id: ID!
       filter: PersonDataFilterFields
     ): Person
     allUsers: UsersConnection
+    birthdays (month: Int): [Person]
     user (id: ID!): User
+    allRoles: RolesConnection
     currentUser: User
     allIssues (input: Field, filter: Field): IssuesConnection
     issue (id: ID!): Issue
@@ -33,9 +35,9 @@ export const RootQuery: DocumentNode = gql`
       search: String
     ): OrganizationalUnitsConnection
     organizationalUnit (id: ID!): OrganizationalUnit
-    session (id: ID!): Session!,
+    session (id: ID!): Session!
     system (id: ID!): System
-    component (id: ID!): Component,
+    component (id: ID!): Component
     organizationalUnit (id: ID!): OrganizationalUnit
     employee (id: ID!): Employee
   }

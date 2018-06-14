@@ -1,7 +1,8 @@
 import UsersResolvers from './../users'
 import { UsersService } from './../../../services'
 import { SessionsService } from './../../../services'
-const getSessionByID = async (root, args, ctx, info) => {
+
+const getSessionByID = async (_, args: { id: string }) => {
   return await SessionsService.getSession(args.id)
 }
 const Session = {

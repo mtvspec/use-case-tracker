@@ -2,7 +2,8 @@ import {
   NodeQueryConfig,
   NodesQueryConfig,
   NodesCountQueryConfig,
-  NodeMutationConfig,
+  CreateNodeMutationConfig,
+  UpdateNodeMutationConfig,
   NodeConfig,
   EdgeQueryConfig,
   EdgesQueryConfig,
@@ -38,10 +39,10 @@ export class DatabaseService {
   public static getNode (config: NodeQueryConfig) {
     return nodes.getNode(config)
   }
-  public static createNode (config: NodeMutationConfig) {
+  public static createNode (config: CreateNodeMutationConfig) {
     return nodes.createNode(config)
   }
-  public static updateNode (config: NodeMutationConfig) {
+  public static updateNode (config: UpdateNodeMutationConfig) {
     return nodes.updateNode(config)
   }
   public static deleteNode (config: NodeConfig) {

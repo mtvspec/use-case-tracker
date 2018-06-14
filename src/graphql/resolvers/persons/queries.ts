@@ -7,7 +7,7 @@ import { DictService } from './../../../services'
 import { CustomersService } from './../../../services'
 
 class PersonsQueriesResolver {
-  public static getPerson = async (_, args, ctx, info) => {
+  public static getPerson = async (_, args: { [key: string]: any }, ctx, info) => {
     return await PersonsService.getPerson({
       unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
       source: { id: args.id },
@@ -26,7 +26,7 @@ class PersonsQueriesResolver {
       orderBy: ['lastName', 'firstName', 'middleName']
     })
   }
-  public static getPersonsTotalCount = async (root: any) => {
+  public static getPersonsTotalCount = async (root) => {
     PersonsService.getPersonsCount({
       args: root.args && Object.keys(root.args).length > 0 ? root.args : null,
       filter: root.args.filter && Object.keys(root.args.filter).length > 0 ? root.args.filter : null,
@@ -99,7 +99,7 @@ const Person = {
   modifiedBy: CommonResolvers.modifiedBy,
 }
 const PersonsConnection = {
-  totalCount: async (root: any) => {
+  totalCount: async (root) => {
     return await PersonsService.getPersonsCount({
       args: root.args && Object.keys(root.args).length > 0 ? root.args : null,
       filter: root.args.filter && Object.keys(root.args.filter).length > 0 ? root.args.filter : null,

@@ -4,7 +4,7 @@ import { ProjectsService } from './../../../services/projects.service'
 import { DictService } from './../../../services/dict.service'
 import CommonResolvers from './../common'
 
-const getIssueByID = async (root: any, args: any) => {
+const getIssueByID = async (_, args: { id: number }) => {
   return await IssuesService.getIssue(args.id)
 }
 
@@ -30,7 +30,7 @@ const IssuesConnection = {
 }
 
 const Issue = {
-  author: async (root: any) => {
+  author: async (root: { author: number }) => {
     return root.author ?
       await ProjectsService.getProjectMember(root.author) : null
   },
