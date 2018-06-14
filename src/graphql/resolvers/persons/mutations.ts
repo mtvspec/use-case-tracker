@@ -28,6 +28,13 @@ const mutations = {
       id: data.id,
       user: ctx.session.user
     }))
+  },
+  createContact: async (_, data, ctx, info) => {
+    return Object.assign(await PersonsService.createContact({
+      unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+      data,
+      user: ctx.session.user
+    }))
   }
 }
 

@@ -93,7 +93,7 @@ const resolvers = {
     deleteOrganization: OrganizationsResolvers.mutations.deleteOrganization,
     createOrganizationalUnit: OrganizationsResolvers.mutations.createOrganizationalUnit,
     updateOrganizationalUnit: OrganizationsResolvers.mutations.updateOrganizationalUnit,
-    createPersonContact: ContactsResolvers.mutations.createPersonContact,
+    createPersonContact: PersonsResolvers.mutations.createContact,
     updatePersonContact: ContactsResolvers.mutations.updatePersonContact,
     deleteContact: ContactsResolvers.mutations.deleteContact,
     createProject: ProjectsResolvers.mutations.createProject,

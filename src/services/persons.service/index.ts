@@ -59,6 +59,30 @@ export class PersonsService extends DatabaseService {
   public static getPhone (config) {
     return this.getEdge(Object.assign({}, this.PersonContactsConfig, config))
   }
+  public static async createContact (config: CreateNodeMutationConfig) {
+    console.log(config.data)
+    const CreateContactResponse = await ContactsService.createContact({
+      unfilteredFields: Object.keys(config.data.input),
+      data: config.data.input,
+      user: config.user
+    })
+    console.log(CreateContactResponse)
+    if (CreateContactResponse && CreateContactResponse.id > 0) {
+      const PersonContactEdgeData = {
+        source: config.data.input.person,
+        node: CreateContactResponse.id
+      }
+      const CreatePersonContactEdgeResponse = await PersonsService.createEdge({
+        unfilteredFields: Object.keys(config.data.input),
+        data: PersonContactEdgeData,
+        user: config.user
+      })
+      console.log(CreatePersonContactEdgeResponse)
+      if (CreatePersonContactEdgeResponse && CreatePersonContactEdgeResponse.id > 0) return CreatePersonContactEdgeResponse
+      else return null
+    }
+    else return null
+  }
 }
 
 export const ps = new PersonsService()
