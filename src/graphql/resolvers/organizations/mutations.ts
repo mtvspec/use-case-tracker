@@ -31,7 +31,8 @@ const createOrganizationalUnit = async (_, data, ctx, info) => {
 const updateOrganizationalUnit = async (_, data, ctx, info) => {
   return Object.assign(OrganizationsService.updateOrganizationalUnit({
     unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
-    data,
+    target: { id: data.input.id },
+    data: data.input,
     user: ctx.session.user
   }))
 }

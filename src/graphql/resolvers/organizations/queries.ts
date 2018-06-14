@@ -43,9 +43,9 @@ const Organization = {
     })
   },
   manager: getManager,
-  contacts: (root: any) => (root),
-  mainPhone: async (root: { id: number }, _: any, ctx: any, info: any) => {
-    const response: any = await OrganizationsService.getPhone({
+  contacts: (root) => (root),
+  mainPhone: async (root: { id: number }, _, ctx, info) => {
+    const response = await OrganizationsService.getPhone({
       unfilteredFields: ['node'],
       source: { id: root.id },
       args: { main: true }
@@ -54,7 +54,7 @@ const Organization = {
       await ContactsService.getContact({
         unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
         source: { id: root.id }
-      }) as any : null
+      }) : null
   },
   state: CommonResolvers.state,
   createdBy: CommonResolvers.createdBy,

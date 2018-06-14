@@ -119,8 +119,8 @@ export class OrganizationsService extends DatabaseService {
   public static async createOrganizationalUnit (config: { unfilteredFields: string[], data: any, user: number }) {
     return this.createNode(Object.assign({}, OrganizationsService.OrganizationalUnitConfig, config))
   }
-  public static updateOrganizationalUnit (config) {
-    return this.updateNode(Object.assign({}, OrganizationsService.OrganizationConfig, config))
+  public static updateOrganizationalUnit (config: { unfilteredFields: string[], target: { [key: string]: any }, data: any, user: number }) {
+    return this.updateNode(Object.assign({}, OrganizationsService.OrganizationalUnitConfig, config))
   }
   public static deleteOrganizationalUnit (config: { unfilteredFields: string[], id: number, user: number }) {
     return this.deleteNode(Object.assign({}, OrganizationsService.OrganizationalUnitConfig, config))
