@@ -11,7 +11,8 @@ const mutations = {
   updatePerson: async (_, data, ctx, info) => {
     return Object.assign(await PersonsService.updatePerson({
       unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
-      data,
+      target: { id: data.input.id },
+      data: data.input,
       user: ctx.session.user
     }))
   },

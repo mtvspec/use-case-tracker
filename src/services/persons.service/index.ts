@@ -1,8 +1,10 @@
 import { DatabaseService, ServiceConfig } from './../database.service'
 import { EdgesConfig, NodesCountConfig, EdgesCountConfig, NodeConfig, NodesConfig } from '../interfaces'
+import ContactsService from '../contacts.service/index'
+import { CreateNodeMutationConfig, UpdateNodeMutationConfig } from '../database.service/interfaces'
 
 export class PersonsService extends DatabaseService {
-  private static PersonConfig: ServiceConfig = {
+  public static PersonConfig: ServiceConfig = {
     table: '',
     tableFields: []
   }
@@ -36,12 +38,12 @@ export class PersonsService extends DatabaseService {
     return this.getNodes(Object.assign({}, config, this.PersonConfig, { fields }))
   }
   public static getPerson (config: NodeConfig) {
-    return this.getNode(Object.assign({}, PersonsService.PersonConfig, config))
+    return this.getNode(Object.assign({}, this.PersonConfig, config))
   }
-  public static async createPerson (config: { unfilteredFields: string[], data: any, user: number }) {
+  public static createPerson (config: CreateNodeMutationConfig) {
     return this.createNode(Object.assign({}, this.PersonConfig, config))
   }
-  public static updatePerson (config: { unfilteredFields: string[], data: any, user: number }) {
+  public static updatePerson (config: UpdateNodeMutationConfig) {
     return this.updateNode(Object.assign({}, this.PersonConfig, config))
   }
   public static deletePerson (config: { unfilteredFields: string[], id: number, user: number }) {
@@ -50,7 +52,7 @@ export class PersonsService extends DatabaseService {
   public static restorePerson (config: { unfilteredFields: string[], id: number, user: number }) {
     return this.restoreNode(Object.assign({}, this.PersonConfig, config))
   }
-  public static async getPersonContactsCount (config: EdgesCountConfig) {
+  public static getPersonContactsCount (config: EdgesCountConfig) {
     return this.getEdgesCount(Object.assign({}, config, this.PersonContactsConfig))
   }
   public static getPersonContactsEdges (config: EdgesConfig) {
