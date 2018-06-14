@@ -38,16 +38,16 @@ export class UsersService extends DatabaseService {
     }
     getUserRolesEdgesTableFields('users.r_e_user_e_role')
   }
-  public static async getUsersCount (config: NodesCountConfig) {
+  public static getUsersCount (config: NodesCountConfig) {
     return this.getNodesCount(Object.assign({}, UsersService.UserConfig, config))
   }
   public static getAllUsers (config: NodesConfig) {
     return this.getNodes(Object.assign({}, UsersService.UserConfig, config))
   }
-  public static async getUser (config: NodeConfig) {
+  public static getUser (config: NodeConfig) {
     return this.getNode(Object.assign({}, UsersService.UserConfig, config))
   }
-  public static async getUserPasswordByUsername (config: NodeQueryConfig) {
+  public static getUserPasswordByUsername (config: NodeQueryConfig) {
     return this.getNode(Object.assign({}, UsersService.UserConfig, config))
   }
   public static getRoles (config: NodesConfig) {
