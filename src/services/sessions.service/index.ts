@@ -38,20 +38,24 @@ export class SessionsService extends DatabaseService {
       text: queries.sessions.GET_USER_ID(token)
     }))
   }
-  public static async closeSession (session: number) {
-    return await this.query(new QueryConfig({
-      qty: 1,
-      text: `
-      
-      UPDATE sessions.e_session
-      SET
-        "closedAt" = now(),
-        "state" = 'C'
-      WHERE id = ${session}
-      RETURNING *;
-      
-      `
-    }))
+  public static closeSession = async (session: number) => {
+    // return await this.query(new QueryConfig({
+    //   qty: 1,
+    //   text: `
+
+    //   UPDATE sessions.e_session
+    //   SET
+    //     "closedAt" = 'now()',
+    //     state = 'C'
+    //   WHERE id = ${session}
+    //   RETURNING *;
+
+    //   `
+    // }))
+    return await db(SESSIONS_TABLE)
+      .update({ closedAt: 'now()' })
+      .where({ session })
+      .returning('*').first()
   }
   public static async validateToken (token: string) {
     return await this.query(new QueryConfig({
