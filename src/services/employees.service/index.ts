@@ -72,16 +72,16 @@ export class EmployeesService extends DatabaseService {
       qty: '*',
       text: `
 
-      SELECT
-        ${requestedFields}
-      FROM
-        ${EmployeesService.EmployeeConfig.table} e,
-        ${OrganizationsService.OrganizationalUnitConfig.table} ou
-      WHERE e."organizationalUnit" = ou.id
-      AND ou."manager" != e.id
-      AND e."firedAt" IS NULL
-      AND ou.id = ${config.source['id']}
-      ORDER BY e.idx, e."createdAt";
+        SELECT
+          ${requestedFields}
+        FROM
+          ${EmployeesService.EmployeeConfig.table} e,
+          ${OrganizationsService.OrganizationalUnitConfig.table} ou
+        WHERE e."organizationalUnit" = ou.id
+        AND ou."manager" != e.id
+        AND e."firedAt" IS NULL
+        AND ou.id = ${config.source['id']}
+        ORDER BY e.idx, e."createdAt";
       
       `
     }))
@@ -146,16 +146,11 @@ export class EmployeesService extends DatabaseService {
         WHERE id = ${config.source['id']}
         UNION ALL
         SELECT
-          cou.id, pou.level + 1
-        FROM cte pou
-        JOIN ${OrganizationsService.OrganizationalUnitConfig.table} cou ON cou."organizationalUnit" = pou.id
-      )
-      SELECT
-        id
-      FROM
-        cte
-      ORDER BY level
-      );
+          id
+        FROM
+          cte
+        ORDER BY level
+        );
       
       `
     }))
@@ -168,14 +163,14 @@ export class EmployeesService extends DatabaseService {
       qty: '*',
       text: `
 
-      SELECT
-        ${requestedFields}
-      FROM
-        ${EmployeesService.EmployeeConfig.table} e,
-        ${OrganizationsService.OrganizationalUnitConfig.table} ou
-      WHERE ou."managerID" = e.id
-      AND ou.id = ${config.sourse['id']}
-      ORDER BY e.idx, e."createdAt";
+        SELECT
+          ${requestedFields}
+        FROM
+          ${EmployeesService.EmployeeConfig.table} e,
+          ${OrganizationsService.OrganizationalUnitConfig.table} ou
+        WHERE ou."managerID" = e.id
+        AND ou.id = ${config.sourse['id']}
+        ORDER BY e.idx, e."createdAt";
       
       `
     }))
@@ -188,14 +183,14 @@ export class EmployeesService extends DatabaseService {
       qty: '*',
       text: `
 
-      SELECT
-        ${requestedFields}
-      FROM
-        ${EmployeesService.EmployeeConfig.table} m,
-        ${EmployeesService.EmployeeConfig.table} s
-      WHERE s."manager" = m.id
-      AND m.id = ${config.source['id']}
-      ORDER BY s.id;
+        SELECT
+          ${requestedFields}
+        FROM
+          ${EmployeesService.EmployeeConfig.table} m,
+          ${EmployeesService.EmployeeConfig.table} s
+        WHERE s."manager" = m.id
+        AND m.id = ${config.source['id']}
+        ORDER BY s.id;
       
       `
     }))
