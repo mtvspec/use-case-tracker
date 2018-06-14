@@ -1,6 +1,7 @@
 import { UsersService } from './../../../services'
 import { PersonsService } from './../../../services'
 import { DictService } from './../../../services'
+
 const createdBy = async (root: { createdBy: number }, _, ctx, info) => {
   return await UsersService.getUser({
     unfilteredFields: Object.keys(ctx.utils.parseFields(info)),

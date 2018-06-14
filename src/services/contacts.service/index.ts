@@ -1,5 +1,6 @@
 import { DatabaseService, ServiceConfig } from './../database.service'
 import { NodeConfig, NodesConfig } from '../interfaces'
+
 export default class ContactsService extends DatabaseService {
   private static ContactsConfig: ServiceConfig = {
     table: '',

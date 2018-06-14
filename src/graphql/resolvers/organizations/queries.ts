@@ -4,6 +4,7 @@ import { OrganizationsService } from './../../../services/organizations.service'
 import { EmployeesService } from './../../../services/employees.service'
 import { PersonsService } from './../../../services/persons.service'
 import { DictService, ContactsService } from '../../../services/index'
+
 const getOrganization = async (_, args: { id: number }, ctx, info) => {
   return await OrganizationsService.getOrganization({
     unfilteredFields: Object.keys(ctx.utils.parseFields(info)),

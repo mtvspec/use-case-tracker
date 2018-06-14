@@ -1,7 +1,7 @@
 import queries from './queries'
 import mutations from './mutations'
-const SystemsResolvers = {
+
+export default {
   queries,
   mutations
 }
-export default SystemsResolvers

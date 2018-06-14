@@ -1,5 +1,4 @@
 import CommonResolvers from './../common'
-
 import { DictService } from './../../../services'
 
 const getDictValue = async (root: { args: { dictName: string } }, _, ctx, info) => {

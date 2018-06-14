@@ -1,4 +1,5 @@
 import { AuthService } from './../../../services'
+
 const authentificateUser = async (root, data, ctx, info) => {
   const response: any = await AuthService.authentificateUser({
     credentials: data.input,

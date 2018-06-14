@@ -1,7 +1,5 @@
 import queries from './queries';
 
-const DictResolvers = {
+export default {
   queries
 }
-
-export default DictResolvers

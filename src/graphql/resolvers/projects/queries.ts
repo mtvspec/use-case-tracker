@@ -2,8 +2,8 @@ import { DictService } from './../../../services/dict.service'
 import { ProjectsService } from './../../../services/projects.service'
 import { EmployeesService } from './../../../services'
 import { PersonsService } from './../../../services'
-import { CustomersService } from './../../../services'
 import CommonResolvers from './../common'
+
 const getProject = async (_, args: { id: number }) => {
   return await ProjectsService.getProject(args.id)
 }
@@ -143,7 +143,7 @@ const ProjectMember = {
   modifiedBy: CommonResolvers.modifiedBy
 }
 
-const ProjectsResolvers = {
+export default {
   getProject,
   ProjectsConnection,
   Project,
@@ -157,5 +157,3 @@ const ProjectsResolvers = {
   ProjectMemberRoleIssuesConnection,
   ProjectSystemsConnection,
 }
-
-export default ProjectsResolvers

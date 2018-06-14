@@ -1,4 +1,5 @@
 import { IssuesService } from './../../../services/issues.service'
+
 const createIssue = async (root, data, context) => {
   const _data = {
     authorID: data.input.authorID,
@@ -83,12 +84,10 @@ const closeIssue = async (root, data, context) => {
   }
 }
 
-const mutations = {
+export default {
   createIssue,
   updateIssue,
   deleteIssue,
   openIssue,
   closeIssue
 }
-
-export default mutations

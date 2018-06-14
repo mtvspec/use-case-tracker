@@ -1,4 +1,3 @@
-import UsersResolvers from './../users'
 import { UsersService } from './../../../services'
 import { SessionsService } from './../../../services'
 

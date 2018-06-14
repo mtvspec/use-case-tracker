@@ -1,6 +1,5 @@
 import CommonResovers from './../common'
 import { UsersService } from './../../../services'
-import { SessionsService } from '../../../services/sessions.service/index';
 
 const getUserByID = async (_, args: { id: number }, ctx, info) => {
   return await UsersService.getUser({

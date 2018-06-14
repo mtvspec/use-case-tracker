@@ -1,10 +1,7 @@
 import queries from './queries'
 import mutations from './mutations'
 
-
-const IssuesResolvers = {
+export default {
   queries,
   mutations,
 }
-
-export default IssuesResolvers
