@@ -64,6 +64,33 @@ export class EmployeesService extends DatabaseService {
       `
     }))
   }
+  public static async getEmployeesByBirthdayMonth (config) {
+    const requestedFields = this.buildFieldSet(this.filterFields(
+      PersonsService.PersonConfig.tableFields,
+      config.unfilteredFields), 'p')
+    return await this.query(new QueryConfig({
+      qty: '*',
+      text: `
+
+        SELECT
+          ${requestedFields}
+        FROM
+          ${PersonsService.PersonConfig.table} p,
+          ${EmployeesService.EmployeeConfig.table} e
+        WHERE extract(month from p.dob) = ${config.source['month']}
+        AND p."isDeleted" = false
+        AND e.person = p.id
+        AND e.organization = 1
+        ORDER BY extract(day from p.dob) asc, p."lastName", p."firstName", p."middleName";
+
+      `
+    }))
+    // return db(`${PersonsService.PersonConfig.table} "p"`)
+    //   .select(this.filterFields(PersonsService.PersonConfig.tableFields, config.unfilteredFields))
+    //   .innerJoin(`${EmployeesService.EmployeeConfig.table}`, `${PersonsService.PersonConfig.table}.id`, `${EmployeesService.EmployeeConfig.table}.person`).as('e')
+    //   .whereRaw(`extract(month from p.dob) = ${config.source['month']}`)
+    //   .andWhereRaw(`e.id = ${config.source['id']}`)
+  }
   public static async getEmployeesByOrganizationalUnit (config) {
     const requestedFields = this.buildFieldSet(this.filterFields(
       EmployeesService.EmployeeConfig.tableFields,

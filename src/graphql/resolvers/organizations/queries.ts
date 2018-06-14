@@ -29,6 +29,12 @@ const getEmployee = async (_, args: { id: number }, ctx, info) => {
     source: { id: args.id }
   })
 }
+const getEmployeesByBirthdayMonth = async (_, args: { month: number }, ctx, info) => {
+  return await EmployeesService.getEmployeesByBirthdayMonth({
+    unfilteredFields: Object.keys(ctx.utils.parseFields(info)),
+    source: { month: args.month }
+  })
+}
 const Organization = {
   organizationalUnits: async (root: { id: number }, _, ctx, info) => {
     return await OrganizationsService.getOrganizationalUnitsByOrganization({
@@ -292,4 +298,5 @@ export default {
   Employee,
   EmployeesConnection,
   PersonEmployeeEdge,
+  getEmployeesByBirthdayMonth
 }
